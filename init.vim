@@ -1,4 +1,4 @@
-call plug#begin('~/.vim/plugged')
+::ll plug#begin('~/.vim/plugged')
 " Essential
 " Plug 'sheerun/vim-polyglot'
 Plug 'junegunn/fzf'
@@ -37,9 +37,6 @@ Plug 'jremmen/vim-ripgrep'
 Plug 'tmhedberg/matchit'
 
 "  Git
-"  a
-Plug 'rbgrouleff/bclose.vim'
-Plug 'iberianpig/tig-explorer.vim'
 Plug 'tpope/vim-fugitive'
 
 
@@ -173,7 +170,7 @@ let g:jsx_ext_required = 0 " Allow JSX in normal JS files
 
 " ==== START COC config
 " List coc plugin
-let g:coc_global_extensions = ['coc-java', 'coc-json', 'coc-eslint', 'coc-tsserver', 'coc-highlight' ]
+let g:coc_global_extensions = ['coc-java', 'coc-json', 'coc-eslint', 'coc-tsserver', 'coc-highlight', 'coc-prettier' ]
 
 set nowritebackup
 " You will have bad experience for diagnostic messages when it's default 4000.
