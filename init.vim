@@ -1,4 +1,4 @@
-::ll plug#begin('~/.vim/plugged')
+call plug#begin('~/.vim/plugged')
 " Essential
 " Plug 'sheerun/vim-polyglot'
 Plug 'junegunn/fzf'
@@ -17,6 +17,7 @@ Plug 'vim-ruby/vim-ruby'
 " Theme + Style
 Plug 'roosta/vim-srcery'
 Plug 'ap/vim-css-color'
+Plug 'wincent/terminus'
 " Plug 'mhinz/vim-signify'
 Plug 'rafi/awesome-vim-colorschemes'
 Plug 'ryanoasis/vim-devicons'
@@ -204,7 +205,7 @@ endfunction
 " === END COC config
 
 " Auto format
-autocmd BufWritePre * StripWhitespaceOnChangedLines
+" autocmd BufWritePre * StripWhitespaceOnChangedLines
 " autocmd BufWritePre *.js,*.jsx,*.css,*.scss,*.less,*.json Prettier
 autocmd BufWritePre *.js,*.jsx,*.css,*.scss,*.less,*.json CocCommand prettier.formatFile
 autocmd BufNewFile,BufRead *.tsx set filetype=typescript
