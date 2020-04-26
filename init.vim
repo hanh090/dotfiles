@@ -17,6 +17,7 @@ Plug 'vim-ruby/vim-ruby'
 " Theme + Style
 Plug 'roosta/vim-srcery'
 Plug 'ap/vim-css-color'
+Plug 'wincent/terminus'
 " Plug 'mhinz/vim-signify'
 Plug 'rafi/awesome-vim-colorschemes'
 Plug 'ryanoasis/vim-devicons'
@@ -37,9 +38,6 @@ Plug 'jremmen/vim-ripgrep'
 Plug 'tmhedberg/matchit'
 
 "  Git
-"  a
-Plug 'rbgrouleff/bclose.vim'
-Plug 'iberianpig/tig-explorer.vim'
 Plug 'tpope/vim-fugitive'
 
 
@@ -173,7 +171,7 @@ let g:jsx_ext_required = 0 " Allow JSX in normal JS files
 
 " ==== START COC config
 " List coc plugin
-let g:coc_global_extensions = ['coc-java', 'coc-json', 'coc-eslint', 'coc-tsserver', 'coc-highlight' ]
+let g:coc_global_extensions = ['coc-java', 'coc-json', 'coc-eslint', 'coc-tsserver', 'coc-highlight', 'coc-prettier' ]
 
 set nowritebackup
 " You will have bad experience for diagnostic messages when it's default 4000.
@@ -207,7 +205,7 @@ endfunction
 " === END COC config
 
 " Auto format
-autocmd BufWritePre * StripWhitespaceOnChangedLines
+" autocmd BufWritePre * StripWhitespaceOnChangedLines
 " autocmd BufWritePre *.js,*.jsx,*.css,*.scss,*.less,*.json Prettier
 autocmd BufWritePre *.js,*.jsx,*.css,*.scss,*.less,*.json CocCommand prettier.formatFile
 autocmd BufNewFile,BufRead *.tsx set filetype=typescript
