@@ -1,6 +1,5 @@
 call plug#begin('~/.vim/plugged')
 " Essential
-" Plug 'sheerun/vim-polyglot'
 Plug 'junegunn/fzf'
 Plug 'junegunn/fzf.vim'
 Plug 'lambdalisue/fern.vim'
@@ -17,13 +16,19 @@ Plug 'vim-ruby/vim-ruby'
 " Theme + Style
 Plug 'roosta/vim-srcery'
 Plug 'ap/vim-css-color'
-Plug 'wincent/terminus'
-" Plug 'mhinz/vim-signify'
 Plug 'rafi/awesome-vim-colorschemes'
 Plug 'ryanoasis/vim-devicons'
 Plug 'lambdalisue/fern-renderer-devicons.vim'
 " Register list
 Plug 'junegunn/vim-peekaboo'
+
+" Cursor for linux
+if has('unix')
+  Plug 'wincent/terminus'
+endif
+
+" Choose window
+Plug 't9md/vim-choosewin'
 
 " Support
 Plug 'matze/vim-move'
@@ -36,10 +41,13 @@ Plug 'alvan/vim-closetag'
 Plug 'jremmen/vim-ripgrep'
 " Extend matching for html tag
 Plug 'tmhedberg/matchit'
+" Enhance matching tag for xml, html document
+Plug 'Valloric/MatchTagAlways'
 
 "  Git
 Plug 'tpope/vim-fugitive'
-
+" Align text
+Plug 'junegunn/vim-easy-align'
 
 " Coding style
 " Plug 'prettier/vim-prettier', {
@@ -57,11 +65,13 @@ endif
 
 " Code completion, LSP
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
-" Plug 'dense-analysis/ale'
 
 " Airline for status line
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
+
+" Github line
+Plug 'ruanyl/vim-gh-line'
 
 call plug#end()
 
@@ -76,24 +86,29 @@ function! RipgrepFzf(query, fullscreen)
 endfunction
 
 command! -nargs=* -bang RG call RipgrepFzf(<q-args>, <bang>0)
-
-nnoremap <Esc> :noh<CR><Esc>
-
-"========================================================
-" leader config
-"========================================================
+" Ignore that because it leads to start in replace mode
+nnoremap <Esc><Esc> :noh<CR><Esc>
+"
+" "========================================================
+" " leader config
+" "========================================================
 let mapleader=" "
 
-noremap <silent><leader>m :Fern . -drawer -toggle<CR>
-" map <leader>r :NERDTreeFind<cr>
-map <leader>r :Fern . -reveal=% -drawer<CR>
+noremap  <silent><leader>m :Fern . -drawer -toggle<CR>
+map      <leader>r :Fern . -reveal=% -drawer<CR>
 " Searching
-noremap <leader>f :FZF<CR>
-noremap <leader>a :Ag <CR>
-noremap <leader>o :Buffers <CR>
-noremap <leader>h :History <CR>
+noremap  <leader>f :FZF<CR>
+noremap  <leader>a :Ag <CR>
+noremap  <leader>o :Buffers <CR>
+noremap  <leader>h :History <CR>
 nnoremap <silent> <leader>ag :Ag <C-R><C-W><CR>
 nnoremap <C-g> :Rg<Cr>
+
+" Start interactive EasyAlign in visual mode (e.g. vipga)
+xmap ga <Plug>(EasyAlign)
+
+" Start interactive EasyAlign for a motion/text object (e.g. gaip)
+nmap ga <Plug>(EasyAlign)
 
 " Quick saving / edit
 noremap <leader>w :w<cr>
@@ -105,32 +120,26 @@ noremap <leader>s :vsplit<cr>
 noremap <leader>v :split<cr>
 
 " Copy current file / folder path
-nnoremap cp :let @* = expand("%")<CR>
-nnoremap cP :let @* = expand("%:p")<CR>
+nnoremap cp :let @+ = expand("%")<CR>
+nnoremap cP :let @+ = expand("%:p")<CR>
 
 " Git
 noremap <leader>gu :Gpull<cr>
 noremap <leader>gp :Gpush<cr>
 noremap <leader>gb :Gblame<cr>
 
+" Choose window config
+nmap  <leader>-  <Plug>(choosewin)
+
 " Easy jump
 map  <leader>j <Plug>(easymotion-bd-w)
 nmap <leader>j <Plug>(easymotion-overwin-w)
 
-" Custom nerdtree
-" let g:NERDTreeSyntaxDisableDefaultExtensions = 1
-" let g:NERDTreeDisableExactMatchHighlight = 1
-" let g:NERDTreeDisablePatternMatchHighlight = 1
-" let g:NERDTreeSyntaxEnabledExtensions = ['rb', 'js', 'html', 'haml', 'css', 'erb', 'jsx', 'scss']
-" let g:NERDTreeLimitedSyntax = 1
-" let g:NERDTreeHighlightCursorline = 0
 let g:fern#renderer = "devicons"
-
 
 " Custom airline
 let g:airline_theme='onedark'
 let g:webdevicons_enable_airline_statusline = 1
-
 " Custom closetag
 let g:closetag_filenames = '*.js,*.jsx,*.html, *.xml'
 " Custom vim-move to use control to move line up/down
@@ -148,8 +157,8 @@ set lazyredraw
 set redrawtime=10000
 set regexpengine=1
 set expandtab
-
-"" Searching
+"
+" "" Searching
 set hlsearch
 set incsearch
 set ignorecase
@@ -171,7 +180,8 @@ let g:jsx_ext_required = 0 " Allow JSX in normal JS files
 
 " ==== START COC config
 " List coc plugin
-let g:coc_global_extensions = ['coc-java', 'coc-json', 'coc-eslint', 'coc-tsserver', 'coc-highlight', 'coc-prettier' ]
+let g:coc_global_extensions = ['coc-tsserver', 'coc-prettier', 'coc-json',  'coc-highlight',  'coc-eslint',  'coc-xml',  'coc-java',  'coc-html']
+
 
 set nowritebackup
 " You will have bad experience for diagnostic messages when it's default 4000.
@@ -185,16 +195,16 @@ nmap <silent> [g <Plug>(coc-diagnostic-prev)
 nmap <silent> ]g <Plug>(coc-diagnostic-next)
 " Remap keys for gotos
 nmap <silent> gd <Plug>(coc-definition)
-" nmap <silent> gd :ALEGoToDefinition <CR>
 nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
-
+nmap <silent> qf <Plug>(coc-codeaction)
+nmap <silent> fm <Plug>(coc-format)
+nmap <silent> rn <Plug>(coc-rename)
+nmap rl :echo CocAction('reloadExtension', 'coc-eslint')<CR>
 " Use K to show documentation in preview window
 nnoremap <silent> K :call <SID>show_documentation()<CR>
 " Symbol renaming.
-nmap <leader>rn <Plug>(coc-rename)
-
 function! s:show_documentation()
   if (index(['vim','help'], &filetype) >= 0)
     execute 'h '.expand('<cword>')
@@ -214,16 +224,31 @@ autocmd BufNewFile,BufRead *.tsx set filetype=typescript
 " Quick escape
 inoremap jk <ESC>
 inoremap jj <ESC>
+" Copy matches only
+function! CopyMatches(reg)
+  let hits = []
+  %s//\=len(add(hits, submatch(0))) ? submatch(0) : ''/gne
+  let reg = empty(a:reg) ? '+' : a:reg
+  execute 'let @'.reg.' = join(hits, "\n") . "\n"'
+endfunction
+command! -register CopyMatches call CopyMatches(<q-reg>)
 
 " Custom FZF
-let $FZF_DEFAULT_COMMAND = 'rg --files --no-ignore-vcs --hidden --glob !.git --glob !node_modules'
+let $FZF_DEFAULT_COMMAND = 'rg --files --no-ignore-vcs --hidden --glob !.git --glob !node_modules --glob !target'
 let g:fzf_preview_window = 'right:40%'
 
+" Custom matching tag
+let g:mta_use_matchparen_group = 0
+
 " Set background and colorscheme
-colorscheme solarized8
+colorscheme solarized8_high
 set background=dark
 hi CocErrorSign cterm=bold,reverse ctermfg=160 ctermbg=230 guifg=White guibg=Red
 hi CocUnderlineError cterm=underline ctermfg=61 gui=undercurl guisp=Red
 hi link CocErrorHighlight CocUnderlineError
+hi MatchTag term=reverse cterm=reverse ctermfg=136 ctermbg=236 guibg=Yellow
+
 " Required for operations modifying multiple buffers like rename.
 set hidden
+" Save file as root
+command! -nargs=0 Sw w !sudo tee % > /dev/null
