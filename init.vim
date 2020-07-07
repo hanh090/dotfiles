@@ -172,6 +172,8 @@ map  <leader>jk <Plug>(easymotion-bd-w)
 nmap <leader>jw <Plug>(easymotion-overwin-w)
 
 let g:fern#renderer = "devicons"
+let g:WebDevIconsUnicodeDecorateFileNodesExtensionSymbols = {} " needed
+let g:WebDevIconsUnicodeDecorateFileNodesExtensionSymbols['re'] = 'λ'
 
 " Custom airline
 let g:airline_theme='onedark'
@@ -179,8 +181,6 @@ let g:airline#extensions#default#layout = [
       \ [ 'a', 'b', 'c' ],
       \ [ 'error', 'warning' ]
       \ ]
-" let g:airline#extensions#tabline#enabled = 1
-let g:webdevicons_enable_airline_statusline = 1
 " Custom closetag
 let g:closetag_filenames = '*.js,*.jsx,*.html, *.xml'
 " Custom vim-move to use control to move line up/down
@@ -270,7 +270,7 @@ inoremap jk <ESC>
 inoremap jj <ESC>
 
 " Custom FZF for default search file
-let $FZF_DEFAULT_COMMAND = 'rg --files  --no-ignore-vcs --hidden --glob !.git --glob !node_modules --glob !target --glob !bin'
+let $FZF_DEFAULT_COMMAND = 'rg --files  --no-ignore-vcs --hidden --glob !.git --glob !node_modules --glob !target --glob !bin --glob "!*.cm*" --glob "!*.reast" --glob "!*.d"'
 let g:fzf_preview_window = 'right:40%'
 
 " Custom git checkout
