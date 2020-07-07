@@ -23,8 +23,6 @@ Plug 'Yggdroot/indentLine'
 " Register list
 Plug 'junegunn/vim-peekaboo'
 " manage todo list, note
-Plug 'tpope/vim-speeddating'
-Plug 'jceb/vim-orgmode'
 
 " Cursor for linux
 if has('unix')
@@ -47,10 +45,11 @@ Plug 'jremmen/vim-ripgrep'
 Plug 'tmhedberg/matchit'
 " Enhance matching tag for xml, html document
 Plug 'Valloric/MatchTagAlways'
-Plug 'tpope/vim-ragtag'
 
 "  Git
 Plug 'tpope/vim-fugitive'
+" --- Integrate github to git
+Plug 'tpope/vim-rhubarb'
 Plug 'stsewd/fzf-checkout.vim'
 " Align text
 Plug 'junegunn/vim-easy-align'
@@ -64,11 +63,14 @@ Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 
-" Github line
-Plug 'ruanyl/vim-gh-line'
-
 " More shortcut/keybinding
 Plug 'tpope/vim-unimpaired'
+
+" Vim wiki
+" Plug 'vimwiki/vimwiki'
+
+" ReasonML
+Plug 'reasonml-editor/vim-reason-plus'
 
 call plug#end()
 
@@ -104,6 +106,7 @@ vnoremap <silent> i` :<c-u>call Ticks(1)<cr>
 
 onoremap <silent> a` :<c-u>normal va`<cr>
 onoremap <silent> i` :<c-u>normal vi`<cr>
+
 "
 " "========================================================
 " " leader config
@@ -130,6 +133,10 @@ xmap ga <Plug>(EasyAlign)
 " Start interactive EasyAlign for a motion/text object (e.g. gaip)
 nmap ga <Plug>(EasyAlign)
 
+" Open sh in current folder
+if !has('nvim')
+ noremap <leader>z :sh<cr>
+endif
 " Quick saving / edit
 noremap <leader>w :w<cr>
 noremap <leader>e :e<cr>
@@ -150,8 +157,13 @@ noremap <leader>gb :Gblame<cr>
 noremap <leader>gc :GCheckout<cr>
 " Git status in new tab
 noremap <leader>gs :Gtabedit :<cr>
+nnoremap <leader>gh :Gbrowse <cr>
+augroup fugitive_ext
+  autocmd!
+  " Browse to the commit under my cursor
+  autocmd FileType fugitiveblame nnoremap <buffer> <leader>gh :execute ":Gbrowse " . expand("<cword>")<cr>
+augroup END
 
-let g:gh_line_blame_map = '<leader>ghb'
 " Choose window config
 nmap  <leader>-  <Plug>(choosewin)
 
@@ -209,7 +221,7 @@ let g:jsx_ext_required = 0 " Allow JSX in normal JS files
 
 " ==== START COC config
 " List coc plugin
-let g:coc_global_extensions = ['coc-tsserver', 'coc-prettier', 'coc-json',  'coc-highlight',  'coc-eslint',  'coc-xml',  'coc-java',  'coc-html', 'coc-solargraph']
+let g:coc_global_extensions = ['coc-tsserver', 'coc-prettier', 'coc-json',  'coc-highlight',  'coc-eslint',  'coc-xml',  'coc-java',  'coc-html', 'coc-solargraph', 'coc-reason']
 
 
 set nowritebackup
@@ -248,7 +260,8 @@ endfunction
 " Auto format
 " autocmd BufWritePre * StripWhitespaceOnChangedLines
 " autocmd BufWritePre *.js,*.jsx,*.css,*.scss,*.less,*.json Prettier
-autocmd BufWritePre *.js,*.jsx,*.css,*.scss,*.less,*.json CocCommand prettier.formatFile
+autocmd BufWritePre *.js,*.jsx,*.css,*.scss,*.less,*.json,*.html CocCommand prettier.formatFile
+autocmd BufWritePre *.re call CocAction('format')
 autocmd BufNewFile,BufRead *.tsx set filetype=typescript
 
 
