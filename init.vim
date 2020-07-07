@@ -155,6 +155,7 @@ noremap <leader>gc :GCheckout<cr>
 noremap <leader>gs :Gtabedit :<cr>
 
 let g:gh_line_blame_map = '<leader>ghb'
+" Choose window config
 nmap  <leader>-  <Plug>(choosewin)
 
 " Easy jump
@@ -259,7 +260,11 @@ inoremap jk <ESC>
 inoremap jj <ESC>
 
 " Custom FZF for default search file
+<<<<<<< HEAD
 let $FZF_DEFAULT_COMMAND = 'rg --files  --no-ignore-vcs --hidden --glob !.git --glob !node_modules --glob !target --glob !bin --glob "!*.cm*" --glob "!*.reast" --glob "!*.d"'
+=======
+let $FZF_DEFAULT_COMMAND = 'rg --files  --no-ignore-vcs --hidden --glob !.git --glob !node_modules --glob !target --glob !bin'
+>>>>>>> ee0f20e172bf7a571ab1694fc4b4321bc3c4dc8a
 let g:fzf_preview_window = 'right:40%'
 
 " Custom git checkout
