@@ -20,9 +20,11 @@ Plug 'ryanoasis/vim-devicons'
 Plug 'lambdalisue/fern-renderer-devicons.vim'
 " Show indent line
 Plug 'Yggdroot/indentLine'
+" Better display for json
+Plug 'elzr/vim-json'
+let g:vim_json_syntax_conceal = 0
 " Register list
 Plug 'junegunn/vim-peekaboo'
-" manage todo list, note
 
 " Cursor for linux
 if has('unix')
@@ -40,7 +42,6 @@ Plug 'tomtom/tcomment_vim'
 Plug 'tpope/vim-surround'
 Plug 'terryma/vim-multiple-cursors'
 Plug 'alvan/vim-closetag'
-Plug 'jremmen/vim-ripgrep'
 " Extend matching for html tag
 Plug 'tmhedberg/matchit'
 " Enhance matching tag for xml, html document
@@ -162,6 +163,7 @@ augroup fugitive_ext
   autocmd!
   " Browse to the commit under my cursor
   autocmd FileType fugitiveblame nnoremap <buffer> <leader>gh :execute ":Gbrowse " . expand("<cword>")<cr>
+  autocmd FileType reason let b:AutoPairs = AutoPairsDefine({'(':')', '[':']', '{':'}'})
 augroup END
 
 " Choose window config
@@ -170,6 +172,7 @@ nmap  <leader>-  <Plug>(choosewin)
 " Easy jump
 map  <leader>jk <Plug>(easymotion-bd-w)
 nmap <leader>jw <Plug>(easymotion-overwin-w)
+nmap <leader>jl <Plug>(easymotion-overwin-line)
 
 let g:fern#renderer = "devicons"
 let g:WebDevIconsUnicodeDecorateFileNodesExtensionSymbols = {} " needed
@@ -246,6 +249,8 @@ nmap <silent> cn <Plug>(coc-rename)
 nmap <silent> cl :echo CocAction('reloadExtension', 'coc-eslint')<CR>
 nmap <silent> co :CocList outline<CR>
 nmap <silent> cu :CocList output<CR>
+nmap <silent> cd :CocList diagnostics<CR>
+nmap <silent> cD :CocList --normal diagnostics<CR>
 " Use K to show documentation in preview window
 nnoremap <silent> K :call <SID>show_documentation()<CR>
 function! s:show_documentation()
@@ -258,8 +263,6 @@ endfunction
 " === END COC config
 
 " Auto format
-" autocmd BufWritePre * StripWhitespaceOnChangedLines
-" autocmd BufWritePre *.js,*.jsx,*.css,*.scss,*.less,*.json Prettier
 autocmd BufWritePre *.js,*.jsx,*.css,*.scss,*.less,*.json,*.html CocCommand prettier.formatFile
 autocmd BufWritePre *.re call CocAction('format')
 autocmd BufNewFile,BufRead *.tsx set filetype=typescript
@@ -291,6 +294,9 @@ let g:fzf_action = {
 
 " Custom matching tag
 let g:mta_use_matchparen_group = 0
+
+" Custom autopair for reason
+autocmd FileType reason let b:AutoPairs = AutoPairsDefine({'(':')', '[':']', '{':'}'})
 
 " Set background and colorscheme
 colorscheme solarized8_high
