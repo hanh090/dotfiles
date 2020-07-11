@@ -88,7 +88,7 @@ endfunction
 command! -nargs=* -bang RG call RipgrepFzf(<q-args>, <bang>0)
 
 "Multiple path for example: find ~/projects ~/Downloads -maxdepth 1 -type d
-command! -nargs=* -complete=dir -bang Cd call fzf#run(fzf#wrap( { 'source':'find ~/projects -maxdepth 1 -type d', 'sink': 'cd', 'options': len(<q-args>) > 0 ?'-q '.(<q-args>): '' } , <bang>0))
+command! -nargs=* -complete=dir -bang Cd call fzf#run(fzf#wrap( { 'source': join(['find ~/projects', '-maxdepth 1 ','-type d'], ' '), 'sink': 'cd', 'options': len(<q-args>) > 0 ?'-q '.(<q-args>): '' } , <bang>0))
 " Ignore that because it leads to start in replace mode
 nnoremap <Esc><Esc> :noh<CR><Esc>
 
