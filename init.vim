@@ -87,7 +87,8 @@ endfunction
 
 command! -nargs=* -bang RG call RipgrepFzf(<q-args>, <bang>0)
 
-"Multiple path for example: find ~/projects ~/Downloads -maxdepth 1 -type d
+" Multiple path for example: find ~/projects ~/Downloads -maxdepth 1 -type d
+" Detect hightlight at cursor http://www.drchip.org/astronaut/vim/index.html#Maps
 command! -nargs=* -complete=dir -bang Cd call fzf#run(fzf#wrap( { 'source': join(['find ~/projects', '-maxdepth 1 ','-type d'], ' '), 'sink': 'cd', 'options': len(<q-args>) > 0 ?'-q '.(<q-args>): '' } , <bang>0))
 " Ignore that because it leads to start in replace mode
 nnoremap <Esc><Esc> :noh<CR><Esc>
