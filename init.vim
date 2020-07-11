@@ -164,7 +164,6 @@ augroup fugitive_ext
   autocmd!
   " Browse to the commit under my cursor
   autocmd FileType fugitiveblame nnoremap <buffer> <leader>gh :execute ":Gbrowse " . expand("<cword>")<cr>
-  autocmd FileType reason let b:AutoPairs = AutoPairsDefine({'(':')', '[':']', '{':'}'})
 augroup END
 
 " Choose window config
@@ -297,7 +296,8 @@ let g:fzf_action = {
 let g:mta_use_matchparen_group = 0
 
 " Custom autopair for reason
-autocmd FileType reason let b:AutoPairs = AutoPairsDefine({'(':')', '[':']', '{':'}'})
+au FileType reason let b:AutoPairs = AutoPairsDefine({}, ["`", "'"])
+au FileType html let b:AutoPairs = AutoPairsDefine({'<!--' : '-->'})
 
 " Set background and colorscheme
 colorscheme solarized8_high
