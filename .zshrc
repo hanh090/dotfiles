@@ -78,6 +78,7 @@ plugins=(
   github
   rake
   vi-mode
+  yarn
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -117,5 +118,10 @@ fancy-ctrl-z () {
 }
 zle -N fancy-ctrl-z
 bindkey '^Z' fancy-ctrl-z
+bindkey '^F' fzf-file-widget
 
 . $(brew --prefix asdf)/asdf.sh
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+source ~ZSH_CUSTOM/plugins/fzf-tab/fzf-tab.plugin.zsh
