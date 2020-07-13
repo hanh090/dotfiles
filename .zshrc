@@ -73,7 +73,6 @@ plugins=(
   autojump
   bgnotify
   fzf-tab
-  fzf-zsh
   git
   gitfast
   github
@@ -89,6 +88,7 @@ source $ZSH/oh-my-zsh.sh
 # User configuration
 
 # export MANPATH="/usr/local/man:$MANPATH"
+
 # You may need to manually set your language environment
 # export LANG=en_US.UTF-8
 
@@ -119,6 +119,10 @@ fancy-ctrl-z () {
     zle clear-screen
   fi
 }
+zle -N fancy-ctrl-z
+bindkey '^Z' fancy-ctrl-z
+
+bindkey '^F' fzf-file-widget
 
 alias gcoi='git checkout $(git branch |fzf --height 40%)'
 # circleci
@@ -149,9 +153,6 @@ deploySbx() {
 }
 
 alias dsb='deploySbx $(git branch | grep sbx- | fzf --height 40%)'
-zle -N fancy-ctrl-z
-bindkey '^Z' fancy-ctrl-z
-bindkey '^F' fzf-file-widget
 
 . $(brew --prefix asdf)/asdf.sh
 
