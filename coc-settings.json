@@ -2,6 +2,9 @@
   "diagnostic.messageTarget": "echo",
   "workspace.ignoredFiletypes": ["log", "txt", "help", "class", "jar", "bs.js"],
   "coc.source.file.ignorePatterns": ["node_modules/*"],
+  "eslint.options": {
+    "ignorePattern": ["node_modules/*"]
+  },
   "tsserver.npm": "/usr/local/bin/npm",
   "eslint.run": "onSave",
   "diagnostic.refreshAfterSave": true
