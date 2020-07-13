@@ -159,6 +159,7 @@ noremap <leader>gb :Gblame<cr>
 noremap <leader>gc :GCheckout<cr>
 " Git status in new tab
 noremap <leader>gs :Gtabedit :<cr>
+noremap <leader>gS :Gstatus<cr>
 nnoremap <leader>gh :Gbrowse <cr>
 augroup fugitive_ext
   autocmd!
