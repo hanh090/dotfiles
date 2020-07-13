@@ -246,7 +246,18 @@ nmap <silent> qf <Plug>(coc-codeaction)
 nmap <silent> fm <Plug>(coc-format)
 " Symbol renaming.
 nmap <silent> cn <Plug>(coc-rename)
-nmap <silent> cl :echo CocAction('reloadExtension', 'coc-eslint')<CR>
+nmap <silent> cl :call <SID>reload_coc_extension()<CR>
+function! s:reload_coc_extension()
+  if(&filetype == 'javascript' || &filetype == 'typescript')
+    let l:result = CocAction('reloadExtension', 'coc-eslint')
+    echo 'Reload coc-eslint with result='.l:result
+  elseif(&filetype == 'reason')
+    let l:result = CocAction('reloadExtension', 'coc-reason')
+    echo 'Reload coc-reason with result='.l:result
+  else
+    echo 'Please choose a version to reload'
+  endif
+endfunction
 nmap <silent> co :CocList outline<CR>
 nmap <silent> cu :CocList output<CR>
 nmap <silent> cd :CocList diagnostics<CR>
@@ -295,7 +306,8 @@ let g:fzf_action = {
 " Custom matching tag
 let g:mta_use_matchparen_group = 0
 
-" Custom autopair for reason
+" Custom autopair for filetype.First parameter is adding, second parameter is
+" removing
 au FileType reason let b:AutoPairs = AutoPairsDefine({}, ["`", "'"])
 au FileType html let b:AutoPairs = AutoPairsDefine({'<!--' : '-->'})
 
