@@ -73,10 +73,13 @@ plugins=(
   autojump
   bgnotify
   fzf-tab
+  fzf-zsh
   git
   gitfast
   github
+  rails
   rake
+  rake-fast
   vi-mode
   yarn
 )
@@ -116,6 +119,36 @@ fancy-ctrl-z () {
     zle clear-screen
   fi
 }
+
+alias gcoi='git checkout $(git branch |fzf --height 40%)'
+# circleci
+ci() {
+  google-chrome https://circleci.com/gh/Thinkei/workflows/$1
+}
+cio() {
+  ci `basename $(pwd)`
+}
+# open circleci in currrent branch
+cc() {
+   ci `basename $(pwd)`/tree/"${$(git rev-parse --abbrev-ref HEAD)//\//%2F}"
+}
+# Quickly merge staging
+deploySbx() {
+  currentBranch=$(git describe --contains --all HEAD)
+  echo "FETCH ORIGIN CODE"
+  git fetch origin $1
+  echo "MERGE $currentBranch"
+  git checkout $1
+  git reset --hard origin/$1
+  git merge $currentBranch -m "Merge branch '$currentBranch' into $1"
+  echo "PUSH CODE"
+  git push origin HEAD
+  cc # Open CircleCI
+  git checkout $currentBranch
+  echo "DONE"
+}
+
+alias dsb='deploySbx $(git branch | grep sbx- | fzf --height 40%)'
 zle -N fancy-ctrl-z
 bindkey '^Z' fancy-ctrl-z
 bindkey '^F' fzf-file-widget
