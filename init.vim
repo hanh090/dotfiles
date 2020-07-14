@@ -192,7 +192,11 @@ let g:move_key_modifier = 'C'
 
 filetype plugin indent on
 
-set clipboard=unnamedplus
+if system('uname -s') == "Darwin\n"
+  set clipboard=unnamed "OSX
+else
+  set clipboard=unnamedplus "Linux
+endif
 set autoindent " Copy indent from current line when starting a new line
 set smarttab
 set tabstop=2 " Number of space og a <Tab> character
