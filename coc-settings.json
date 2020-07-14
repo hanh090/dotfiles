@@ -1,11 +1,12 @@
 {
   "diagnostic.messageTarget": "echo",
-  "workspace.ignoredFiletypes": ["log", "txt", "help", "class", "jar", "bs.js"],
+  "workspace.ignoredFiletypes": ["log", "txt", "help", "class", "jar"],
   "coc.source.file.ignorePatterns": ["node_modules/*"],
   "eslint.options": {
-    "ignorePattern": ["node_modules/*"]
+    "ignorePattern": ["node_modules/*", "*.bs.js"]
   },
-  "tsserver.npm": "/usr/local/bin/npm",
+  "tsserver.npm": "$HOME/.asdf/shims/npm",
   "eslint.run": "onSave",
-  "diagnostic.refreshAfterSave": true
+  "diagnostic.refreshAfterSave": true,
+  "reason_language_server.reloadOnChange": true
 }
