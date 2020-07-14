@@ -43,7 +43,7 @@ Plug 'tpope/vim-surround'
 Plug 'terryma/vim-multiple-cursors'
 Plug 'alvan/vim-closetag'
 " Extend matching for html tag
-Plug 'tmhedberg/matchit'
+Plug 'andymass/vim-matchup'
 " Enhance matching tag for xml, html document
 Plug 'Valloric/MatchTagAlways'
 
@@ -55,7 +55,7 @@ Plug 'stsewd/fzf-checkout.vim'
 " Align text
 Plug 'junegunn/vim-easy-align'
 " Auto add pairing
-Plug 'jiangmiao/auto-pairs'
+Plug 'hanh090/auto-pairs'
 
 " Code completion, LSP
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
@@ -220,8 +220,6 @@ set number
 set rnu
 
 set showcmd
-
-let g:jsx_ext_required = 0 " Allow JSX in normal JS files
 
 " ==== START COC config
 " List coc plugin
