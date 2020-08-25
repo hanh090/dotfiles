@@ -88,11 +88,11 @@ source $ZSH/oh-my-zsh.sh
 # User configuration
 
 # export MANPATH="/usr/local/man:$MANPATH"
-
 # You may need to manually set your language environment
 # export LANG=en_US.UTF-8
 
 # Preferred editor for local and remote sessions
+export EDITOR='nvim'
 # if [[ -n $SSH_CONNECTION ]]; then
 #   export EDITOR='vim'
 # else
@@ -125,9 +125,24 @@ bindkey '^Z' fancy-ctrl-z
 bindkey '^F' fzf-file-widget
 
 alias gcoi='git checkout $(git branch |fzf --height 40%)'
+
+cross_open(){
+  case "$OSTYPE" in
+    darwin*)
+      open $1
+      ;;
+    linux*)
+      gnome-open $1
+      ;;
+    dragonfly*|freebsd*|netbsd*|openbsd*)
+      # ...
+      ;;
+  esac
+}
+
 # circleci
 ci() {
-  google-chrome https://circleci.com/gh/Thinkei/workflows/$1
+  cross_open https://circleci.com/gh/Thinkei/workflows/$1
 }
 cio() {
   ci `basename $(pwd)`
@@ -135,6 +150,16 @@ cio() {
 # open circleci in currrent branch
 cc() {
    ci `basename $(pwd)`/tree/"${$(git rev-parse --abbrev-ref HEAD)//\//%2F}"
+}
+
+pr() {
+  cross_open $(hub pr list --format='%H %U %n' | grep $(git rev-parse --abbrev-ref HEAD) | awk '{print $2}')
+}
+
+# fetch and merge master to current branch
+fm() {
+ git fetch origin master
+ git merge origin/master
 }
 # Quickly merge staging
 deploySbx() {

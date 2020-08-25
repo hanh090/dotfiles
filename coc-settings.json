@@ -5,8 +5,10 @@
   "eslint.options": {
     "ignorePattern": ["node_modules/*", "*.bs.js"]
   },
-  "tsserver.npm": "$HOME/.asdf/shims/npm",
+  "tsserver.npm": "/Users/eh/.asdf/shims/npm",
+  "java.home": "/Library/Java/JavaVirtualMachines/jdk1.8.0_231.jdk/Contents/Home",
   "eslint.run": "onSave",
   "diagnostic.refreshAfterSave": true,
-  "reason_language_server.reloadOnChange": true
+  "reason_language_server.reloadOnChange": true,
+  "yank.highlight.enable": false
 }

@@ -1,8 +1,16 @@
+"================ Vim Plug =====================
+"Auto install Vim Plug
+if empty(glob('~/.vim/autoload/plug.vim'))
+  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd VimEnter * PlugInstall | source $MYVIMRC
+endif
+
 call plug#begin('~/.vim/plugged')
 " Essential
 Plug 'junegunn/fzf'
 Plug 'junegunn/fzf.vim'
-Plug 'lambdalisue/fern.vim'
+Plug 'lambdalisue/fern.vim', { 'tag': 'v1.4.0' }
 
 "--------- Language syntax
 " JS
@@ -31,16 +39,13 @@ if has('unix')
   Plug 'wincent/terminus'
 endif
 
-" Choose window
-Plug 't9md/vim-choosewin'
-
 " Support
 Plug 'matze/vim-move'
 Plug 'easymotion/vim-easymotion'
 Plug 'ntpeters/vim-better-whitespace'
 Plug 'tomtom/tcomment_vim'
 Plug 'tpope/vim-surround'
-Plug 'terryma/vim-multiple-cursors'
+Plug 'mg979/vim-visual-multi'
 Plug 'alvan/vim-closetag'
 " Extend matching for html tag
 Plug 'andymass/vim-matchup'
@@ -67,16 +72,33 @@ Plug 'vim-airline/vim-airline-themes'
 " More shortcut/keybinding
 Plug 'tpope/vim-unimpaired'
 
-" Vim wiki
-" Plug 'vimwiki/vimwiki'
+" Split/Join code
+Plug 'AndrewRadev/splitjoin.vim'
 
 " ReasonML
-Plug 'reasonml-editor/vim-reason-plus'
+Plug 'hanh090/vim-reason-plus'
+" Send command to tmux
+Plug 'jgdavey/tslime.vim'
+"{
+let g:tslime_always_current_session = 1
+let g:tslime_always_current_window = 1
+vmap <C-c><C-c> <Plug>SendSelectionToTmux
+nmap <C-c><C-c> <Plug>NormalModeSendToTmux
+nmap <C-c>r <Plug>SetTmuxVars
+"}
+
+" Navigate between tmux and vim
+Plug 'christoomey/vim-tmux-navigator'
+
+" Choose win
+Plug 't9md/vim-choosewin'
+
+" Snippet
+Plug 'honza/vim-snippets'
 
 call plug#end()
 
 set laststatus=2
-
 function! RipgrepFzf(query, fullscreen)
   let command_fmt = 'rg --column --line-number --no-heading --color=always --smart-case %s '
   let initial_command = printf(command_fmt, a:query)
@@ -89,9 +111,19 @@ command! -nargs=* -bang RG call RipgrepFzf(<q-args>, <bang>0)
 
 " Multiple path for example: find ~/projects ~/Downloads -maxdepth 1 -type d
 " Detect hightlight at cursor http://www.drchip.org/astronaut/vim/index.html#Maps
-command! -nargs=* -complete=dir -bang Cd call fzf#run(fzf#wrap( { 'source': join(['find ~/projects', '-maxdepth 1 ','-type d'], ' '), 'sink': 'cd', 'options': len(<q-args>) > 0 ?'-q '.(<q-args>): '' } , <bang>0))
+command! -nargs=* -complete=dir -bang Cd call
+      \ fzf#run(fzf#wrap(
+      \ {
+      \ 'source': join(['find ~/projects', '-maxdepth 1 ','-type d'], ' '),
+      \ 'sink': 'cd',
+      \ 'options': [
+      \ '-q', len(<q-args>) > 0 ?(<q-args>): '',
+      \ '--prompt', getcwd().">"]
+      \ } , <bang>0))
 " Ignore that because it leads to start in replace mode
 nnoremap <Esc><Esc> :noh<CR><Esc>
+" Move to bottom after select paragraph
+vnoremap y y']
 
 " Select inside the tick
 function! Ticks(inner)
@@ -117,16 +149,17 @@ let mapleader=" "
 
 noremap  <silent><leader>m :Fern . -drawer -toggle<CR>
 map      <leader>r :Fern . -reveal=% -drawer<CR>
+" Mapping tmux-navigator control
+autocmd FileType fern nnoremap <buffer> <c-l> :TmuxNavigateRight<cr>
 " Searching
 noremap  <leader>f :FZF<CR>
-noremap  <leader>a :Ag <CR>
-noremap  <leader>o :Buffers <CR>
-noremap  <leader>h :History <CR>
+noremap  <leader>h :call fzf#vim#history({ 'options': ['--header-lines', 0, '--header', getcwd()]})<CR>
 noremap  <leader>d :Cd <CR>
 " Search for the word under cursor
 nnoremap <silent> <leader>ag :Ag <C-R><C-W><CR>
-" Search for the visually selected text
+vnoremap <silent> <leader>ag y:Ag <C-R>=@"<CR><CR>
 nnoremap <silent> <leader>rg :Rg <C-R><C-W><Cr>
+" Search for the visually selected text
 vnoremap // y/\V<C-R>=escape(@",'/\')<CR><CR>
 
 " Start interactive EasyAlign in visual mode (e.g. vipga)
@@ -136,12 +169,12 @@ xmap ga <Plug>(EasyAlign)
 nmap ga <Plug>(EasyAlign)
 
 " Open sh in current folder
-if !has('nvim')
- noremap <leader>z :sh<cr>
-endif
+noremap <leader>z :split <bar> term<cr>
+tnoremap <leader>z <c-\><c-n><c-o><esc><esc>
+tnoremap <leader>q <c-\><c-n>
 " Quick saving / edit
 noremap <leader>w :w<cr>
-noremap <leader>e :e<cr>
+noremap <leader>e :e!<cr>
 noremap <leader>q :q<cr>
 
 " Split screen
@@ -153,50 +186,109 @@ nnoremap cp :let @+ = expand("%")<CR>
 nnoremap cP :let @+ = expand("%:p")<CR>
 
 " Git
-noremap <leader>gu :Gpull<cr>
-noremap <leader>gp :Git push origin HEAD<cr>
-noremap <leader>gb :Gblame<cr>
-noremap <leader>gc :GCheckout<cr>
+noremap  <leader>gu :execute 'Git pull origin '.FugitiveHead()<cr>
+noremap  <leader>gp :Git push origin HEAD <bar>echo "Pushed success" <cr>
+noremap  <leader>gb :Gblame<cr>
+noremap  <leader>gc :GCheckout<cr>
+
+function! GNewBranch()
+  let branch_name = input('Enter your branch:')
+  execute '!git fetch origin master'
+  execute '!git checkout -b '.l:branch_name.' origin/master'
+endfunction
+noremap <leader>gn :call GNewBranch()<cr>
 " Git status in new tab
-noremap <leader>gs :Gtabedit :<cr>
-noremap <leader>gS :Gstatus<cr>
-nnoremap <leader>gh :Gbrowse <cr>
+noremap  <leader>gs :Gtabedit :<cr>
+noremap  <leader>gS :Gstatus<cr>
+nnoremap <leader>gh :Gbrowse<cr>
+vnoremap <leader>gh :Gbrowse<cr>
 augroup fugitive_ext
   autocmd!
   " Browse to the commit under my cursor
   autocmd FileType fugitiveblame nnoremap <buffer> <leader>gh :execute ":Gbrowse " . expand("<cword>")<cr>
+  autocmd FileType fugitive nnoremap <buffer> D :!rm <c-r><c-f><cr>
 augroup END
 
+" Github PR
+nnoremap <leader>pr :Git pull-request -d<cr>
+
+function! s:checkout(selected)
+  let l:pr_number = split(a:selected[1])[0]
+  if a:selected[0] == 'ctrl-o'
+    execute '!hub pr show '.l:pr_number
+  else
+    execute '!hub pr checkout '.l:pr_number
+  endif
+endfunction
+
+command! -nargs=* -complete=dir -bang PrList call
+      \ fzf#run(fzf#wrap(
+      \ {
+      \ 'source': "hub pr list -f '%I %t-%au %cr %n'".(<bang>0 == 0 ? '' : ' -s all -L 200'),
+      \ 'sink*': function('s:checkout'),
+      \ 'options': [
+      \ '-m',
+      \ '--tiebreak', 'index',
+      \ '--prompt', "Pull request>",
+      \ '--expect=ctrl-o'
+      \ ]
+      \ } , 0))
+nnoremap <leader>pl :PrList<cr>
+nnoremap <leader>pL :PrList!<cr>
+function! Open_Pr_In_Branch()
+  if has('mac')
+    execute "!open $(hub pr list --format='\\%H \\%U \\%n' | grep $(git rev-parse --abbrev-ref HEAD) | awk '{print $2}')"
+  elseif has("unix")
+    execute "!gnome-open $(hub pr list --format='\\%H \\%U \\%n' | grep $(git rev-parse --abbrev-ref HEAD) | awk '{print $2}')"
+  endif
+endfunction
+nnoremap <leader>po :call Open_Pr_In_Branch()<cr>
 " Choose window config
-nmap  <leader>-  <Plug>(choosewin)
+nmap     <leader>-  <Plug>(choosewin)
+" Equal window width
+function! EqualWindow()
+  let window_counter = 0
+  windo let window_counter = window_counter + 1
+  let size = &columns/l:window_counter
+  execute 'windo vertical resize '.l:size
+endfunction
+nmap     <leader>=  :call EqualWindow()<cr>
 
 " Easy jump
 map  <leader>jk <Plug>(easymotion-bd-w)
 nmap <leader>jw <Plug>(easymotion-overwin-w)
 nmap <leader>jl <Plug>(easymotion-overwin-line)
+nmap <leader>jf <Plug>(easymotion-overwin-f2)
 
 let g:fern#renderer = "devicons"
-let g:WebDevIconsUnicodeDecorateFileNodesExtensionSymbols = {} " needed
+if !exists('g:WebDevIconsUnicodeDecorateFileNodesExtensionSymbols')
+  let g:WebDevIconsUnicodeDecorateFileNodesExtensionSymbols = {}
+endif
 let g:WebDevIconsUnicodeDecorateFileNodesExtensionSymbols['re'] = 'λ'
 
 " Custom airline
 let g:airline_theme='onedark'
+
+let g:airline_section_c=airline#section#create(["%{pathshorten(fnamemodify(expand('%'), ':~:.'))}"])
 let g:airline#extensions#default#layout = [
       \ [ 'a', 'b', 'c' ],
       \ [ 'error', 'warning' ]
       \ ]
+
+
 " Custom closetag
 let g:closetag_filenames = '*.js,*.jsx,*.html, *.xml'
 " Custom vim-move to use control to move line up/down
-let g:move_key_modifier = 'C'
+" let g:move_key_modifier = 'C-S'
 
 filetype plugin indent on
 
-if system('uname -s') == "Darwin\n"
-  set clipboard=unnamed "OSX
+if has('win32') || has('win64') || has('mac')
+  set clipboard=unnamed
 else
-  set clipboard=unnamedplus "Linux
+  set clipboard=unnamed,unnamedplus
 endif
+
 set autoindent " Copy indent from current line when starting a new line
 set smarttab
 set tabstop=2 " Number of space og a <Tab> character
@@ -207,13 +299,13 @@ set redrawtime=10000
 set regexpengine=1
 set expandtab
 "
-" "" Searching
+"  Searching
 set hlsearch
 set incsearch
 set ignorecase
 set smartcase
 
-set foldmethod=indent
+set foldmethod=manual
 set foldnestmax=10
 set nofoldenable
 set foldlevel=2
@@ -227,7 +319,22 @@ set showcmd
 
 " ==== START COC config
 " List coc plugin
-let g:coc_global_extensions = ['coc-tsserver', 'coc-prettier', 'coc-json',  'coc-highlight',  'coc-eslint',  'coc-xml',  'coc-java',  'coc-html', 'coc-solargraph', 'coc-reason']
+let g:coc_global_extensions =
+      \ [
+      \ 'coc-eslint',
+      \ 'coc-highlight',
+      \ 'coc-html',
+      \ 'coc-java',
+      \ 'coc-json',
+      \ 'coc-prettier',
+      \ 'coc-reason',
+      \ 'coc-snippets',
+      \ 'coc-solargraph',
+      \ 'coc-tsserver',
+      \ 'coc-vimlsp',
+      \ 'coc-xml',
+      \ 'coc-yank',
+      \ ]
 
 
 set nowritebackup
@@ -245,11 +352,26 @@ nmap <silent> gd <Plug>(coc-definition)
 nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
-nmap <silent> qf <Plug>(coc-codeaction)
-nmap <silent> fm <Plug>(coc-format)
+nmap <silent> <space>co :CocList outline<CR>
+nmap <silent> <space>cu :CocList output<CR>
+nmap <silent> <space>cd :CocList diagnostics<CR>
+nmap <silent> <space>cD :CocList --normal diagnostics<CR>
+" Use <c-space> to trigger completion.
+if has('nvim')
+  inoremap <silent><expr> <c-space> coc#refresh()
+else
+  inoremap <silent><expr> <c-@> coc#refresh()
+endif
+" Show full message.ce mean coc-expand
+nmap <silent> <space>ce :call CocAction("diagnosticInfo")<cr>
+" List of yank
+nmap <silent> <space>cy  :<C-u>CocList -N yank<cr>
+nmap <silent> <space>cY  :<C-u>CocList --normal yank<cr>:set filetype=vim<cr>
+" quick fix
+nmap <silent> <space>cq <Plug>(coc-codeaction)
+nmap <silent> <space>cf <Plug>(coc-format)
 " Symbol renaming.
-nmap <silent> cn <Plug>(coc-rename)
-nmap <silent> cl :call <SID>reload_coc_extension()<CR>
+nmap <silent> <space>cn <Plug>(coc-rename)
 function! s:reload_coc_extension()
   if(&filetype == 'javascript' || &filetype == 'typescript')
     let l:result = CocAction('reloadExtension', 'coc-eslint')
@@ -257,14 +379,14 @@ function! s:reload_coc_extension()
   elseif(&filetype == 'reason')
     let l:result = CocAction('reloadExtension', 'coc-reason')
     echo 'Reload coc-reason with result='.l:result
+  elseif(&filetype == 'ruby')
+    let l:result = CocAction('reloadExtension', 'coc-solargraph')
+    echo 'Reload coc-solargraph with result='.l:result
   else
-    echo 'Please choose a version to reload'
+    CocRestart
   endif
 endfunction
-nmap <silent> co :CocList outline<CR>
-nmap <silent> cu :CocList output<CR>
-nmap <silent> cd :CocList diagnostics<CR>
-nmap <silent> cD :CocList --normal diagnostics<CR>
+nmap <silent> <space>cl :call <SID>reload_coc_extension()<CR>
 " Use K to show documentation in preview window
 nnoremap <silent> K :call <SID>show_documentation()<CR>
 function! s:show_documentation()
@@ -274,6 +396,20 @@ function! s:show_documentation()
     call CocAction('doHover')
   endif
 endfunction
+
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? coc#_select_confirm() :
+      \ coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+let g:coc_snippet_next = '<tab>'
+
 " === END COC config
 
 " Auto format
@@ -287,12 +423,29 @@ inoremap jk <ESC>
 inoremap jj <ESC>
 
 " Custom FZF for default search file
-let $FZF_DEFAULT_COMMAND = 'rg --files  --no-ignore-vcs --hidden --glob !.git --glob !node_modules --glob !target --glob !bin --glob "!*.cm*" --glob "!*.reast" --glob "!*.d"'
+let $FZF_DEFAULT_COMMAND = 'rg --files --no-ignore-vcs --hidden'.
+      \' --glob !.git'.
+      \' --glob !node_modules'.
+      \' --glob !target'.
+      \' --glob !bin'.
+      \' --glob "!*.cm*"'.
+      \' --glob "!*.reast"'.
+      \' --glob "!*.d"'.
+      \' --glob "!.cache"'.
+      \' --glob "!*.class"'.
+      \' '
+
+let $FZF_DEFAULT_OPTS='--bind '.
+      \ 'ctrl-space:toggle-out,'.
+      \ 'shift-tab:toggle-in,'.
+      \ 'alt-a:select-all,'.
+      \ 'alt-d:deselect-all'
+
 let g:fzf_preview_window = 'right:40%'
 
 " Custom git checkout
-let g:fzf_checkout_git_options = '--sort=committerdate'
-let g:fzf_checkout_execute = 'system'
+let g:fzf_checkout_git_options = '--sort=-committerdate'
+let g:fzf_checkout_execute = 'terminal'
 
 function! s:build_quickfix_list(lines)
   call setqflist(map(copy(a:lines), '{ "filename": v:val }'))
@@ -304,16 +457,50 @@ let g:fzf_action = {
       \ 'ctrl-q': function('s:build_quickfix_list'),
       \ 'ctrl-h': 'tab split',
       \ 'ctrl-x': 'split',
-      \ 'ctrl-v': 'vsplit' }
+      \ 'ctrl-v': 'vsplit',
+      \ }
 
 " Custom matching tag
 let g:mta_use_matchparen_group = 0
 
+"----- Add redirect output of command
+" Ref: https://gist.github.com/romainl/eae0a260ab9c135390c30cd370c20cd7
+function! Redir(cmd, rng, start, end)
+  for win in range(1, winnr('$'))
+    if getwinvar(win, 'scratch')
+      execute win . 'windo close'
+    endif
+  endfor
+  if a:cmd =~ '^!'
+    let cmd = a:cmd =~' %'
+      \ ? matchstr(substitute(a:cmd, ' %', ' ' . expand('%:p'), ''), '^!\zs.*')
+      \ : matchstr(a:cmd, '^!\zs.*')
+    if a:rng == 0
+      let output = systemlist(cmd)
+    else
+      let joined_lines = join(getline(a:start, a:end), '\n')
+      let cleaned_lines = substitute(shellescape(joined_lines), "'\\\\''", "\\\\'", 'g')
+      let output = systemlist(cmd . " <<< $" . cleaned_lines)
+    endif
+  else
+    redir => output
+    execute a:cmd
+    redir END
+    let output = split(output, "\n")
+  endif
+  vnew
+  let w:scratch = 1
+  setlocal buftype=nofile bufhidden=wipe nobuflisted noswapfile
+  call setline(1, output)
+endfunction
+command! -nargs=1 -complete=command -bar -range Redir silent call Redir(<q-args>, <range>, <line1>, <line2>)
+"End custom redirect output
+
 " Custom autopair for filetype.First parameter is adding, second parameter is
 " removing
-au FileType reason let b:AutoPairs = AutoPairsDefine({}, ["`", "'"])
+au FileType reason let b:AutoPairs = AutoPairsDefine({'/**':'**/'}, ["`", "'"])
 au FileType html let b:AutoPairs = AutoPairsDefine({'<!--' : '-->'})
-
+au FileType gitcommit set textwidth=0
 " Set background and colorscheme
 colorscheme solarized8_high
 set background=dark
