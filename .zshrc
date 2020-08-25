@@ -72,6 +72,10 @@ plugins=(
   asdf
   autojump
   bgnotify
+  fzf
+  ## Download plugins
+  # git clone https://github.com/lincheney/fzf-tab-completion.git
+  # ${ZSH_CUSTOM:=~/.oh-my-zsh/custom}/plugins/fzf-tab-completion
   fzf-tab
   git
   gitfast
@@ -126,16 +130,15 @@ bindkey '^F' fzf-file-widget
 
 alias gcoi='git checkout $(git branch |fzf --height 40%)'
 
+alias vim='nvim'
+
 cross_open(){
   case "$OSTYPE" in
     darwin*)
       open $1
       ;;
     linux*)
-      gnome-open $1
-      ;;
-    dragonfly*|freebsd*|netbsd*|openbsd*)
-      # ...
+      xdg-open $1
       ;;
   esac
 }
@@ -179,7 +182,15 @@ deploySbx() {
 
 alias dsb='deploySbx $(git branch | grep sbx- | fzf --height 40%)'
 
-. $(brew --prefix asdf)/asdf.sh
+
+case "$OSTYPE" in
+  darwin*)
+    . $(brew --prefix asdf)/asdf.sh
+    ;;
+  linux*)
+    . $HOME/.asdf/asdf.sh
+    ;;
+esac
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
