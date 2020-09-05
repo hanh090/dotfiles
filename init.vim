@@ -99,6 +99,7 @@ Plug 'honza/vim-snippets'
 
 " mjml file
 Plug 'amadeus/vim-mjml'
+Plug 'shumphrey/fugitive-gitlab.vim'
 
 " Fix cursor hold in nvim
 if has("nvim")
@@ -205,7 +206,10 @@ noremap  <leader>gb :Gblame<cr>
 noremap  <leader>gc :GCheckout<cr>
 
 function! GNewBranch()
-  let branch_name = input('Enter your branch:')
+  let branch_name = input('Enter your branch ('.pathshorten(getcwd()).'):')
+  if len(l:branch_name) == 0
+    return
+  endif
   execute '!git fetch origin master'
   execute '!git checkout -b '.l:branch_name.' origin/master'
 endfunction
