@@ -239,10 +239,10 @@ function! Open_Pr_In_Branch()
   if has('mac')
     execute "!open $(hub pr list --format='\\%H \\%U \\%n' | grep $(git rev-parse --abbrev-ref HEAD) | awk '{print $2}')"
   elseif has("unix")
-    execute "!gnome-open $(hub pr list --format='\\%H \\%U \\%n' | grep $(git rev-parse --abbrev-ref HEAD) | awk '{print $2}')"
+    execute "!xdg-open $(hub pr list --format='\\%H \\%U \\%n' | grep $(git rev-parse --abbrev-ref HEAD) | awk '{print $2}')"
   endif
 endfunction
-nnoremap <leader>po :call Open_Pr_In_Branch()<cr>
+nnoremap <silent> <leader>po :call Open_Pr_In_Branch()<cr><cr>
 " Choose window config
 nmap     <leader>-  <Plug>(choosewin)
 " Equal window width
