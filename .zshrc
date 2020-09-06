@@ -130,7 +130,7 @@ bindkey '^F' fzf-file-widget
 
 alias gcoi='git checkout $(git branch |fzf --height 40%)'
 
-alias vim='nvim'
+# alias vim='nvim'
 
 cross_open(){
   case "$OSTYPE" in
