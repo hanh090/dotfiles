@@ -8,9 +8,9 @@ endif
 
 call plug#begin('~/.vim/plugged')
 " Essential
-Plug 'junegunn/fzf'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
-Plug 'lambdalisue/fern.vim', { 'tag': 'v1.4.0' }
+Plug 'lambdalisue/fern.vim'
 
 "--------- Language syntax
 " JS
@@ -45,6 +45,7 @@ Plug 'easymotion/vim-easymotion'
 Plug 'ntpeters/vim-better-whitespace'
 Plug 'tomtom/tcomment_vim'
 Plug 'tpope/vim-surround'
+Plug 'tpope/vim-repeat'
 Plug 'mg979/vim-visual-multi'
 Plug 'alvan/vim-closetag'
 " Extend matching for html tag
@@ -95,6 +96,18 @@ Plug 't9md/vim-choosewin'
 
 " Snippet
 Plug 'honza/vim-snippets'
+
+" mjml file
+Plug 'amadeus/vim-mjml'
+Plug 'shumphrey/fugitive-gitlab.vim'
+
+" Fix cursor hold in nvim
+if has("nvim")
+  Plug 'antoinemadec/FixCursorHold.nvim'
+endif
+
+" Support raw search for ag and rg from fzf
+Plug 'jesseleite/vim-agriculture'
 
 call plug#end()
 
@@ -147,13 +160,14 @@ onoremap <silent> i` :<c-u>normal vi`<cr>
 " "========================================================
 let mapleader=" "
 
-noremap  <silent><leader>m :Fern . -drawer -toggle<CR>
-map      <leader>r :Fern . -reveal=% -drawer<CR>
+noremap  <silent> <leader>m :Fern . -drawer -toggle<CR>
+noremap  <silent> <leader>r :Fern . -reveal=% -drawer<CR>
 " Mapping tmux-navigator control
 autocmd FileType fern nnoremap <buffer> <c-l> :TmuxNavigateRight<cr>
+autocmd FileType fern nnoremap <buffer> <c-j> :TmuxNavigateDown<cr>
 " Searching
 noremap  <leader>f :FZF<CR>
-noremap  <leader>h :call fzf#vim#history({ 'options': ['--header-lines', 0, '--header', getcwd()]})<CR>
+noremap <silent> <leader>h :call fzf#vim#history({ 'options': ['--header-lines', 0, '--header', getcwd()]})<CR>
 noremap  <leader>d :Cd <CR>
 " Search for the word under cursor
 nnoremap <silent> <leader>ag :Ag <C-R><C-W><CR>
@@ -182,7 +196,7 @@ noremap <leader>s :vsplit<cr>
 noremap <leader>v :split<cr>
 
 " Copy current file / folder path
-nnoremap cp :let @+ = expand("%")<CR>
+nnoremap cp :let @+ = expand("%") <bar> echo @+<CR>
 nnoremap cP :let @+ = expand("%:p")<CR>
 
 " Git
@@ -192,7 +206,10 @@ noremap  <leader>gb :Gblame<cr>
 noremap  <leader>gc :GCheckout<cr>
 
 function! GNewBranch()
-  let branch_name = input('Enter your branch:')
+  let branch_name = input('Enter your branch ('.pathshorten(getcwd()).'):')
+  if len(l:branch_name) == 0
+    return
+  endif
   execute '!git fetch origin master'
   execute '!git checkout -b '.l:branch_name.' origin/master'
 endfunction
@@ -261,6 +278,7 @@ nmap <leader>jl <Plug>(easymotion-overwin-line)
 nmap <leader>jf <Plug>(easymotion-overwin-f2)
 
 let g:fern#renderer = "devicons"
+let g:fern_renderer_devicons_disable_warning = 1
 if !exists('g:WebDevIconsUnicodeDecorateFileNodesExtensionSymbols')
   let g:WebDevIconsUnicodeDecorateFileNodesExtensionSymbols = {}
 endif
@@ -443,7 +461,7 @@ let $FZF_DEFAULT_OPTS='--bind '.
       \ 'alt-a:select-all,'.
       \ 'alt-d:deselect-all'
 
-let g:fzf_preview_window = 'right:40%'
+let g:fzf_preview_window = 'right:40%:wrap'
 
 function! s:build_quickfix_list(lines)
   call setqflist(map(copy(a:lines), '{ "filename": v:val }'))
