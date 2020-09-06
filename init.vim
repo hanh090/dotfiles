@@ -438,14 +438,12 @@ let $FZF_DEFAULT_COMMAND = 'rg --files --no-ignore-vcs --hidden'.
 let $FZF_DEFAULT_OPTS='--bind '.
       \ 'ctrl-space:toggle-out,'.
       \ 'shift-tab:toggle-in,'.
+      \ 'ctrl-alt-j:preview-down,'.
+      \ 'ctrl-alt-k:preview-up,'.
       \ 'alt-a:select-all,'.
       \ 'alt-d:deselect-all'
 
 let g:fzf_preview_window = 'right:40%'
-
-" Custom git checkout
-let g:fzf_checkout_git_options = '--sort=-committerdate'
-let g:fzf_checkout_execute = 'terminal'
 
 function! s:build_quickfix_list(lines)
   call setqflist(map(copy(a:lines), '{ "filename": v:val }'))
