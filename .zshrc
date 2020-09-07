@@ -124,6 +124,7 @@ fancy-ctrl-z () {
   fi
 }
 zle -N fancy-ctrl-z
+bindkey -e
 bindkey '^Z' fancy-ctrl-z
 
 bindkey '^F' fzf-file-widget
