@@ -182,6 +182,23 @@ deploySbx() {
 
 alias dsb='deploySbx $(git branch | grep sbx- | fzf --height 40%)'
 
+# Change cursor mapping
+zle-keymap-select() {
+  if [[ $KEYMAP = vicmd ]]; then
+    print -n '\e[2 q'
+  else
+    print -n '\e[5 q'
+  fi
+}
+zle-line-init() {
+  print -n '\e[5 q'
+}
+zle -N zle-keymap-select
+zle -N zle-line-init
+preexec() {
+  print -n $'\e[2 q'
+}
+#End Change cursor mapping
 
 case "$OSTYPE" in
   darwin*)
