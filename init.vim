@@ -110,6 +110,9 @@ endif
 " Support raw search for ag and rg from fzf
 Plug 'jesseleite/vim-agriculture'
 
+" Automaticall size of window
+Plug 'camspiers/lens.vim'
+
 call plug#end()
 
 set laststatus=2
