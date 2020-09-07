@@ -17,12 +17,11 @@ Plug 'lambdalisue/fern.vim'
 Plug 'pangloss/vim-javascript'
 Plug 'maxmellon/vim-jsx-pretty'
 Plug 'leafgarland/typescript-vim'
-" Ruby
+" " Ruby
 Plug 'vim-ruby/vim-ruby'
 " ---------END Language syntax
 " Theme + Style
-Plug 'roosta/vim-srcery'
-Plug 'ap/vim-css-color'
+Plug 'norcalli/nvim-colorizer.lua'
 Plug 'rafi/awesome-vim-colorschemes'
 Plug 'ryanoasis/vim-devicons'
 Plug 'lambdalisue/fern-renderer-devicons.vim'
@@ -518,8 +517,10 @@ au FileType reason let b:AutoPairs = AutoPairsDefine({'/**':'**/'}, ["`", "'"])
 au FileType html let b:AutoPairs = AutoPairsDefine({'<!--' : '-->'})
 au FileType gitcommit set textwidth=0
 " Set background and colorscheme
+set termguicolors
 colorscheme solarized8_high
 set background=dark
+
 hi CocErrorSign cterm=bold,reverse ctermfg=160 ctermbg=230 guifg=White guibg=Red
 hi CocUnderlineError cterm=underline ctermfg=61 gui=undercurl guisp=Red
 hi link CocErrorHighlight CocUnderlineError
