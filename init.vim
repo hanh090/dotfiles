@@ -110,9 +110,6 @@ endif
 " Support raw search for ag and rg from fzf
 Plug 'jesseleite/vim-agriculture'
 
-" Auto resize window
-Plug 'camspiers/lens.vim'
-
 call plug#end()
 
 set laststatus=2
@@ -219,8 +216,8 @@ function! GNewBranch()
 endfunction
 noremap <leader>gn :call GNewBranch()<cr>
 " Git status in new tab
-noremap  <leader>gS :Gtabedit :<cr>
-noremap  <leader>gs :Gstatus<cr>
+noremap  <leader>gs :Gtabedit :<cr>
+noremap  <leader>gS :Gstatus<cr>
 nnoremap <leader>gh :Gbrowse<cr>
 vnoremap <leader>gh :Gbrowse<cr>
 augroup fugitive_ext
