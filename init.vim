@@ -110,7 +110,7 @@ endif
 " Support raw search for ag and rg from fzf
 Plug 'jesseleite/vim-agriculture'
 
-" Automaticall size of window
+" Auto resize window
 Plug 'camspiers/lens.vim'
 
 call plug#end()
@@ -200,11 +200,11 @@ noremap <leader>s :vsplit<cr>
 noremap <leader>v :split<cr>
 
 " Copy current file / folder path
-nnoremap cp :let @+ = expand("%") <bar> echo @+<CR>
-nnoremap cP :let @+ = expand("%:p")<CR>
+nnoremap cp :let @+ = expand("%")   <bar> echo @+<CR>
+nnoremap cP :let @+ = expand("%:p") <bar> echo @+<CR>
 
 " Git
-noremap  <leader>gu :execute 'Git pull origin '.FugitiveHead()<cr>
+noremap  <leader>gl :execute 'Git pull origin '.FugitiveHead()<cr>
 noremap  <leader>gp :Git push origin HEAD <bar>echo "Pushed success" <cr>
 noremap  <leader>gb :Gblame<cr>
 noremap  <leader>gc :GCheckout<cr>
@@ -219,8 +219,8 @@ function! GNewBranch()
 endfunction
 noremap <leader>gn :call GNewBranch()<cr>
 " Git status in new tab
-noremap  <leader>gs :Gtabedit :<cr>
-noremap  <leader>gS :Gstatus<cr>
+noremap  <leader>gS :Gtabedit :<cr>
+noremap  <leader>gs :Gstatus<cr>
 nnoremap <leader>gh :Gbrowse<cr>
 vnoremap <leader>gh :Gbrowse<cr>
 augroup fugitive_ext
@@ -320,6 +320,7 @@ set lazyredraw
 set redrawtime=10000
 set regexpengine=1
 set expandtab
+set noshowmode
 "
 "  Searching
 set hlsearch
