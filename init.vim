@@ -303,6 +303,13 @@ let g:closetag_filenames = '*.js,*.jsx,*.html, *.xml'
 " Custom vim-move to use control to move line up/down
 " let g:move_key_modifier = 'C-S'
 
+" Keep folder vim and terminal same
+function! s:CtrlZ()
+  call writefile([getcwd(),''], '/tmp/cd_vim', 'b')
+  return "\<C-z>"
+endfunction
+nnoremap <expr> <C-z> <SID>CtrlZ()
+
 filetype plugin indent on
 
 if has('win32') || has('win64') || has('mac')

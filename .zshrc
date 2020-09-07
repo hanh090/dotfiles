@@ -126,6 +126,13 @@ fancy-ctrl-z () {
 zle -N fancy-ctrl-z
 bindkey -e
 bindkey '^Z' fancy-ctrl-z
+# keep folder vim and terminal same
+# https://stackoverflow.com/a/12241861/1743046
+function precmd()
+{
+    local CWDFILE=/tmp/cd_vim
+    test -e $CWDFILE && cd "$(cat $CWDFILE)"
+}
 
 bindkey '^F' fzf-file-widget
 
