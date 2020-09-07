@@ -319,6 +319,7 @@ set lazyredraw
 set redrawtime=10000
 set regexpengine=1
 set expandtab
+set noshowmode
 "
 "  Searching
 set hlsearch
