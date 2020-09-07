@@ -5,8 +5,8 @@
   "eslint.options": {
     "ignorePattern": ["node_modules/*", "*.bs.js"]
   },
-  "tsserver.npm": "/Users/eh/.asdf/shims/npm",
-  "java.home": "/Library/Java/JavaVirtualMachines/jdk1.8.0_231.jdk/Contents/Home",
+  "tsserver.npm": "~/.asdf/shims/npm",
+  "java.home": "~/.asdf/shims/java",
   "eslint.run": "onSave",
   "diagnostic.refreshAfterSave": true,
   "reason_language_server.reloadOnChange": true,
