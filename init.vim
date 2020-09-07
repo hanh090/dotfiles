@@ -100,9 +100,11 @@ Plug 'honza/vim-snippets'
 Plug 'amadeus/vim-mjml'
 Plug 'shumphrey/fugitive-gitlab.vim'
 
-" Fix cursor hold in nvim
 if has("nvim")
+  " Fix cursor hold in nvim
   Plug 'antoinemadec/FixCursorHold.nvim'
+  " Fix sudo problem
+  Plug 'lambdalisue/suda.vim'
 endif
 
 " Support raw search for ag and rg from fzf
