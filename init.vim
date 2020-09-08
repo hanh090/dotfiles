@@ -284,9 +284,10 @@ if !exists('g:WebDevIconsUnicodeDecorateFileNodesExtensionSymbols')
   let g:WebDevIconsUnicodeDecorateFileNodesExtensionSymbols = {}
 endif
 let g:WebDevIconsUnicodeDecorateFileNodesExtensionSymbols['re'] = 'λ'
+let g:WebDevIconsUnicodeDecorateFileNodesExtensionSymbols['mjml'] = ''
 
 " Custom airline
-let g:airline_theme='onedark'
+let g:airline_theme='bubblegum'
 
 let g:airline_section_c=airline#section#create(["%{pathshorten(fnamemodify(expand('%'), ':~:.'))}"])
 let g:airline#extensions#default#layout = [
@@ -528,7 +529,7 @@ au FileType html let b:AutoPairs = AutoPairsDefine({'<!--' : '-->'})
 au FileType gitcommit set textwidth=0
 " Set background and colorscheme
 set termguicolors
-colorscheme solarized8_high
+colorscheme one
 set background=dark
 
 hi CocErrorSign cterm=bold,reverse ctermfg=160 ctermbg=230 guifg=White guibg=Red
@@ -536,7 +537,7 @@ hi CocUnderlineError cterm=underline ctermfg=61 gui=undercurl guisp=Red
 hi link CocErrorHighlight CocUnderlineError
 hi MatchTag term=reverse cterm=reverse ctermfg=136 ctermbg=236 guibg=Yellow
 hi MatchParen ctermfg=yellow
-
+hi Visual cterm=reverse ctermbg=242 guibg=#303030cterm=reverse ctermbg=242 gui=reverse guifg=#586e75 guibg=#002b36
 " Required for operations modifying multiple buffers like rename.
 set hidden
 " Save file as root
