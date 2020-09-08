@@ -127,7 +127,7 @@ zle -N fancy-ctrl-z
 bindkey '^Z' fancy-ctrl-z
 # keep folder vim and terminal same
 # https://stackoverflow.com/a/12241861/1743046
-function precmd()
+function s()
 {
     local CWDFILE=/tmp/cd_vim
     test -e $CWDFILE && cd "$(cat $CWDFILE)"
