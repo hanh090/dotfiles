@@ -124,7 +124,6 @@ fancy-ctrl-z () {
   fi
 }
 zle -N fancy-ctrl-z
-bindkey -e
 bindkey '^Z' fancy-ctrl-z
 # keep folder vim and terminal same
 # https://stackoverflow.com/a/12241861/1743046
