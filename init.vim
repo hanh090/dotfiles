@@ -183,7 +183,7 @@ xmap ga <Plug>(EasyAlign)
 nmap ga <Plug>(EasyAlign)
 
 " Open sh in current folder
-noremap <leader>z :split <bar> term<cr>
+noremap  <leader>z :split <bar> term<cr>
 tnoremap <leader>z <c-\><c-n><c-o><esc><esc>
 tnoremap <leader>q <c-\><c-n>
 " Quick saving / edit
