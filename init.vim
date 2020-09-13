@@ -56,7 +56,6 @@ Plug 'Valloric/MatchTagAlways'
 Plug 'tpope/vim-fugitive'
 " --- Integrate github to git
 Plug 'tpope/vim-rhubarb'
-Plug 'stsewd/fzf-checkout.vim'
 " Align text
 Plug 'junegunn/vim-easy-align'
 " Auto add pairing
@@ -204,7 +203,8 @@ nnoremap cP :let @+ = expand("%:p") <bar> echo @+<CR>
 noremap  <leader>gl :execute 'Git pull origin '.FugitiveHead()<cr>
 noremap  <leader>gp :Git push origin HEAD <bar>echo "Pushed success" <cr>
 noremap  <leader>gb :Gblame<cr>
-noremap  <leader>gc :GCheckout<cr>
+noremap  <leader>gc :BranchList<cr>
+noremap  <leader>gC :BranchList!<cr>
 
 function! GNewBranch()
   let branch_name = input('Enter your branch ('.pathshorten(getcwd()).'):')
@@ -230,7 +230,8 @@ augroup END
 " Github PR
 nnoremap <leader>pr :Git pull-request -d<cr>
 
-function! s:checkout(selected)
+" Github PR list
+function! s:pr_checkout(selected)
   let l:pr_number = split(a:selected[1])[0]
   if a:selected[0] == 'ctrl-o'
     execute '!hub pr show '.l:pr_number
@@ -243,16 +244,17 @@ command! -nargs=* -complete=dir -bang PrList call
       \ fzf#run(fzf#wrap(
       \ {
       \ 'source': "hub pr list -f '%I %t-%au %cr %n'".(<bang>0 == 0 ? '' : ' -s all -L 200'),
-      \ 'sink*': function('s:checkout'),
+      \ 'sink*': function('s:pr_checkout'),
       \ 'options': [
-      \ '-m',
-      \ '--tiebreak', 'index',
-      \ '--prompt', "Pull request>",
-      \ '--expect=ctrl-o'
+      \   '--tiebreak', 'index',
+      \   '--prompt', "Pull request>",
+      \   '--expect=ctrl-o'
       \ ]
       \ } , 0))
 nnoremap <leader>pl :PrList<cr>
 nnoremap <leader>pL :PrList!<cr>
+
+" Open github PR at current branch
 function! Open_Pr_In_Branch()
   if has('mac')
     execute "!open $(hub pr list --format='\\%H \\%U \\%n' | grep $(git rev-parse --abbrev-ref HEAD) | awk '{print $2}')"
@@ -261,6 +263,23 @@ function! Open_Pr_In_Branch()
   endif
 endfunction
 nnoremap <silent> <leader>po :call Open_Pr_In_Branch()<cr><cr>
+
+" Checkout list branch
+function! s:git_checkout(selected)
+  let l:branch = split(a:selected[0])[0]
+  execute 'Git checkout '.l:branch
+endfunction
+command! -nargs=* -complete=dir -bang BranchList call
+      \ fzf#run(fzf#wrap(
+      \ {
+      \ 'source': "git for-each-ref --sort=-committerdate refs/heads/ --format=".shellescape('%(refname:short)  - %(contents:subject) - %(authorname) (%(committerdate:relative))').(<bang>0 == 0 ? '' : ' --all'),
+      \ 'sink': function('s:git_checkout'),
+      \ 'options': [
+      \   '--tiebreak', 'index',
+      \   '--prompt', "Branches>",
+      \ ]
+      \ } , 0))
+
 " Choose window config
 nmap     <leader>-  <Plug>(choosewin)
 " Equal window width
