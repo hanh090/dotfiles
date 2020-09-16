@@ -267,13 +267,14 @@ nnoremap <silent> <leader>po :call Open_Pr_In_Branch()<cr><cr>
 " Checkout list branch
 function! s:git_checkout(selected)
   let l:branch = split(a:selected[0])[0]
+  echo l:branch
   execute 'Git checkout '.l:branch
 endfunction
 command! -nargs=* -complete=dir -bang BranchList call
       \ fzf#run(fzf#wrap(
       \ {
-      \ 'source': "git for-each-ref --sort=-committerdate refs/heads/ --format=".shellescape('%(refname:short)  - %(contents:subject) - %(authorname) (%(committerdate:relative))').(<bang>0 == 0 ? '' : ' --all'),
-      \ 'sink': function('s:git_checkout'),
+      \ 'source': "git for-each-ref --sort=-committerdate refs/heads/ --format=".shellescape('%(HEAD)  %(refname:short)  - %(contents:subject) - %(authorname) (%(committerdate:relative))').(<bang>0 == 0 ? '' : ' --all'),
+      \ 'sink*': function('s:git_checkout'),
       \ 'options': [
       \   '--tiebreak', 'index',
       \   '--prompt', "Branches>",
@@ -351,6 +352,9 @@ set hlsearch
 set incsearch
 set ignorecase
 set smartcase
+if has('nvim')
+  set inccommand=split          " enables interactive search and replace
+endif
 
 set foldmethod=manual
 set foldnestmax=10
