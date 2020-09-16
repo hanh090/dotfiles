@@ -1,14 +1,18 @@
 {
-  "diagnostic.messageTarget": "echo",
-  "workspace.ignoredFiletypes": ["log", "txt", "help", "class", "jar"],
   "coc.source.file.ignorePatterns": ["node_modules/*"],
+  "diagnostic.messageTarget": "echo",
+  "diagnostic.refreshAfterSave": true,
   "eslint.options": {
     "ignorePattern": ["node_modules/*", "*.bs.js"]
   },
-  "tsserver.npm": "~/.asdf/shims/npm",
-  "java.home": "~/.asdf/shims/java",
   "eslint.run": "onSave",
-  "diagnostic.refreshAfterSave": true,
+  "java.home": "~/.asdf/shims/java",
   "reason_language_server.reloadOnChange": true,
-  "yank.highlight.enable": false
+  "suggest.timeout": 6000,
+  "solargraph.autoformat": true,
+  "solargraph.diagnostics": true,
+  "solargraph.formatting": true,
+  "tsserver.npm": "~/.asdf/shims/npm",
+  "yank.highlight.enable": false,
+  "workspace.ignoredFiletypes": ["log", "txt", "help", "class", "jar"]
 }
