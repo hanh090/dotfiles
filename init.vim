@@ -16,7 +16,7 @@ Plug 'lambdalisue/fern.vim'
 " JS
 Plug 'pangloss/vim-javascript'
 Plug 'maxmellon/vim-jsx-pretty'
-Plug 'leafgarland/typescript-vim'
+Plug 'HerringtonDarkholme/yats.vim'
 " " Ruby
 Plug 'vim-ruby/vim-ruby'
 " ---------END Language syntax
@@ -424,9 +424,12 @@ nmap <silent> <space>cf <Plug>(coc-format)
 " Symbol renaming.
 nmap <silent> <space>cn <Plug>(coc-rename)
 function! s:reload_coc_extension()
-  if(&filetype == 'javascript' || &filetype == 'typescript')
+  if(&filetype == 'javascript')
     let l:result = CocAction('reloadExtension', 'coc-eslint')
     echo 'Reload coc-eslint with result='.l:result
+  elseif(&filetype == 'typescript')
+    let l:result = CocAction('reloadExtension', 'coc-tsserver')
+    echo 'Reload coc-tsserver with result='.l:result
   elseif(&filetype == 'reason')
     let l:result = CocAction('reloadExtension', 'coc-reason')
     echo 'Reload coc-reason with result='.l:result
@@ -464,9 +467,8 @@ let g:coc_snippet_next = '<tab>'
 " === END COC config
 
 " Auto format
-autocmd BufWritePre *.js,*.jsx,*.css,*.scss,*.less,*.json,*.html CocCommand prettier.formatFile
-autocmd BufWritePre *.re call CocAction('format')
-autocmd BufNewFile,BufRead *.tsx set filetype=typescript
+autocmd BufWritePre *.js,*.jsx,*.css,*.scss,*.less,*.json,*.html,*.ts,*.tsx CocCommand prettier.formatFile
+" autocmd BufWritePre *.re call CocAction('format')
 
 
 " Quick escape
