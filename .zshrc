@@ -215,6 +215,7 @@ case "$OSTYPE" in
     . $HOME/.asdf/asdf.sh
     ;;
 esac
+. ~/.asdf/plugins/java/set-java-home.zsh
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
