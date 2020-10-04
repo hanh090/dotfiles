@@ -6,13 +6,12 @@
     "ignorePattern": ["node_modules/*", "*.bs.js"]
   },
   "eslint.run": "onSave",
-  "java.home": "~/.asdf/shims/java",
   "reason_language_server.reloadOnChange": true,
+  "prettier.eslintIntegration": true,
   "suggest.timeout": 6000,
   "solargraph.autoformat": true,
   "solargraph.diagnostics": true,
   "solargraph.formatting": true,
-  "tsserver.npm": "~/.asdf/shims/npm",
   "yank.highlight.enable": false,
   "workspace.ignoredFiletypes": ["log", "txt", "help", "class", "jar"]
 }
