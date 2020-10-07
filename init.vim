@@ -267,10 +267,17 @@ nnoremap <silent> <leader>po :call Open_Pr_In_Branch()<cr><cr>
 
 " Checkout list branch
 function! s:git_checkout(selected)
-  let l:branch = split(a:selected[0])[0]
-  echo l:branch
-  execute 'Git checkout '.l:branch
-endfunction
+  let l:branch = split(a:selected[1])[0]
+  if a:selected[0] == 'ctrl-d'
+    for delete_selected in a:selected[1:]
+      let l:delete_branch = split(delete_selected)[0]
+      execute 'Git branch -D '.l:delete_branch
+      echom 'Deleted branch '.l:delete_branch
+    endfor
+  else
+    execute 'Git checkout '.l:branch
+  endif
+ endfunction
 command! -nargs=* -complete=dir -bang BranchList call
       \ fzf#run(fzf#wrap(
       \ {
@@ -278,7 +285,9 @@ command! -nargs=* -complete=dir -bang BranchList call
       \ 'sink*': function('s:git_checkout'),
       \ 'options': [
       \   '--tiebreak', 'index',
+      \   '--multi' ,
       \   '--prompt', "Branches>",
+      \   '--expect=ctrl-d'
       \ ]
       \ } , 0))
 
