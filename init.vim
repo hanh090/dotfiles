@@ -16,7 +16,8 @@ Plug 'lambdalisue/fern.vim'
 " JS
 Plug 'pangloss/vim-javascript'
 Plug 'maxmellon/vim-jsx-pretty'
-Plug 'HerringtonDarkholme/yats.vim'
+Plug 'leafgarland/typescript-vim'
+Plug 'peitalin/vim-jsx-typescript'
 " " Ruby
 Plug 'vim-ruby/vim-ruby'
 " ---------END Language syntax
@@ -342,6 +343,7 @@ set tabstop=2 " Number of space og a <Tab> character
 set softtabstop=2
 set shiftwidth=2 " Number of spaces use by autoindent
 set lazyredraw
+set synmaxcol=128  " avoid slow rendering for long lines
 set redrawtime=10000
 set regexpengine=1
 set expandtab
@@ -363,8 +365,8 @@ set foldlevel=2
 
 set nobackup
 set noswapfile
-set number
-set rnu
+set nonumber
+set nornu
 
 set showcmd
 
@@ -428,7 +430,7 @@ function! s:reload_coc_extension()
   if(&filetype == 'javascript')
     let l:result = CocAction('reloadExtension', 'coc-eslint')
     echo 'Reload coc-eslint with result='.l:result
-  elseif(&filetype == 'typescript')
+  elseif(&filetype == 'typescript' || &filetype == 'typescriptreact')
     let l:result = CocAction('reloadExtension', 'coc-typescript')
     echo 'Reload coc-typescript with result='.l:result
   elseif(&filetype == 'reason')
