@@ -12,6 +12,7 @@
   "solargraph.autoformat": true,
   "solargraph.diagnostics": true,
   "solargraph.formatting": true,
+  "solargraph.useBundler": false,
   "tsserver.npm": "~/.asdf/shims/npm",
   "yank.highlight.enable": false,
   "workspace.ignoredFiletypes": ["log", "txt", "help", "class", "jar"]
