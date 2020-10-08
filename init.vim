@@ -208,8 +208,12 @@ function! GNewBranch()
   if len(l:branch_name) == 0
     return
   endif
-  execute '!git fetch origin master'
-  execute '!git checkout -b '.l:branch_name.' origin/master'
+  let merge_branch = 'master'
+  if stridx(getcwd(), "employment-hero") >=0
+    let merge_branch = "development"
+  endif
+  execute '!git fetch origin '.l:merge_branch
+  execute '!git checkout -b '.l:branch_name.' origin/'.l:merge_branch
 endfunction
 noremap <leader>gn :call GNewBranch()<cr>
 " Git status in new tab
