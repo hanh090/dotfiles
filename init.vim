@@ -95,10 +95,6 @@ Plug 't9md/vim-choosewin'
 " Snippet
 Plug 'honza/vim-snippets'
 
-" mjml file
-Plug 'amadeus/vim-mjml'
-Plug 'shumphrey/fugitive-gitlab.vim'
-
 if has("nvim")
   " Fix cursor hold in nvim
   Plug 'antoinemadec/FixCursorHold.nvim'
