@@ -433,6 +433,9 @@ function! s:reload_coc_extension()
   elseif(&filetype == 'ruby')
     let l:result = CocAction('reloadExtension', 'coc-solargraph')
     echo 'Reload coc-solargraph with result='.l:result
+  elseif(&filetype == 'java')
+    let l:result = CocAction('reloadExtension', 'coc-java')
+    echo 'Reload coc-java with result='.l:result
   else
     CocRestart
   endif
