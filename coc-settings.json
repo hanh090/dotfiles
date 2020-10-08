@@ -6,13 +6,15 @@
     "ignorePattern": ["node_modules/*", "*.bs.js"]
   },
   "eslint.run": "onSave",
-  "java.home": "~/.asdf/shims/java",
+  "java.maven.downloadSources": true,
+  "prettier.eslintIntegration": true,
   "reason_language_server.reloadOnChange": true,
-  "suggest.timeout": 6000,
   "solargraph.autoformat": true,
+  "solargraph.checkGemVersion": false,
   "solargraph.diagnostics": true,
   "solargraph.formatting": true,
+  "suggest.timeout": 6000,
   "tsserver.npm": "~/.asdf/shims/npm",
-  "yank.highlight.enable": false,
-  "workspace.ignoredFiletypes": ["log", "txt", "help", "class", "jar"]
+  "workspace.ignoredFiletypes": ["log", "txt", "help", "class", "jar"],
+  "yank.highlight.enable": false
 }
