@@ -306,6 +306,7 @@ let g:WebDevIconsUnicodeDecorateFileNodesExtensionSymbols['mjml'] = ''
 let g:airline_theme='bubblegum'
 
 let g:airline_section_c=airline#section#create(["%{pathshorten(fnamemodify(expand('%'), ':~:.'))}"])
+let g:airline_section_b=airline#section#create(["%{FugitiveHead()[:20]}"])
 let g:airline#extensions#default#layout = [
       \ [ 'a', 'b', 'c' ],
       \ [ 'error', 'warning' ]
