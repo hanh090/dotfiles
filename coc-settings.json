@@ -14,6 +14,7 @@
   "solargraph.diagnostics": true,
   "solargraph.formatting": true,
   "suggest.timeout": 6000,
+  "solargraph.useBundler": false,
   "tsserver.npm": "~/.asdf/shims/npm",
   "workspace.ignoredFiletypes": ["log", "txt", "help", "class", "jar"],
   "yank.highlight.enable": false

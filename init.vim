@@ -17,6 +17,7 @@ Plug 'lambdalisue/fern.vim'
 Plug 'pangloss/vim-javascript'
 Plug 'maxmellon/vim-jsx-pretty'
 Plug 'leafgarland/typescript-vim'
+Plug 'peitalin/vim-jsx-typescript'
 " " Ruby
 Plug 'vim-ruby/vim-ruby'
 " ---------END Language syntax
@@ -262,10 +263,17 @@ nnoremap <silent> <leader>po :call Open_Pr_In_Branch()<cr><cr>
 
 " Checkout list branch
 function! s:git_checkout(selected)
-  let l:branch = split(a:selected[0])[0]
-  echo l:branch
-  execute 'Git checkout '.l:branch
-endfunction
+  let l:branch = split(a:selected[1])[0]
+  if a:selected[0] == 'ctrl-d'
+    for delete_selected in a:selected[1:]
+      let l:delete_branch = split(delete_selected)[0]
+      execute 'Git branch -D '.l:delete_branch
+      echom 'Deleted branch '.l:delete_branch
+    endfor
+  else
+    execute 'Git checkout '.l:branch
+  endif
+ endfunction
 command! -nargs=* -complete=dir -bang BranchList call
       \ fzf#run(fzf#wrap(
       \ {
@@ -273,7 +281,9 @@ command! -nargs=* -complete=dir -bang BranchList call
       \ 'sink*': function('s:git_checkout'),
       \ 'options': [
       \   '--tiebreak', 'index',
+      \   '--multi' ,
       \   '--prompt', "Branches>",
+      \   '--expect=ctrl-d'
       \ ]
       \ } , 0))
 
@@ -339,6 +349,7 @@ set tabstop=2 " Number of space og a <Tab> character
 set softtabstop=2
 set shiftwidth=2 " Number of spaces use by autoindent
 set lazyredraw
+set synmaxcol=128  " avoid slow rendering for long lines
 set redrawtime=10000
 set regexpengine=1
 set expandtab
@@ -360,8 +371,8 @@ set foldlevel=2
 
 set nobackup
 set noswapfile
-set number
-set rnu
+set nonumber
+set nornu
 
 set showcmd
 
@@ -418,12 +429,16 @@ nmap <silent> <space>cY  :<C-u>CocList --normal yank<cr>:set filetype=vim<cr>
 " quick fix
 nmap <silent> <space>cq <Plug>(coc-codeaction)
 nmap <silent> <space>cf <Plug>(coc-format)
+vmap <silent> <space>cf <Plug>(coc-format-selected)
 " Symbol renaming.
 nmap <silent> <space>cn <Plug>(coc-rename)
 function! s:reload_coc_extension()
-  if(&filetype == 'javascript' || &filetype == 'typescript')
+  if(&filetype == 'javascript')
     let l:result = CocAction('reloadExtension', 'coc-eslint')
     echo 'Reload coc-eslint with result='.l:result
+  elseif(&filetype == 'typescript' || &filetype == 'typescriptreact')
+    let l:result = CocAction('reloadExtension', 'coc-typescript')
+    echo 'Reload coc-typescript with result='.l:result
   elseif(&filetype == 'reason')
     let l:result = CocAction('reloadExtension', 'coc-reason')
     echo 'Reload coc-reason with result='.l:result
@@ -464,9 +479,8 @@ let g:coc_snippet_next = '<tab>'
 " === END COC config
 
 " Auto format
-autocmd BufWritePre *.js,*.jsx,*.css,*.scss,*.less,*.json,*.html CocCommand prettier.formatFile
+autocmd BufWritePre *.js,*.jsx,*.css,*.scss,*.less,*.json,*.html,*.ts,*.tsx CocCommand prettier.formatFile
 autocmd BufWritePre *.re call CocAction('format')
-autocmd BufNewFile,BufRead *.tsx set filetype=typescript
 
 
 " Quick escape
