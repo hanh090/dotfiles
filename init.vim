@@ -374,12 +374,15 @@ set nofoldenable
 set foldlevel=2
 
 set nobackup
+set nowritebackup
 set noswapfile
 set nonumber
 set nornu
 
 set showcmd
 
+setlocal nobackup
+setlocal nowritebackup
 " ==== START COC config
 " List coc plugin
 let g:coc_global_extensions =
