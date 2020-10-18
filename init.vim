@@ -271,7 +271,7 @@ function! s:git_checkout(selected)
   if a:selected[0] == 'ctrl-d'
     for delete_selected in a:selected[1:]
       let l:delete_branch = split(delete_selected)[0]
-      execute 'Git branch -D '.l:delete_branch
+      execute '!git branch -D '.l:delete_branch
       echom 'Deleted branch '.l:delete_branch
     endfor
   else
