@@ -10,7 +10,7 @@ call plug#begin('~/.vim/plugged')
 " Essential
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
-Plug 'lambdalisue/fern.vim'
+Plug 'lambdalisue/fern.vim', {'tag': 'v1.25.0' }
 
 "--------- Language syntax
 " JS
@@ -516,6 +516,8 @@ let $FZF_DEFAULT_OPTS='--bind '.
       \ 'alt-d:deselect-all'
 
 let g:fzf_preview_window = 'right:40%:wrap'
+" Border style (rounded / sharp / horizontal)
+let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.7, 'border': 'sharp' } }
 
 function! s:build_quickfix_list(lines)
   call setqflist(map(copy(a:lines), '{ "filename": v:val }'))
