@@ -57,6 +57,8 @@ Plug 'Valloric/MatchTagAlways'
 Plug 'tpope/vim-fugitive'
 " --- Integrate github to git
 Plug 'tpope/vim-rhubarb'
+" -- Integrate gitlab to git fugitive
+Plug 'shumphrey/fugitive-gitlab.vim'
 " Align text
 Plug 'junegunn/vim-easy-align'
 " Auto add pairing
