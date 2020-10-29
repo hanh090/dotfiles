@@ -166,7 +166,8 @@ autocmd FileType fern nnoremap <buffer> <c-l> :TmuxNavigateRight<cr>
 autocmd FileType fern nnoremap <buffer> <c-j> :TmuxNavigateDown<cr>
 " Searching
 noremap  <leader>f :FZF<CR>
-noremap <silent> <leader>h :call fzf#vim#history({ 'options': ['--header-lines', 0, '--header', getcwd()]})<CR>
+noremap  <leader>b :Buffers<CR>
+noremap  <silent> <leader>h :call fzf#vim#history({ 'options': ['--header-lines', 0, '--header', getcwd()]})<CR>
 noremap  <leader>d :Cd <CR>
 " Search for the word under cursor
 nnoremap <silent> <leader>ag :Ag <C-R><C-W><CR>
@@ -213,6 +214,8 @@ function! GNewBranch()
   let merge_branch = 'master'
   if stridx(getcwd(), "employment-hero") >=0
     let merge_branch = "development"
+  elseif stridx(getcwd(), "plan-manager") >= 0
+    let merge_branch = "dev"
   endif
   execute '!git fetch origin '.l:merge_branch
   execute '!git checkout -b '.l:branch_name.' origin/'.l:merge_branch
@@ -489,7 +492,7 @@ let g:coc_snippet_next = '<tab>'
 
 " Auto format
 autocmd BufWritePre *.js,*.jsx,*.css,*.scss,*.less,*.json,*.html,*.ts,*.tsx CocCommand prettier.formatFile
-autocmd BufWritePre *.re call CocAction('format')
+" autocmd BufWritePre *.re call CocAction('format')
 
 
 " Quick escape
@@ -519,7 +522,7 @@ let $FZF_DEFAULT_OPTS='--bind '.
 
 let g:fzf_preview_window = 'right:40%:wrap'
 " Border style (rounded / sharp / horizontal)
-let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.7, 'border': 'sharp' } }
+let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6,  'highlight': 'Todo', 'border': 'sharp' } }
 
 function! s:build_quickfix_list(lines)
   call setqflist(map(copy(a:lines), '{ "filename": v:val }'))
