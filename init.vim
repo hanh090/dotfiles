@@ -170,8 +170,8 @@ noremap  <leader>b :Buffers<CR>
 noremap  <silent> <leader>h :call fzf#vim#history({ 'options': ['--header-lines', 0, '--header', getcwd()]})<CR>
 noremap  <leader>d :Cd <CR>
 " Search for the word under cursor
-nnoremap <silent> <leader>ag :Ag <C-R><C-W><CR>
-vnoremap <silent> <leader>ag y:Ag <C-R>=@"<CR><CR>
+nnoremap <silent> <leader>ag ::call histadd("cmd", 'Ag <C-R><C-W>') <bar> Ag <C-R><C-W><CR>
+vnoremap <silent> <leader>ag y:call histadd("cmd", 'Ag <C-R>=@"<CR>') <bar> Ag <C-R>=@"<CR><CR>
 nnoremap <silent> <leader>rg :Rg <C-R><C-W><Cr>
 " Search for the visually selected text
 vnoremap // y/\V<C-R>=escape(@",'/\')<CR><CR>
@@ -442,6 +442,8 @@ nmap <silent> <space>cY  :<C-u>CocList --normal yank<cr>:set filetype=vim<cr>
 nmap <silent> <space>cq <Plug>(coc-codeaction)
 nmap <silent> <space>cf <Plug>(coc-format)
 vmap <silent> <space>cf <Plug>(coc-format-selected)
+"format json need jq command in system
+autocmd FileType json nnoremap <buffer> <leader>cf :%!jq '.'<cr>
 " Symbol renaming.
 nmap <silent> <space>cn <Plug>(coc-rename)
 function! s:reload_coc_extension()
@@ -491,7 +493,7 @@ let g:coc_snippet_next = '<tab>'
 " === END COC config
 
 " Auto format
-autocmd BufWritePre *.js,*.jsx,*.css,*.scss,*.less,*.json,*.html,*.ts,*.tsx CocCommand prettier.formatFile
+autocmd BufWritePre *.js,*.jsx,*.css,*.scss,*.less,*.html,*.ts,*.tsx CocCommand prettier.formatFile
 " autocmd BufWritePre *.re call CocAction('format')
 
 
