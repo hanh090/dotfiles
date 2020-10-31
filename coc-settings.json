@@ -1,12 +1,18 @@
 {
-  "coc.source.file.ignorePatterns": ["node_modules/*"],
+  "coc.source.file.ignorePatterns": [
+    "node_modules/*"
+  ],
   "diagnostic.messageTarget": "echo",
   "diagnostic.refreshAfterSave": true,
   "eslint.options": {
-    "ignorePattern": ["node_modules/*", "*.bs.js"]
+    "ignorePattern": [
+      "node_modules/*",
+      "*.bs.js"
+    ]
   },
   "eslint.run": "onSave",
   "java.maven.downloadSources": true,
+  "java.jdt.ls.vmargs": "-javaagent:/Users/eh/.m2/repository/org/projectlombok/lombok/1.18.12/lombok-1.18.12.jar -Xbootclasspath/a:/Users/eh/.m2/repository/org/projectlombok/lombok/1.18.12/lombok-1.18.12.jar",
   "prettier.eslintIntegration": true,
   "reason_language_server.reloadOnChange": true,
   "solargraph.autoformat": true,
@@ -15,6 +21,12 @@
   "solargraph.formatting": true,
   "suggest.timeout": 6000,
   "tsserver.npm": "~/.asdf/shims/npm",
-  "workspace.ignoredFiletypes": ["log", "txt", "help", "class", "jar"],
+  "workspace.ignoredFiletypes": [
+    "log",
+    "txt",
+    "help",
+    "class",
+    "jar"
+  ],
   "yank.highlight.enable": false
 }
