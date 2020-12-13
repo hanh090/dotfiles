@@ -14,6 +14,8 @@
   "java.maven.downloadSources": true,
   "java.jdt.ls.vmargs": "-javaagent:/Users/eh/.m2/repository/org/projectlombok/lombok/1.18.12/lombok-1.18.12.jar -Xbootclasspath/a:/Users/eh/.m2/repository/org/projectlombok/lombok/1.18.12/lombok-1.18.12.jar",
   "prettier.eslintIntegration": true,
+  "python.jediEnabled": false,
+  "python.pythonPath": "python3.6",
   "reason_language_server.reloadOnChange": true,
   "solargraph.autoformat": true,
   "solargraph.checkGemVersion": false,
