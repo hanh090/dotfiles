@@ -162,16 +162,22 @@ let mapleader=" "
 noremap  <silent> <leader>m :Fern . -drawer -toggle<CR>
 noremap  <silent> <leader>r :Fern . -reveal=% -drawer<CR>
 " Mapping tmux-navigator control
-autocmd FileType fern nnoremap <buffer> <c-l> :TmuxNavigateRight<cr>
+let g:fern#mapping#mappings= ['drawer', 'filter', 'mark', 'node', 'open', 'wait', 'yank']
+autocmd FileType fern nnoremap <buffer> <c-l> :wincmd l<cr>
 autocmd FileType fern nnoremap <buffer> <c-j> :TmuxNavigateDown<cr>
 " Searching
 noremap  <leader>f :FZF<CR>
+vnoremap <leader>f y:call fzf#vim#files('.', {'options': ['--query', '<C-R>=@"<CR>']})<CR>
 noremap  <leader>b :Buffers<CR>
 noremap  <silent> <leader>h :call fzf#vim#history({ 'options': ['--header-lines', 0, '--header', getcwd()]})<CR>
 noremap  <leader>d :Cd <CR>
 " Search for the word under cursor
-nnoremap <silent> <leader>ag ::call histadd("cmd", 'Ag <C-R><C-W>') <bar> Ag <C-R><C-W><CR>
+nnoremap <silent> <leader>ag :call histadd("cmd", 'Ag <C-R><C-W>') <bar> Ag <C-R><C-W><CR>
 vnoremap <silent> <leader>ag y:call histadd("cmd", 'Ag <C-R>=@"<CR>') <bar> Ag <C-R>=@"<CR><CR>
+" Add handle in fern, move to new active buffer
+autocmd FileType fern nnoremap <silent> <leader>ag :wincmd l <bar> call histadd("cmd", 'Ag <C-R><C-W>') <bar> Ag <C-R><C-W><CR>
+autocmd FileType fern vnoremap <silent> <leader>ag y:call histadd("cmd", 'Ag <C-R>=@"<CR>') <bar> Ag <C-R>=@"<CR><CR>
+
 nnoremap <silent> <leader>rg :Rg <C-R><C-W><Cr>
 " Search for the visually selected text
 vnoremap // y/\V<C-R>=escape(@",'/\')<CR><CR>
