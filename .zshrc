@@ -174,6 +174,8 @@ fm() {
 # Quickly merge staging
 deploySbx() {
   currentBranch=$(git describe --contains --all HEAD)
+  echo "STASH"
+  git stash
   echo "FETCH ORIGIN CODE"
   git fetch origin $1
   echo "MERGE $currentBranch"
@@ -184,6 +186,7 @@ deploySbx() {
   git push origin HEAD
   cc # Open CircleCI
   git checkout $currentBranch
+  git stash apply
   echo "DONE"
 }
 
@@ -215,6 +218,7 @@ case "$OSTYPE" in
     . $HOME/.asdf/asdf.sh
     ;;
 esac
+
 . ~/.asdf/plugins/java/set-java-home.zsh
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
