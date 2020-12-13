@@ -316,9 +316,11 @@ nmap     <leader>=  :call EqualWindow()<cr>
 
 " Easy jump
 map  <leader>jk <Plug>(easymotion-bd-w)
+map  <leader>ja <Plug>(easymotion-lineanywhere)
+map  <leader>jA <Plug>(easymotion-jumptoanywhere)
+nmap <leader>jf <Plug>(easymotion-overwin-f2)
 nmap <leader>jw <Plug>(easymotion-overwin-w)
 nmap <leader>jl <Plug>(easymotion-overwin-line)
-nmap <leader>jf <Plug>(easymotion-overwin-f2)
 
 let g:fern#renderer = "devicons"
 let g:fern_renderer_devicons_disable_warning = 1
@@ -399,12 +401,14 @@ setlocal nowritebackup
 " List coc plugin
 let g:coc_global_extensions =
       \ [
+      \ 'coc-angular',
       \ 'coc-eslint',
       \ 'coc-highlight',
       \ 'coc-html',
       \ 'coc-java',
       \ 'coc-json',
       \ 'coc-prettier',
+      \ 'coc-python',
       \ 'coc-reason',
       \ 'coc-snippets',
       \ 'coc-solargraph',
@@ -458,7 +462,7 @@ function! s:reload_coc_extension()
     let l:result = CocAction('reloadExtension', 'coc-eslint')
     echo 'Reload coc-eslint with result='.l:result
   elseif(&filetype == 'typescript' || &filetype == 'typescriptreact')
-    let l:result = CocAction('reloadExtension', 'coc-typescript')
+    let l:result = CocAction('reloadExtension', 'coc-tsserver')
     echo 'Reload coc-typescript with result='.l:result
   elseif(&filetype == 'reason')
     let l:result = CocAction('reloadExtension', 'coc-reason')
@@ -467,6 +471,7 @@ function! s:reload_coc_extension()
     let l:result = CocAction('reloadExtension', 'coc-solargraph')
     echo 'Reload coc-solargraph with result='.l:result
   elseif(&filetype == 'java')
+    call coc#rpc#notify('runCommand', ['java.clean.workspace'])
     let l:result = CocAction('reloadExtension', 'coc-java')
     echo 'Reload coc-java with result='.l:result
   else
@@ -586,6 +591,8 @@ command! -nargs=1 -complete=command -bar -range Redir silent call Redir(<q-args>
 " removing
 au FileType reason let b:AutoPairs = AutoPairsDefine({'/**':'**/'}, ["`", "'"])
 au FileType html let b:AutoPairs = AutoPairsDefine({'<!--' : '-->'})
+au FileType java let b:AutoPairs = AutoPairsDefine({'<' : '>'})
+
 au FileType gitcommit set textwidth=0
 " Set background and colorscheme
 set termguicolors
