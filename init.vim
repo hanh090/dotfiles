@@ -98,6 +98,9 @@ Plug 't9md/vim-choosewin'
 " Snippet
 Plug 'honza/vim-snippets'
 
+" Async job
+Plug 'skywind3000/asyncrun.vim'
+
 if has("nvim")
   " Fix cursor hold in nvim
   Plug 'antoinemadec/FixCursorHold.nvim'
