@@ -228,16 +228,25 @@ function! GNewBranch()
   execute '!git checkout -b '.l:branch_name.' origin/'.l:merge_branch
 endfunction
 noremap <leader>gn :call GNewBranch()<cr>
+
 " Git status in new tab
 noremap  <leader>gs :Gtabedit :<cr>
 noremap  <leader>gS :Gstatus<cr>
 nnoremap <leader>gh :Gbrowse<cr>
 vnoremap <leader>gh :Gbrowse<cr>
+
+function! OpenFilePath(fugitive_path)
+   let file_path_with_hash = split(split(a:fugitive_path, '//')[-1])[-1]
+   let file_path = join(split(file_path_with_hash, '/')[1:], '/')
+   execute 'edit '.file_path
+endfunction
+
 augroup fugitive_ext
   autocmd!
   " Browse to the commit under my cursor
   autocmd FileType fugitiveblame nnoremap <buffer> <leader>gh :execute ":Gbrowse " . expand("<cword>")<cr>
-  autocmd FileType fugitive nnoremap <buffer> D :!rm <c-r><c-f><cr>
+  autocmd FileType fugitive nnoremap <buffer> D :!rm -rf <c-r><c-f><cr>
+  autocmd FileType git nnoremap <buffer> go Vy:call OpenFilePath('<C-R>=@"<CR>')<CR>
 augroup END
 
 " Github PR
