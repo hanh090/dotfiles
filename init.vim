@@ -207,6 +207,7 @@ nnoremap cP :let @+ = expand("%:p") <bar> echo @+<CR>
 
 " Git
 noremap  <leader>gl :execute 'Git pull origin '.FugitiveHead()<cr>
+noremap  <leader>gL :Git stash <bar> execute 'Git pull origin '.FugitiveHead() <bar> Git stash apply <bar> echo "Pull success"<cr>
 noremap  <leader>gp :Git push origin HEAD <bar>echo "Pushed success" <cr>
 noremap  <leader>gP :Git push origin HEAD --force <bar>echo "Pushed success" <cr>
 noremap  <leader>gb :Gblame<cr>
