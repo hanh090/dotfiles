@@ -108,6 +108,10 @@ endif
 " Support raw search for ag and rg from fzf
 Plug 'jesseleite/vim-agriculture'
 
+" Text object indent
+Plug 'kana/vim-textobj-user'
+Plug 'kana/vim-textobj-indent'
+
 call plug#end()
 
 set laststatus=2
