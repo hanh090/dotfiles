@@ -174,6 +174,8 @@ noremap  <leader>d :Cd <CR>
 " Search for the word under cursor
 nnoremap <silent> <leader>ag :call histadd("cmd", 'Ag <C-R><C-W>') <bar> Ag <C-R><C-W><CR>
 vnoremap <silent> <leader>ag y:call histadd("cmd", 'Ag <C-R>=@"<CR>') <bar> Ag <C-R>=@"<CR><CR>
+
+nnoremap <silent> <leader>/ :BLines<CR>
 " Add handle in fern, move to new active buffer
 autocmd FileType fern nnoremap <silent> <leader>ag :wincmd l <bar> call histadd("cmd", 'Ag <C-R><C-W>') <bar> Ag <C-R><C-W><CR>
 autocmd FileType fern vnoremap <silent> <leader>ag y:call histadd("cmd", 'Ag <C-R>=@"<CR>') <bar> Ag <C-R>=@"<CR><CR>
@@ -294,8 +296,8 @@ function! s:git_checkout(selected)
     for delete_selected in a:selected[1:]
       let l:delete_branch = split(delete_selected)[0]
       execute '!git branch -D '.l:delete_branch
-      echom 'Deleted branch '.l:delete_branch
     endfor
+    echo 'Deleted branch successfully'
   else
     execute 'Git checkout '.l:branch
   endif
