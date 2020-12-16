@@ -108,10 +108,6 @@ endif
 " Support raw search for ag and rg from fzf
 Plug 'jesseleite/vim-agriculture'
 
-" Text object indent
-Plug 'kana/vim-textobj-user'
-Plug 'kana/vim-textobj-indent'
-
 call plug#end()
 
 set laststatus=2
@@ -552,7 +548,8 @@ let $FZF_DEFAULT_OPTS='--bind '.
 
 let g:fzf_preview_window = 'right:40%:wrap'
 " Border style (rounded / sharp / horizontal)
-let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6,  'highlight': 'Todo', 'border': 'sharp' } }
+" let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6,  'highlight': 'Todo', 'border': 'sharp' } }
+let g:fzf_layout = { 'down': '40%' }
 
 function! s:build_quickfix_list(lines)
   call setqflist(map(copy(a:lines), '{ "filename": v:val }'))
