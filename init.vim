@@ -427,7 +427,7 @@ set tabstop=2 " Number of space og a <Tab> character
 set softtabstop=2
 set shiftwidth=2 " Number of spaces use by autoindent
 set lazyredraw
-set synmaxcol=128  " avoid slow rendering for long lines
+set synmaxcol=200  " avoid slow rendering for long lines
 set redrawtime=10000
 set regexpengine=1
 set expandtab
@@ -454,6 +454,9 @@ set nonumber
 set nornu
 
 set showcmd
+
+" enable splitright
+set splitright
 
 setlocal nobackup
 setlocal nowritebackup
