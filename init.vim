@@ -237,8 +237,10 @@ noremap <leader>s :vsplit<cr>
 noremap <leader>v :split<cr>
 
 " Copy current file / folder path
-nnoremap cp :let @+ = expand("%")   <bar> echo @+<CR>
-nnoremap cP :let @+ = expand("%:p") <bar> echo @+<CR>
+nnoremap <silent> cp :let @+ = expand("%")   <bar> echo @+<CR>
+nnoremap <silent> cP :let @+ = expand("%:p") <bar> echo @+<CR>
+nnoremap <silent> cl :let @+ = expand("%").":".line(".") <bar> echo @+<CR>
+nnoremap <silent> cL :let @+ = expand("%:p").":".line(".") <bar> echo @+<CR>
 
 " Git
 noremap  <leader>gl :execute 'Git pull origin '.FugitiveHead()<cr>
