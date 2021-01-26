@@ -494,6 +494,7 @@ nmap <silent> [g <Plug>(coc-diagnostic-prev)
 nmap <silent> ]g <Plug>(coc-diagnostic-next)
 " Remap keys for gotos
 nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gt :call CocAction('jumpDefinition', 'vne')<CR>
 nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
@@ -516,6 +517,11 @@ nmap <silent> <space>cY  :<C-u>CocList --normal yank<cr>:set filetype=vim<cr>
 nmap <silent> <space>cq <Plug>(coc-codeaction)
 nmap <silent> <space>cf <Plug>(coc-format)
 vmap <silent> <space>cf <Plug>(coc-format-selected)
+" Add text object
+xmap if <Plug>(coc-funcobj-i)
+omap if <Plug>(coc-funcobj-i)
+xmap af <Plug>(coc-funcobj-a)
+omap af <Plug>(coc-funcobj-a)
 "format json need jq command in system
 autocmd FileType json nnoremap <buffer> <leader>cf :%!jq '.'<cr>
 " Symbol renaming.
@@ -568,7 +574,7 @@ let g:coc_snippet_next = '<tab>'
 " === END COC config
 
 " Auto format
-autocmd BufWritePre *.js,*.jsx,*.css,*.scss,*.less,*.html,*.ts,*.tsx CocCommand prettier.formatFile
+autocmd BufWritePre *.js,*.jsx,*.css,*.scss,*.less,*.ts,*.tsx if stridx(expand("%:p"), "node_modules") < 0 | CocCommand prettier.formatFile | endif
 " autocmd BufWritePre *.re call CocAction('format')
 
 
