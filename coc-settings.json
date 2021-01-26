@@ -2,6 +2,7 @@
   "coc.source.file.ignorePatterns": [
     "node_modules/*"
   ],
+  "coc.preferences.floatActions": false,
   "diagnostic.messageTarget": "echo",
   "diagnostic.refreshAfterSave": true,
   "eslint.options": {
