@@ -369,13 +369,26 @@ nmap <leader>jf <Plug>(easymotion-overwin-f2)
 nmap <leader>jw <Plug>(easymotion-overwin-w)
 nmap <leader>jl <Plug>(easymotion-overwin-line)
 
+map  <leader><leader>( <Space><Space>s(
+map  <leader><leader>) <Space><Space>s)
+map  <leader><leader>[ <Space><Space>s[
+map  <leader><leader>] <Space><Space>s]
+map  <leader><leader>{ <Space><Space>s{
+map  <leader><leader>} <Space><Space>s}
+
 let g:fern#renderer = "devicons"
 let g:fern_renderer_devicons_disable_warning = 1
 if !exists('g:WebDevIconsUnicodeDecorateFileNodesExtensionSymbols')
   let g:WebDevIconsUnicodeDecorateFileNodesExtensionSymbols = {}
 endif
-let g:WebDevIconsUnicodeDecorateFileNodesExtensionSymbols['re'] = 'λ'
+let g:WebDevIconsUnicodeDecorateFileNodesExtensionSymbols['re']   = 'λ'
 let g:WebDevIconsUnicodeDecorateFileNodesExtensionSymbols['mjml'] = ''
+let g:WebDevIconsUnicodeDecorateFileNodesExtensionSymbols['xml']  = ''
+let g:WebDevIconsUnicodeDecorateFileNodesExtensionSymbols['properties']  = ''
+let g:WebDevIconsUnicodeDecorateFileNodesExtensionSymbols['snap']  = ''
+let g:WebDevIconsUnicodeDecorateFileNodesExtensionSymbols['apib']  = ''
+
+
 
 " Custom airline
 let g:airline_theme='bubblegum'
