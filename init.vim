@@ -197,6 +197,7 @@ noremap  <silent> <leader>r :Fern . -reveal=% -drawer<CR>
 let g:fern#mapping#mappings= ['drawer', 'filter', 'mark', 'node', 'open', 'wait', 'yank']
 autocmd FileType fern nnoremap <buffer> <c-l> :wincmd l<cr>
 autocmd FileType fern nnoremap <buffer> <c-j> :TmuxNavigateDown<cr>
+autocmd FileType fern hi CursorLine ctermbg=20 guibg=#2c323c gui=undercurl
 " Searching
 noremap  <leader>f :FZF<CR>
 vnoremap <leader>f y:call fzf#vim#files('.', {'options': ['--query', '<C-R>=@"<CR>']})<CR>
