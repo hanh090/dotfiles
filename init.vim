@@ -282,7 +282,7 @@ endfunction
 augroup fugitive_ext
   autocmd!
   " Browse to the commit under my cursor
-  autocmd FileType fugitiveblame nnoremap <buffer> <leader>gh :execute ":Gbrowse " . expand("<cword>")<cr>
+  autocmd FileType fugitiveblame,git nnoremap <buffer> <leader>gh :execute ":Gbrowse " . expand("<cword>")<cr>
   autocmd FileType fugitive nnoremap <buffer> D :!rm -rf <c-r><c-f><cr>
   autocmd FileType git nnoremap <buffer> go Vy:call OpenFilePath('<C-R>=@"<CR>')<CR>
 augroup END
