@@ -18,8 +18,11 @@ Plug 'pangloss/vim-javascript'
 Plug 'maxmellon/vim-jsx-pretty'
 Plug 'leafgarland/typescript-vim'
 Plug 'peitalin/vim-jsx-typescript'
+Plug 'othree/html5.vim'
 " " Ruby
 Plug 'vim-ruby/vim-ruby'
+" apiblueprint
+Plug 'kylef/apiblueprint.vim'
 " ---------END Language syntax
 " Theme + Style
 Plug 'norcalli/nvim-colorizer.lua'
@@ -43,6 +46,9 @@ endif
 Plug 'matze/vim-move'
 Plug 'easymotion/vim-easymotion'
 Plug 'ntpeters/vim-better-whitespace'
+"{
+let g:better_whitespace_filetypes_blacklist=['log']
+"}
 Plug 'tomtom/tcomment_vim'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-repeat'
@@ -65,7 +71,7 @@ Plug 'junegunn/vim-easy-align'
 Plug 'hanh090/auto-pairs'
 
 " Code completion, LSP
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'hanh090/coc.nvim', {'branch': 'master'}
 
 " Airline for status line
 Plug 'vim-airline/vim-airline'
@@ -98,6 +104,23 @@ Plug 't9md/vim-choosewin'
 " Snippet
 Plug 'honza/vim-snippets'
 
+" Indent object, fit for yml,python file
+Plug 'michaeljsmith/vim-indent-object'
+" CamelCaseMotion
+Plug 'bkad/CamelCaseMotion'
+"---{
+let g:camelcasemotion_key = ','
+"---}
+" Convert javascript object to json and fix problem if have
+Plug 'rhysd/vim-fixjson'
+"---{
+" let s:root_dir = expand('<sfile>:p:h:h:h')
+" let s:cmd_path = join([s:root_dir, 'node_modules', '.bin', 'fixjson'], '/')
+" let g:fixjson_executable  = s:cmd_path
+let g:fixjson_indent_size = 4
+let g:fixjson_fix_on_save = 0
+"---}
+
 if has("nvim")
   " Fix cursor hold in nvim
   Plug 'antoinemadec/FixCursorHold.nvim'
@@ -108,6 +131,15 @@ endif
 " Support raw search for ag and rg from fzf
 Plug 'jesseleite/vim-agriculture'
 
+" Add log hightlight
+Plug 'MTDL9/vim-log-highlighting'
+
+" Add parentheses
+Plug 'junegunn/rainbow_parentheses.vim'
+"{-------
+let g:rainbow#max_level = 4
+let g:rainbow#pairs = [['(', ')'], ['[', ']']]
+"}
 call plug#end()
 
 set laststatus=2
