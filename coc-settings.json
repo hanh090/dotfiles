@@ -22,7 +22,6 @@
   "solargraph.diagnostics": true,
   "solargraph.formatting": true,
   "suggest.timeout": 6000,
-  "tsserver.npm": "~/.asdf/shims/npm",
   "workspace.ignoredFiletypes": [
     "log",
     "txt",
