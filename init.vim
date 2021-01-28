@@ -284,6 +284,8 @@ augroup fugitive_ext
   " Browse to the commit under my cursor
   autocmd FileType fugitiveblame,git nnoremap <buffer> <leader>gh :execute ":Gbrowse " . expand("<cword>")<cr>
   autocmd FileType fugitive nnoremap <buffer> D :!rm -rf <c-r><c-f><cr>
+  " Unmap q so that we can use macro to multiple remove
+  autocmd FileType fugitive nunmap <buffer> q
   autocmd FileType git nnoremap <buffer> go Vy:call OpenFilePath('<C-R>=@"<CR>')<CR>
 augroup END
 
@@ -427,7 +429,7 @@ set tabstop=2 " Number of space og a <Tab> character
 set softtabstop=2
 set shiftwidth=2 " Number of spaces use by autoindent
 set lazyredraw
-set synmaxcol=200  " avoid slow rendering for long lines
+set synmaxcol=120  " avoid slow rendering for long lines
 set redrawtime=10000
 set regexpengine=1
 set expandtab
