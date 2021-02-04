@@ -166,6 +166,13 @@ pr() {
   cross_open $(hub pr list --format='%H %U %n' | grep $(git rev-parse --abbrev-ref HEAD) | awk '{print $2}')
 }
 
+kt() {
+  kill -9 $(ps aux | fzf -e -1 -0 -q 'telegram !fzf' | awk '{print $2}')
+}
+
+ot() {
+  open -a "/Applications/Telegram.app/Contents/MacOS/Telegram"
+}
 # fetch and merge master to current branch
 fm() {
  git fetch origin master

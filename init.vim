@@ -14,25 +14,29 @@ Plug 'lambdalisue/fern.vim', {'tag': 'v1.25.0' }
 
 "--------- Language syntax
 " JS
-Plug 'pangloss/vim-javascript'
-Plug 'maxmellon/vim-jsx-pretty'
-Plug 'leafgarland/typescript-vim'
-Plug 'peitalin/vim-jsx-typescript'
-Plug 'othree/html5.vim'
-" " Ruby
-Plug 'vim-ruby/vim-ruby'
+" Plug 'pangloss/vim-javascript'
+" Plug 'maxmellon/vim-jsx-pretty'
+" Plug 'leafgarland/typescript-vim'
+" Plug 'peitalin/vim-jsx-typescript'
+" Plug 'othree/html5.vim'
+" " " Ruby
+" Plug 'vim-ruby/vim-ruby'
 " apiblueprint
-Plug 'kylef/apiblueprint.vim'
+" Plug 'kylef/apiblueprint.vim'
 " ---------END Language syntax
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+Plug 'nvim-treesitter/nvim-treesitter-refactor'
+Plug 'christianchiarulli/nvcode-color-schemes.vim'
+Plug 'p00f/nvim-ts-rainbow'
 " Theme + Style
 Plug 'norcalli/nvim-colorizer.lua'
-Plug 'rafi/awesome-vim-colorschemes'
+" Plug 'rafi/awesome-vim-colorschemes'
 Plug 'ryanoasis/vim-devicons'
 Plug 'lambdalisue/fern-renderer-devicons.vim'
 " Show indent line
 Plug 'Yggdroot/indentLine'
-" Better display for json
-Plug 'elzr/vim-json'
+" " Better display for json
+" Plug 'elzr/vim-json'
 let g:vim_json_syntax_conceal = 0
 " Register list
 Plug 'junegunn/vim-peekaboo'
@@ -47,7 +51,7 @@ Plug 'matze/vim-move'
 Plug 'easymotion/vim-easymotion'
 Plug 'ntpeters/vim-better-whitespace'
 "{
-let g:better_whitespace_filetypes_blacklist=['log']
+let g:better_whitespace_filetypes_blacklist=['log', 'fugitive']
 "}
 Plug 'tomtom/tcomment_vim'
 Plug 'tpope/vim-surround'
@@ -134,13 +138,23 @@ Plug 'jesseleite/vim-agriculture'
 " Add log hightlight
 Plug 'MTDL9/vim-log-highlighting'
 
-" Add parentheses
-Plug 'junegunn/rainbow_parentheses.vim'
-"{-------
-let g:rainbow#max_level = 4
-let g:rainbow#pairs = [['(', ')'], ['[', ']']]
-"}
+"Interactive buffer
+Plug 'metakirby5/codi.vim'
 call plug#end()
+
+"{
+lua << LUA
+require'nvim-treesitter.configs'.setup {
+  ensure_installed = "all", -- one of "all", "maintained" (parsers with maintainers), or a list of languages
+  rainbow = {
+    enable = false
+  },
+  highlight = {
+    enable = true,              -- false will disable the whole extension
+  },
+}
+LUA
+"}
 
 set laststatus=2
 function! RipgrepFzf(query, fullscreen)
@@ -250,6 +264,8 @@ noremap  <leader>gP :Git push origin HEAD --force <bar>echo "Pushed success" <cr
 noremap  <leader>gb :Gblame<cr>
 noremap  <leader>gc :BranchList<cr>
 noremap  <leader>gC :BranchList!<cr>
+noremap  <leader>gm :Git fetch origin master <bar> Git merge origin/master<cr>
+noremap  <leader>gd :execute 'Git diff origin/master..'.FugitiveHead()<cr>
 
 function! GNewBranch()
   let branch_name = input('Enter your branch ('.pathshorten(getcwd()).'):')
@@ -444,7 +460,8 @@ if has('nvim')
   set inccommand=split          " enables interactive search and replace
 endif
 
-set foldmethod=manual
+set foldmethod=expr
+set foldexpr=nvim_treesitter#foldexpr()
 set foldnestmax=10
 set nofoldenable
 set foldlevel=2
@@ -496,7 +513,7 @@ nmap <silent> [g <Plug>(coc-diagnostic-prev)
 nmap <silent> ]g <Plug>(coc-diagnostic-next)
 " Remap keys for gotos
 nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gt :call CocAction('jumpDefinition', 'vne')<CR>
+nmap <silent> gs :call CocAction('jumpDefinition', 'vne')<CR>
 nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
@@ -624,7 +641,7 @@ let g:fzf_action = {
       \ }
 
 " Custom matching tag
-let g:mta_use_matchparen_group = 0
+let g:mta_use_matchparen_group = 1
 
 "----- Add redirect output of command
 " Ref: https://gist.github.com/romainl/eae0a260ab9c135390c30cd370c20cd7
@@ -668,7 +685,9 @@ au FileType java let b:AutoPairs = AutoPairsDefine({'<' : '>'})
 au FileType gitcommit set textwidth=0
 " Set background and colorscheme
 set termguicolors
-colorscheme one
+" configure nvcode-color-schemes
+let g:nvcode_termcolors=256
+colorscheme nvcode
 set background=dark
 
 hi CocErrorSign cterm=bold,reverse ctermfg=160 ctermbg=230 guifg=White guibg=Red

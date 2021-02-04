@@ -4,7 +4,6 @@
   ],
   "coc.preferences.floatActions": false,
   "diagnostic.messageTarget": "echo",
-  "diagnostic.refreshAfterSave": true,
   "eslint.options": {
     "ignorePattern": [
       "node_modules/*",
