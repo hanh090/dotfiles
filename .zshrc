@@ -71,16 +71,8 @@ COMPLETION_WAITING_DOTS="true"
 plugins=(
   asdf
   autojump
-  bgnotify
   fzf
-  ## Download plugins
-  # git clone https://github.com/lincheney/fzf-tab-completion.git
-  # ${ZSH_CUSTOM:=~/.oh-my-zsh/custom}/plugins/fzf-tab-completion
-  fzf-tab
   git
-  gitfast
-  github
-  rails
   rake
   rake-fast
   vi-mode
@@ -97,6 +89,7 @@ source $ZSH/oh-my-zsh.sh
 
 # Preferred editor for local and remote sessions
 export EDITOR='nvim'
+bindkey '^V' edit-command-line
 # if [[ -n $SSH_CONNECTION ]]; then
 #   export EDITOR='vim'
 # else
@@ -114,6 +107,12 @@ export EDITOR='nvim'
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
+
+#--- Custom config for vi-mode
+export VI_MODE_SET_CURSOR=true
+#kill the log when press esc
+export KEYTIMEOUT=1
+#--- END Custom config for vi-mode
 fancy-ctrl-z () {
   if [[ $#BUFFER -eq 0 ]]; then
     BUFFER="fg"
@@ -134,10 +133,6 @@ function s()
 }
 
 bindkey '^F' fzf-file-widget
-
-alias gcoi='git checkout $(git branch |fzf --height 40%)'
-
-# alias vim='nvim'
 
 cross_open(){
   case "$OSTYPE" in
@@ -166,6 +161,7 @@ pr() {
   cross_open $(hub pr list --format='%H %U %n' | grep $(git rev-parse --abbrev-ref HEAD) | awk '{print $2}')
 }
 
+# kill and open telegram app
 kt() {
   kill -9 $(ps aux | fzf -e -1 -0 -q 'telegram !fzf' | awk '{print $2}')
 }
@@ -199,22 +195,31 @@ deploySbx() {
 
 alias dsb='deploySbx $(git branch | grep sbx- | fzf --height 40%)'
 
+# staging
+alias heroclistag='HERO_ACCESS_TOKEN=$HERO_ACCESS_TOKEN_STG herocli --server hero2.staging.ehrocks.com:443'
+
+# production AU
+alias herocliprod='HERO_ACCESS_TOKEN=$HERO_ACCESS_TOKEN_PROD herocli --server hero2.ehrocks.com:443'
+
+# production EU
+alias herocliprod_eu='HERO_ACCESS_TOKEN=$HERO_ACCESS_TOKEN_PROD_EU herocli --server hero2.eu.ehrocks.com:443'
+
 # Change cursor mapping
-zle-keymap-select() {
-  if [[ $KEYMAP = vicmd ]]; then
-    print -n '\e[2 q'
-  else
-    print -n '\e[5 q'
-  fi
-}
-zle-line-init() {
-  print -n '\e[5 q'
-}
-zle -N zle-keymap-select
-zle -N zle-line-init
-preexec() {
-  print -n $'\e[2 q'
-}
+# zle-keymap-select() {
+#   if [[ $KEYMAP = vicmd ]]; then
+#     print -n '\e[2 q'
+#   else
+#     print -n '\e[5 q'
+#   fi
+# }
+# zle-line-init() {
+#   print -n '\e[5 q'
+# }
+# zle -N zle-keymap-select
+# zle -N zle-line-init
+# preexec() {
+#   print -n $'\e[2 q'
+# }
 #End Change cursor mapping
 
 case "$OSTYPE" in
@@ -231,3 +236,6 @@ esac
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 source ~ZSH_CUSTOM/plugins/fzf-tab/fzf-tab.plugin.zsh
+
+# fix problem with unmatching
+unsetopt nomatch
