@@ -10,20 +10,9 @@ call plug#begin('~/.vim/plugged')
 " Essential
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
-Plug 'lambdalisue/fern.vim', {'tag': 'v1.25.0' }
+Plug 'lambdalisue/fern.vim'
 
 "--------- Language syntax
-" JS
-" Plug 'pangloss/vim-javascript'
-" Plug 'maxmellon/vim-jsx-pretty'
-" Plug 'leafgarland/typescript-vim'
-" Plug 'peitalin/vim-jsx-typescript'
-" Plug 'othree/html5.vim'
-" " " Ruby
-" Plug 'vim-ruby/vim-ruby'
-" apiblueprint
-" Plug 'kylef/apiblueprint.vim'
-" ---------END Language syntax
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'nvim-treesitter/nvim-treesitter-refactor'
 Plug 'christianchiarulli/nvcode-color-schemes.vim'
@@ -51,7 +40,7 @@ Plug 'matze/vim-move'
 Plug 'easymotion/vim-easymotion'
 Plug 'ntpeters/vim-better-whitespace'
 "{
-let g:better_whitespace_filetypes_blacklist=['log', 'fugitive']
+let g:better_whitespace_filetypes_blacklist=['log', 'fugitive', 'quickfix']
 "}
 Plug 'tomtom/tcomment_vim'
 Plug 'tpope/vim-surround'
@@ -75,7 +64,7 @@ Plug 'junegunn/vim-easy-align'
 Plug 'hanh090/auto-pairs'
 
 " Code completion, LSP
-Plug 'hanh090/coc.nvim', {'branch': 'master'}
+Plug 'neoclide/coc.nvim'
 
 " Airline for status line
 Plug 'vim-airline/vim-airline'
@@ -221,11 +210,18 @@ noremap  <leader>d :Cd <CR>
 " Search for the word under cursor
 nnoremap <silent> <leader>ag :call histadd("cmd", 'Ag <C-R><C-W>') <bar> Ag <C-R><C-W><CR>
 vnoremap <silent> <leader>ag y:call histadd("cmd", 'Ag <C-R>=@"<CR>') <bar> Ag <C-R>=@"<CR><CR>
+" Add handle in fern, move to new active buffer
+function! SearchFern(input, function_name)
+  wincmd l
+  let l:ascii_name = substitute(split(a:input)[1], "\\..*$", "", 'g')
+  echom l:ascii_name
+  call histadd('cmd', a:function_name.' '.l:ascii_name)
+  execute a:function_name.' '.l:ascii_name
+endfunction
+autocmd FileType fern nnoremap <silent> <leader>ag :call SearchFern('<C-R><C-L>', 'Ag')<CR>
+autocmd FileType fern nnoremap <silent> <leader>rg :call SearchFern('<C-R><C-L>', 'Rg')<CR>
 
 nnoremap <silent> <leader>/ :BLines<CR>
-" Add handle in fern, move to new active buffer
-autocmd FileType fern nnoremap <silent> <leader>ag :wincmd l <bar> call histadd("cmd", 'Ag <C-R><C-W>') <bar> Ag <C-R><C-W><CR>
-autocmd FileType fern vnoremap <silent> <leader>ag y:call histadd("cmd", 'Ag <C-R>=@"<CR>') <bar> Ag <C-R>=@"<CR><CR>
 
 nnoremap <silent> <leader>rg :Rg <C-R><C-W><Cr>
 " Search for the visually selected text
@@ -366,7 +362,7 @@ command! -nargs=* -complete=dir -bang BranchList call
       \   '--prompt', "Branches>",
       \   '--expect=ctrl-d'
       \ ]
-      \ } , 0))
+      \ },0))
 
 " Choose window config
 nmap     <leader>-  <Plug>(choosewin)
@@ -380,19 +376,16 @@ endfunction
 nmap     <leader>=  :call EqualWindow()<cr>
 
 " Easy jump
-map  <leader>jk <Plug>(easymotion-bd-w)
+let g:EasyMotion_smartcase = 1
+map  <leader>jk <Plug>(easymotion-s)
 map  <leader>ja <Plug>(easymotion-lineanywhere)
 map  <leader>jA <Plug>(easymotion-jumptoanywhere)
-nmap <leader>jf <Plug>(easymotion-overwin-f2)
+map <leader>jf <Plug>(easymotion-overwin-f2)
 nmap <leader>jw <Plug>(easymotion-overwin-w)
 nmap <leader>jl <Plug>(easymotion-overwin-line)
-
-map  <leader><leader>( <Space><Space>s(
-map  <leader><leader>) <Space><Space>s)
-map  <leader><leader>[ <Space><Space>s[
-map  <leader><leader>] <Space><Space>s]
-map  <leader><leader>{ <Space><Space>s{
-map  <leader><leader>} <Space><Space>s}
+" Remove annoyed Coc in jump mode
+autocmd User EasyMotionPromptBegin silent! CocDisable
+autocmd User EasyMotionPromptEnd silent! CocEnable
 
 let g:fern#renderer = "devicons"
 let g:fern_renderer_devicons_disable_warning = 1
@@ -688,14 +681,15 @@ set termguicolors
 " configure nvcode-color-schemes
 let g:nvcode_termcolors=256
 colorscheme nvcode
-set background=dark
 
 hi CocErrorSign cterm=bold,reverse ctermfg=160 ctermbg=230 guifg=White guibg=Red
 hi CocUnderlineError cterm=underline ctermfg=61 gui=undercurl guisp=Red
 hi link CocErrorHighlight CocUnderlineError
 hi MatchTag term=reverse cterm=reverse ctermfg=136 ctermbg=236 guibg=Yellow
 hi MatchParen ctermfg=yellow
-hi Visual cterm=reverse ctermbg=242 guibg=#303030cterm=reverse ctermbg=242 gui=reverse guifg=#586e75 guibg=#002b36
+hi Search  ctermfg=234 ctermbg=180 guifg=#1e1e1e guibg=#e5c07b
+
+" hi Visual cterm=reverse ctermbg=242 guibg=#303030 cterm=reverse ctermbg=242 gui=reverse guifg=#586e75 guibg=#002b36
 " Required for operations modifying multiple buffers like rename.
 set hidden
 " Save file as root
