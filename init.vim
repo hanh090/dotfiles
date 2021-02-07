@@ -200,7 +200,7 @@ noremap  <silent> <leader>r :Fern . -reveal=% -drawer<CR>
 let g:fern#mapping#mappings= ['drawer', 'filter', 'mark', 'node', 'open', 'wait', 'yank']
 autocmd FileType fern nnoremap <buffer> <c-l> :wincmd l<cr>
 autocmd FileType fern nnoremap <buffer> <c-j> :TmuxNavigateDown<cr>
-autocmd FileType fern hi CursorLine ctermbg=20 guibg=#2c323c gui=undercurl
+autocmd FileType fern hi CursorLine ctermbg=20 guibg=#2c323c gui=bold
 " Searching
 noremap  <leader>f :FZF<CR>
 vnoremap <leader>f y:call fzf#vim#files('.', {'options': ['--query', '<C-R>=@"<CR>']})<CR>
@@ -214,7 +214,6 @@ vnoremap <silent> <leader>ag y:call histadd("cmd", 'Ag <C-R>=@"<CR>') <bar> Ag <
 function! SearchFern(input, function_name)
   wincmd l
   let l:ascii_name = substitute(split(a:input)[1], "\\..*$", "", 'g')
-  echom l:ascii_name
   call histadd('cmd', a:function_name.' '.l:ascii_name)
   execute a:function_name.' '.l:ascii_name
 endfunction
