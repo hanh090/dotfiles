@@ -354,7 +354,10 @@ function! s:git_checkout(selected)
 command! -nargs=* -complete=dir -bang BranchList call
       \ fzf#run(fzf#wrap(
       \ {
-      \ 'source': "git for-each-ref --sort=-committerdate refs/heads/ --format=".shellescape('%(HEAD)  %(refname:short)  - %(contents:subject) - %(authorname) (%(committerdate:relative))').(<bang>0 == 0 ? '' : ' --all'),
+      \ 'source': "git for-each-ref --sort=-committerdate refs/heads/ --format=".shellescape(
+      \ '%(HEAD)  %(refname:short)  - %(contents:subject) - %(authorname) (%(committerdate:relative))'
+      \ )
+      \ .(<bang>0 == 0 ? '' : ' --all'),
       \ 'sink*': function('s:git_checkout'),
       \ 'options': [
       \   '--tiebreak', 'index',
