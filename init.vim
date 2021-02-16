@@ -110,7 +110,7 @@ Plug 'rhysd/vim-fixjson'
 " let s:root_dir = expand('<sfile>:p:h:h:h')
 " let s:cmd_path = join([s:root_dir, 'node_modules', '.bin', 'fixjson'], '/')
 " let g:fixjson_executable  = s:cmd_path
-let g:fixjson_indent_size = 4
+let g:fixjson_indent_size = 2
 let g:fixjson_fix_on_save = 0
 "---}
 
