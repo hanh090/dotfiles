@@ -71,6 +71,7 @@ COMPLETION_WAITING_DOTS="true"
 plugins=(
   asdf
   autojump
+  bgnotify
   fzf
   git
   rake
