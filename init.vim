@@ -222,8 +222,10 @@ noremap  <leader>b :Buffers<CR>
 noremap  <silent> <leader>h :call fzf#vim#history({ 'options': ['--header-lines', 0, '--header', getcwd()]})<CR>
 noremap  <leader>d :Cd <CR>
 " Search for the word under cursor
-nnoremap <silent> <leader>ag :call histadd("cmd", 'Ag <C-R><C-W>') <bar> Ag <C-R><C-W><CR>
+nnoremap <silent> <leader>ag :call  histadd("cmd", 'Ag <C-R><C-W>')   <bar> Ag <C-R><C-W><CR>
 vnoremap <silent> <leader>ag y:call histadd("cmd", 'Ag <C-R>=@"<CR>') <bar> Ag <C-R>=@"<CR><CR>
+nnoremap <silent> <leader>rg :call  histadd("cmd", 'Rg <C-R><C-W>')   <bar> Rg <C-R><C-W><CR>
+vnoremap <silent> <leader>rg y:call histadd("cmd", 'Rg <C-R>=@"<CR>') <bar> Rg <C-R>=@"<CR><CR>
 " Add handle in fern, move to new active buffer
 function! SearchFern(input, function_name)
   wincmd l
@@ -231,12 +233,11 @@ function! SearchFern(input, function_name)
   call histadd('cmd', a:function_name.' '.l:ascii_name)
   execute a:function_name.' '.l:ascii_name
 endfunction
-autocmd FileType fern nnoremap <silent> <leader>ag :call SearchFern('<C-R><C-L>', 'Ag')<CR>
-autocmd FileType fern nnoremap <silent> <leader>rg :call SearchFern('<C-R><C-L>', 'Rg')<CR>
+autocmd FileType fern nmap <silent> <buffer> <leader>ag :call SearchFern('<C-R><C-L>', 'Ag')<CR>
+autocmd FileType fern nmap <silent> <buffer> <leader>rg :call SearchFern('<C-R><C-L>', 'Rg')<CR>
 
 nnoremap <silent> <leader>/ :BLines<CR>
 
-nnoremap <silent> <leader>rg :Rg <C-R><C-W><Cr>
 " Search for the visually selected text
 vnoremap // y/\V<C-R>=escape(@",'/\')<CR><CR>
 
