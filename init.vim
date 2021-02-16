@@ -188,7 +188,21 @@ vnoremap <silent> i` :<c-u>call Ticks(1)<cr>
 onoremap <silent> a` :<c-u>normal va`<cr>
 onoremap <silent> i` :<c-u>normal vi`<cr>
 
-"
+" Map Emacs like movement in Insert mode
+inoremap <C-n> <Down>
+inoremap <C-p> <Up>
+inoremap <C-f> <Right>
+inoremap <C-b> <Left>
+inoremap <C-e> <C-o>$
+inoremap <C-a> <C-o>^
+
+cnoremap <C-A>		<Home>
+cnoremap <C-B>		<Left>
+cnoremap <C-D>		<Del>
+cnoremap <C-E>		<End>
+cnoremap <C-F>		<Right>
+cnoremap <C-N>		<Down>
+cnoremap <C-P>		<Up>
 " "========================================================
 " " leader config
 " "========================================================
