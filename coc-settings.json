@@ -11,8 +11,13 @@
     ]
   },
   "eslint.run": "onSave",
-  "java.maven.downloadSources": true,
   "java.jdt.ls.vmargs": "-javaagent:/Users/eh/.m2/repository/org/projectlombok/lombok/1.18.12/lombok-1.18.12.jar -Xbootclasspath/a:/Users/eh/.m2/repository/org/projectlombok/lombok/1.18.12/lombok-1.18.12.jar",
+  "java.maven.downloadSources": true,
+  "java.completion.filteredTypes": [
+    "java.awt.*",
+    "com.sun.*",
+    "antlr.*"
+  ],
   "prettier.eslintIntegration": true,
   "python.jediEnabled": false,
   "reason_language_server.reloadOnChange": true,
