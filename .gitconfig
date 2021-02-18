@@ -10,3 +10,5 @@
   # automatically launch merge tool without displaying a prompt
 [mergetool]
   prompt = false
+[core]
+	whitespace = trailing-space
