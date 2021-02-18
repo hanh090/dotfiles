@@ -24,7 +24,7 @@ ZSH_THEME="robbyrussell"
 # HYPHEN_INSENSITIVE="true"
 
 # Uncomment the following line to disable bi-weekly auto-update checks.
-# DISABLE_AUTO_UPDATE="true"
+DISABLE_AUTO_UPDATE="true"
 
 # Uncomment the following line to automatically update without prompting.
 # DISABLE_UPDATE_PROMPT="true"
@@ -76,6 +76,7 @@ plugins=(
   git
   rake
   rake-fast
+  rails
   vi-mode
   yarn
 )
@@ -171,10 +172,15 @@ ot() {
   open -a "/Applications/Telegram.app/Contents/MacOS/Telegram"
 }
 # fetch and merge master to current branch
-fm() {
+gfm() {
  git fetch origin master
  git merge origin/master
 }
+# git checkout interactive
+gcoi(){
+ git checkout $(git branch | fzf -1)
+}
+
 # Quickly merge staging
 deploySbx() {
   currentBranch=$(git describe --contains --all HEAD)
