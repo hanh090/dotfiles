@@ -310,6 +310,8 @@ augroup fugitive_ext
   " Browse to the commit under my cursor
   autocmd FileType fugitiveblame,git nnoremap <buffer> <leader>gh :execute ":Gbrowse " . expand("<cword>")<cr>
   autocmd FileType fugitive nnoremap <buffer> D :!rm -rf <c-r><c-f><cr>
+  autocmd FileType * set synmaxcol=120
+  autocmd FileType fugitive set synmaxcol=500
   " Unmap q so that we can use macro to multiple remove
   autocmd FileType fugitive nunmap <buffer> q
   autocmd FileType git nnoremap <buffer> go Vy:call OpenFilePath('<C-R>=@"<CR>')<CR>
@@ -689,6 +691,7 @@ command! -nargs=1 -complete=command -bar -range Redir silent call Redir(<q-args>
 au FileType reason let b:AutoPairs = AutoPairsDefine({'/**':'**/'}, ["`", "'"])
 au FileType html let b:AutoPairs = AutoPairsDefine({'<!--' : '-->'})
 au FileType java let b:AutoPairs = AutoPairsDefine({'<' : '>'})
+au FileType markdown let b:AutoPairs = AutoPairsDefine({}, ["["])
 
 au FileType gitcommit set textwidth=0
 " Set background and colorscheme
