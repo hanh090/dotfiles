@@ -246,3 +246,5 @@ source ~ZSH_CUSTOM/plugins/fzf-tab/fzf-tab.plugin.zsh
 
 # fix problem with unmatching
 unsetopt nomatch
+
+source /Users/eh/.config/broot/launcher/bash/br
