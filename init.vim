@@ -16,7 +16,6 @@ Plug 'lambdalisue/fern.vim'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'nvim-treesitter/nvim-treesitter-refactor'
 Plug 'christianchiarulli/nvcode-color-schemes.vim'
-Plug 'p00f/nvim-ts-rainbow'
 " Theme + Style
 Plug 'norcalli/nvim-colorizer.lua'
 " Plug 'rafi/awesome-vim-colorschemes'
@@ -128,18 +127,24 @@ Plug 'jesseleite/vim-agriculture'
 Plug 'MTDL9/vim-log-highlighting'
 
 "Interactive buffer
-Plug 'metakirby5/codi.vim'
+" Plug 'metakirby5/codi.vim'
 call plug#end()
 
 "{
 lua << LUA
 require'nvim-treesitter.configs'.setup {
   ensure_installed = "all", -- one of "all", "maintained" (parsers with maintainers), or a list of languages
-  rainbow = {
-    enable = false
-  },
   highlight = {
     enable = true,              -- false will disable the whole extension
+  },
+  incremental_selection = {
+    enable = true,
+    keymaps = {
+      init_selection = "gnn",
+      node_incremental = "grn",
+      scope_incremental = "grc",
+      node_decremental = "grm",
+    },
   },
 }
 LUA
@@ -690,7 +695,6 @@ command! -nargs=1 -complete=command -bar -range Redir silent call Redir(<q-args>
 " removing
 au FileType reason let b:AutoPairs = AutoPairsDefine({'/**':'**/'}, ["`", "'"])
 au FileType html let b:AutoPairs = AutoPairsDefine({'<!--' : '-->'})
-au FileType java let b:AutoPairs = AutoPairsDefine({'<' : '>'})
 au FileType markdown let b:AutoPairs = AutoPairsDefine({}, ["["])
 
 au FileType gitcommit set textwidth=0
