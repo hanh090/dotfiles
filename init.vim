@@ -315,7 +315,7 @@ augroup fugitive_ext
   " Browse to the commit under my cursor
   autocmd FileType fugitiveblame,git nnoremap <buffer> <leader>gh :execute ":Gbrowse " . expand("<cword>")<cr>
   autocmd FileType fugitive nnoremap <buffer> D :!rm -rf <c-r><c-f><cr>
-  autocmd FileType * set synmaxcol=120
+  autocmd FileType * set synmaxcol=200
   autocmd FileType fugitive set synmaxcol=500
   " Unmap q so that we can use macro to multiple remove
   autocmd FileType fugitive nunmap <buffer> q
