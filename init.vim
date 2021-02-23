@@ -324,6 +324,7 @@ augroup fugitive_ext
   autocmd FileType fugitive set synmaxcol=500
   " Unmap q so that we can use macro to multiple remove
   autocmd FileType fugitive nunmap <buffer> q
+  autocmd FileType fugitive DisableWhitespace
   autocmd FileType git nnoremap <buffer> go Vy:call OpenFilePath('<C-R>=@"<CR>')<CR>
 augroup END
 
