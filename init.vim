@@ -23,6 +23,9 @@ Plug 'ryanoasis/vim-devicons'
 Plug 'lambdalisue/fern-renderer-devicons.vim'
 " Show indent line
 Plug 'Yggdroot/indentLine'
+"----{
+let g:indentLine_setConceal = 0
+"}
 " " Better display for json
 " Plug 'elzr/vim-json'
 let g:vim_json_syntax_conceal = 0
@@ -425,8 +428,6 @@ let g:WebDevIconsUnicodeDecorateFileNodesExtensionSymbols['properties']  = ''
 let g:WebDevIconsUnicodeDecorateFileNodesExtensionSymbols['snap']  = ''
 let g:WebDevIconsUnicodeDecorateFileNodesExtensionSymbols['apib']  = ''
 
-
-
 " Custom airline
 let g:airline_theme='bubblegum'
 
@@ -469,7 +470,7 @@ set redrawtime=10000
 set regexpengine=1
 set expandtab
 set noshowmode
-"
+set conceallevel=2
 "  Searching
 set hlsearch
 set incsearch
@@ -699,7 +700,8 @@ au FileType reason let b:AutoPairs = AutoPairsDefine({'/**':'**/'}, ["`", "'"])
 au FileType html let b:AutoPairs = AutoPairsDefine({'<!--' : '-->'})
 au FileType markdown let b:AutoPairs = AutoPairsDefine({}, ["["])
 
-au FileType gitcommit set textwidth=0
+au FileType gitcommit set  textwidth=0
+au FileType markdown  setl conceallevel=0
 " Set background and colorscheme
 set termguicolors
 " configure nvcode-color-schemes
