@@ -126,6 +126,8 @@ Plug 'jesseleite/vim-agriculture'
 " Add log hightlight
 Plug 'MTDL9/vim-log-highlighting'
 
+" Markdown and folding
+Plug 'plasticboy/vim-markdown'
 "Interactive buffer
 " Plug 'metakirby5/codi.vim'
 call plug#end()
