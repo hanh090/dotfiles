@@ -39,7 +39,7 @@ Plug 'matze/vim-move'
 Plug 'easymotion/vim-easymotion'
 Plug 'ntpeters/vim-better-whitespace'
 "{
-let g:better_whitespace_filetypes_blacklist=['log', 'fugitive', 'quickfix']
+let g:better_whitespace_filetypes_blacklist=['log', 'fugitive', 'quickfix', 'git']
 "}
 Plug 'tomtom/tcomment_vim'
 Plug 'tpope/vim-surround'
