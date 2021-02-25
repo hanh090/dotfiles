@@ -200,7 +200,7 @@ deploySbx() {
   echo "DONE"
 }
 
-alias dsb='deploySbx $(git branch | grep sbx- | fzf --height 40%)'
+alias dsb='deploySbx $(git branch | fzf --height 40% -q sbx)'
 
 # staging
 alias heroclistag='HERO_ACCESS_TOKEN=$HERO_ACCESS_TOKEN_STG herocli --server hero2.staging.ehrocks.com:443'
@@ -243,7 +243,8 @@ esac
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 source ~ZSH_CUSTOM/plugins/fzf-tab/fzf-tab.plugin.zsh
-
+# wrap git by hub
+# eval "$(hub alias -s)"
 # fix problem with unmatching
 unsetopt nomatch
 
