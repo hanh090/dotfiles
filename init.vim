@@ -288,8 +288,12 @@ noremap  <leader>gb :Gblame<cr>
 noremap  <leader>gc :BranchList<cr>
 noremap  <leader>gC :BranchList!<cr>
 noremap  <leader>gm :Git fetch origin master <bar> Git merge origin/master<cr>
-noremap  <leader>gd :execute 'Git diff origin/master..'.FugitiveHead()<cr>
+noremap  <leader>gd :execute 'Git diff '.GInitCommitWhenBranching().'..HEAD'<cr>
 
+function! GInitCommitWhenBranching()
+  let commit = system('git show --pretty=format:"\%h" `git merge-base '.FugitiveHead().' origin/master`')
+  return commit[1:10]
+endfunction
 function! GNewBranch()
   let branch_name = input('Enter your branch ('.pathshorten(getcwd()).'):')
   if len(l:branch_name) == 0
