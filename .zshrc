@@ -200,7 +200,7 @@ deploySbx() {
   echo "DONE"
 }
 
-alias dsb='deploySbx $(git branch | grep sbx- | fzf --height 40%)'
+alias dsb='deploySbx $(git branch | fzf --height 40% -q "sbx | stag" -1)'
 
 # staging
 alias heroclistag='HERO_ACCESS_TOKEN=$HERO_ACCESS_TOKEN_STG herocli --server hero2.staging.ehrocks.com:443'
