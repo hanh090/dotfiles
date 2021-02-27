@@ -336,7 +336,7 @@ augroup fugitive_ext
 augroup END
 
 " Github PR
-nnoremap <leader>pr :Git pull-request -d<cr>
+nnoremap <leader>pr :Git hub-pr -d<cr>
 
 " Github PR list
 function! s:pr_checkout(selected)
