@@ -133,6 +133,9 @@ Plug 'MTDL9/vim-log-highlighting'
 Plug 'plasticboy/vim-markdown'
 "Interactive buffer
 " Plug 'metakirby5/codi.vim'
+" Rainbow parenless
+" Plug 'luochen1990/rainbow'
+" let g:rainbow_active = 0
 call plug#end()
 
 "{
