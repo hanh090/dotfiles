@@ -517,7 +517,6 @@ let g:coc_global_extensions =
       \ 'coc-html',
       \ 'coc-java',
       \ 'coc-json',
-      \ 'coc-prettier',
       \ 'coc-python',
       \ 'coc-reason',
       \ 'coc-snippets',
@@ -619,7 +618,7 @@ endfunction
 " === END COC config
 
 " Auto format
-autocmd BufWritePre *.js,*.jsx,*.css,*.scss,*.less,*.ts,*.tsx if stridx(expand("%:p"), "node_modules") < 0 | CocCommand prettier.formatFile | endif
+autocmd BufWritePre *.js,*.jsx,*.css,*.scss,*.less,*.ts,*.tsx if stridx(expand("%:p"), "node_modules") < 0 | call CocAction('format') | endif
 " autocmd BufWritePre *.re call CocAction('format')
 
 
