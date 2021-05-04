@@ -25,7 +25,10 @@
   "solargraph.checkGemVersion": false,
   "solargraph.diagnostics": true,
   "solargraph.formatting": true,
+  "sql.formatOptions":{"uppercase": true},
   "suggest.timeout": 6000,
+  "eslint.workingDirectories":["./packages/core"],
+  "eslint.autoFixOnSave":false,
   "workspace.ignoredFiletypes": [
     "log",
     "txt",

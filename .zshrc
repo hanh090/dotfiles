@@ -183,9 +183,8 @@ gcoi(){
 
 # Quickly merge staging
 deploySbx() {
-  currentBranch=$(git describe --contains --all HEAD)
-  echo "STASH"
-  git stash
+  currentBranch=$(git rev-parse --abbrev-ref HEAD)
+  # git stash
   echo "FETCH ORIGIN CODE"
   git fetch origin $1
   echo "MERGE $currentBranch"
@@ -195,8 +194,9 @@ deploySbx() {
   echo "PUSH CODE"
   git push origin HEAD
   cc # Open CircleCI
+  echo "CHECKOUT BACK"
   git checkout $currentBranch
-  git stash apply
+  # git stash apply
   echo "DONE"
 }
 
@@ -204,9 +204,15 @@ alias dsb='deploySbx $(git branch | fzf --height 40% -q "sbx | stag" -1)'
 
 # staging
 alias heroclistag='HERO_ACCESS_TOKEN=$HERO_ACCESS_TOKEN_STG herocli --server hero2.staging.ehrocks.com:443'
+herostag(){
+  heroclistag $1 $2 $3
+}
 
 # production AU
 alias herocliprod='HERO_ACCESS_TOKEN=$HERO_ACCESS_TOKEN_PROD herocli --server hero2.ehrocks.com:443'
+heroprod(){
+  heroprod $1 $2 $3
+}
 
 # production EU
 alias herocliprod_eu='HERO_ACCESS_TOKEN=$HERO_ACCESS_TOKEN_PROD_EU herocli --server hero2.eu.ehrocks.com:443'

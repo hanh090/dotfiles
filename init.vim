@@ -12,11 +12,12 @@ Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'lambdalisue/fern.vim'
 
-"--------- Language syntax
+" "--------- Language syntax
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+Plug 'nvim-treesitter/playground'
 Plug 'nvim-treesitter/nvim-treesitter-refactor'
 Plug 'christianchiarulli/nvcode-color-schemes.vim'
-" Theme + Style
+" " Theme + Style
 Plug 'norcalli/nvim-colorizer.lua'
 " Plug 'rafi/awesome-vim-colorschemes'
 Plug 'ryanoasis/vim-devicons'
@@ -38,7 +39,7 @@ if has('unix')
 endif
 
 " Support
-Plug 'matze/vim-move'
+" Plug 'matze/vim-move'
 Plug 'easymotion/vim-easymotion'
 Plug 'ntpeters/vim-better-whitespace'
 "{
@@ -72,9 +73,9 @@ Plug 'neoclide/coc.nvim'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 
+
 " More shortcut/keybinding
 Plug 'tpope/vim-unimpaired'
-
 " Split/Join code
 Plug 'AndrewRadev/splitjoin.vim'
 
@@ -131,6 +132,14 @@ Plug 'MTDL9/vim-log-highlighting'
 
 " Markdown and folding
 Plug 'plasticboy/vim-markdown'
+
+" Asynchonous call
+Plug 'tpope/vim-dispatch'
+" manage projection and alternate file
+Plug 'tpope/vim-projectionist'
+" Utilitis from projectionist for rails
+" Plug 'tpope/vim-rails'
+
 "Interactive buffer
 " Plug 'metakirby5/codi.vim'
 " Rainbow parenless
@@ -142,6 +151,7 @@ call plug#end()
 lua << LUA
 require'nvim-treesitter.configs'.setup {
   ensure_installed = "all", -- one of "all", "maintained" (parsers with maintainers), or a list of languages
+  ignore_install = { "haskell" },
   highlight = {
     enable = true,              -- false will disable the whole extension
   },
@@ -178,6 +188,7 @@ command! -nargs=* -complete=dir -bang Cd call
       \ 'sink': 'cd',
       \ 'options': [
       \ '-q', len(<q-args>) > 0 ?(<q-args>): '',
+      \ '-1',
       \ '--prompt', getcwd().">"]
       \ } , <bang>0))
 " Ignore that because it leads to start in replace mode
@@ -216,6 +227,13 @@ cnoremap <C-E>		<End>
 cnoremap <C-F>		<Right>
 cnoremap <C-N>		<Down>
 cnoremap <C-P>		<Up>
+cnoremap <M-b> <S-Left>
+cnoremap <M-f> <S-Right>
+
+" These mappings will make it so that going to the next one in a search will
+" center on the line it's found in.
+nnoremap n nzzzv
+nnoremap N Nzzzv
 " "========================================================
 " " leader config
 " "========================================================
@@ -232,7 +250,7 @@ autocmd FileType fern hi CursorLine ctermbg=20 guibg=#2c323c gui=bold
 noremap  <leader>f :FZF<CR>
 vnoremap <leader>f y:call fzf#vim#files('.', {'options': ['--query', '<C-R>=@"<CR>']})<CR>
 noremap  <leader>b :Buffers<CR>
-noremap  <silent> <leader>h :call fzf#vim#history({ 'options': ['--header-lines', 0, '--header', getcwd()]})<CR>
+" noremap  <silent> <leader>h :call fzf#vim#history({ 'options': ['--header-lines', 0, '--header', getcwd()]})<CR>
 noremap  <leader>d :Cd <CR>
 " Search for the word under cursor
 nnoremap <silent> <leader>ag :call  histadd("cmd", 'Ag <C-R><C-W>')   <bar> Ag <C-R><C-W><CR>
@@ -243,6 +261,7 @@ vnoremap <silent> <leader>rg y:call histadd("cmd", 'Rg <C-R>=@"<CR>') <bar> Rg <
 function! SearchFern(input, function_name)
   wincmd l
   let l:ascii_name = substitute(split(a:input)[1], "\\..*$", "", 'g')
+  let l:ascii_name = substitute(l:ascii_name, "/", "", 'g')
   call histadd('cmd', a:function_name.' '.l:ascii_name)
   execute a:function_name.' '.l:ascii_name
 endfunction
@@ -268,7 +287,8 @@ tnoremap <leader>q <c-\><c-n>
 noremap <leader>w :w<cr>
 noremap <leader>e :e!<cr>
 noremap <leader>q :q<cr>
-
+" only tab
+noremap <leader>to :tabonly<cr>
 " Split screen
 noremap <leader>s :vsplit<cr>
 noremap <leader>v :split<cr>
@@ -284,54 +304,74 @@ noremap  <leader>gl :execute 'Git pull origin '.FugitiveHead()<cr>
 noremap  <leader>gL :Git stash <bar> execute 'Git pull origin '.FugitiveHead() <bar> Git stash apply <bar> echo "Pull success"<cr>
 noremap  <leader>gp :Git push origin HEAD <bar>echo "Pushed success" <cr>
 noremap  <leader>gP :Git push origin HEAD --force <bar>echo "Pushed success" <cr>
-noremap  <leader>gb :Gblame<cr>
+noremap  <leader>gb :Git blame<cr>
 noremap  <leader>gc :BranchList<cr>
 noremap  <leader>gC :BranchList!<cr>
 noremap  <leader>gm :Git fetch origin master <bar> Git merge origin/master<cr>
 noremap  <leader>gd :execute 'Git diff '.GInitCommitWhenBranching().'..HEAD'<cr>
+noremap  <leader>gD :execute 'Git diff --name-status '.GInitCommitWhenBranching().'..HEAD'<cr>
+
+" reload current file in source code
+noremap  <leader>gr :execute 'edit +'.line('.').' '.substitute(expand('%'), 'fugitive://\\|.git//\x*/', '', 'g')<cr>
 
 function! GInitCommitWhenBranching()
-  let commit = system('git show --pretty=format:"\%h" `git merge-base '.FugitiveHead().' origin/master`')
-  return commit[1:10]
+  let merge_branch = GetMergeBranchByProj()
+  let commit = system('git merge-base '.FugitiveHead().' origin/'.l:merge_branch)
+  return commit[:-2]
 endfunction
 function! GNewBranch()
   let branch_name = input('Enter your branch ('.pathshorten(getcwd()).'):')
   if len(l:branch_name) == 0
     return
   endif
+  let merge_branch = GetMergeBranchByProj()
+  execute '!git fetch origin '.l:merge_branch
+  execute '!git checkout -b '.l:branch_name.' origin/'.l:merge_branch
+endfunction
+
+function! GetMergeBranchByProj()
   let merge_branch = 'master'
   if stridx(getcwd(), "employment-hero") >=0
     let merge_branch = "development"
   elseif stridx(getcwd(), "plan-manager") >= 0
     let merge_branch = "dev"
+  elseif stridx(getcwd(), "frontend-script") >= 0
+    let merge_branch = "main"
   endif
-  execute '!git fetch origin '.l:merge_branch
-  execute '!git checkout -b '.l:branch_name.' origin/'.l:merge_branch
+  return merge_branch
 endfunction
 noremap <leader>gn :call GNewBranch()<cr>
 
 " Git status in new tab
 noremap  <leader>gs :Gtabedit :<cr>
-noremap  <leader>gS :Gstatus<cr>
-nnoremap <leader>gh :Gbrowse<cr>
-vnoremap <leader>gh :Gbrowse<cr>
+noremap  <leader>gS :Git<cr>
+nnoremap <leader>gh :GBrowse<cr>
+vnoremap <leader>gh :GBrowse<cr>
+vnoremap <leader>gH :GBrowse!<cr>
 
 function! OpenFilePath(fugitive_path)
-   let file_path_with_hash = split(split(a:fugitive_path, '//')[-1])[-1]
-   let file_path = join(split(file_path_with_hash, '/')[1:], '/')
-   execute 'edit '.file_path
+  let file_path_with_hash = split(split(a:fugitive_path, '//')[-1])[-1]
+  let file_path_index = 0
+  if stridx(file_path_with_hash, "a/") >= 0 || stridx(file_path_with_hash, "b/") >= 0
+    let file_path_index = 1
+  endif
+  let file_path = join(split(file_path_with_hash, '/')[file_path_index:], '/')
+  execute 'edit '.file_path
 endfunction
 
 augroup fugitive_ext
   autocmd!
   " Browse to the commit under my cursor
-  autocmd FileType fugitiveblame,git nnoremap <buffer> <leader>gh :execute ":Gbrowse " . expand("<cword>")<cr>
+  autocmd FileType fugitiveblame,git,qf nnoremap <buffer> <leader>gh :execute ":Gbrowse " . expand("<cword>")<cr>
+  autocmd FileType fugitive nnoremap <buffer> <leader>gb :Gbrowse head<cr>
+  autocmd FileType fugitive nnoremap <buffer> <leader>gB :Gbrowse! head<cr>
   autocmd FileType fugitive nnoremap <buffer> D :!rm -rf <c-r><c-f><cr>
   autocmd FileType * set synmaxcol=200
   autocmd FileType fugitive set synmaxcol=500
   " Unmap q so that we can use macro to multiple remove
   autocmd FileType fugitive nunmap <buffer> q
-  autocmd FileType fugitive DisableWhitespace
+  autocmd FileType git nnoremap <buffer> q q
+  autocmd FileType fugitive,help DisableWhitespace
   autocmd FileType git nnoremap <buffer> go Vy:call OpenFilePath('<C-R>=@"<CR>')<CR>
 augroup END
 
@@ -417,12 +457,15 @@ let g:EasyMotion_smartcase = 1
 map  <leader>jk <Plug>(easymotion-s)
 map  <leader>ja <Plug>(easymotion-lineanywhere)
 map  <leader>jA <Plug>(easymotion-jumptoanywhere)
-map <leader>jf <Plug>(easymotion-overwin-f2)
+map  <leader>jf <Plug>(easymotion-overwin-f2)
 nmap <leader>jw <Plug>(easymotion-overwin-w)
 nmap <leader>jl <Plug>(easymotion-overwin-line)
 " Remove annoyed Coc in jump mode
-autocmd User EasyMotionPromptBegin silent! CocDisable
-autocmd User EasyMotionPromptEnd silent! CocEnable
+" autocmd User EasyMotionPromptBegin silent! CocDisable
+" autocmd User EasyMotionPromptEnd   silent! CocEnable
+
+" autocmd User EasyMotionPromptBegin silent! TSBufDisable
+" autocmd User EasyMotionPromptEnd   silent! TSBufEnable
 
 let g:fern#renderer = "devicons"
 let g:fern_renderer_devicons_disable_warning = 1
@@ -517,10 +560,12 @@ let g:coc_global_extensions =
       \ 'coc-html',
       \ 'coc-java',
       \ 'coc-json',
+      \ 'coc-prettier',
       \ 'coc-python',
       \ 'coc-reason',
       \ 'coc-snippets',
       \ 'coc-solargraph',
+      \ 'coc-sql',
       \ 'coc-tsserver',
       \ 'coc-vimlsp',
       \ 'coc-xml',
@@ -561,6 +606,7 @@ nmap <silent> <space>cy  :<C-u>CocList -N yank<cr>
 nmap <silent> <space>cY  :<C-u>CocList --normal yank<cr>:set filetype=vim<cr>
 " quick fix
 nmap <silent> <space>cq <Plug>(coc-codeaction)
+vmap <silent> <space>cq <Plug>(coc-codeaction-selected)
 nmap <silent> <space>cf <Plug>(coc-format)
 vmap <silent> <space>cf <Plug>(coc-format-selected)
 " Add text object
@@ -618,8 +664,10 @@ endfunction
 " === END COC config
 
 " Auto format
-autocmd BufWritePre *.js,*.jsx,*.css,*.scss,*.less,*.ts,*.tsx if stridx(expand("%:p"), "node_modules") < 0 | call CocAction('format') | endif
-" autocmd BufWritePre *.re call CocAction('format')
+autocmd BufWritePost *.js,*.jsx,*.css,*.scss,*.less,*.ts,*.tsx if stridx(expand("%:p"), "node_modules") < 0 | call CocAction('format') | endif
+autocmd BufWritePost *.re call CocAction('format')
+" Temporary fix for ruby syntax.Ref: https://github.com/nvim-treesitter/nvim-treesitter/issues/584#issuecomment-708607922
+autocmd BufNewFile,BufRead *.rb set syntax=ruby
 
 
 " Quick escape
@@ -647,7 +695,8 @@ let $FZF_DEFAULT_OPTS='--bind '.
       \ 'alt-a:select-all,'.
       \ 'alt-d:deselect-all'
 
-let g:fzf_preview_window = 'right:40%:wrap'
+let g:fzf_preview_window = &columns > 120 ? 'right:40%:wrap' : ''
+autocmd VimResized * let g:fzf_preview_window = &columns > 120 ? 'right:40%:wrap' : ''
 " Border style (rounded / sharp / horizontal)
 " let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6,  'highlight': 'Todo', 'border': 'sharp' } }
 let g:fzf_layout = { 'down': '40%' }
@@ -703,9 +752,10 @@ command! -nargs=1 -complete=command -bar -range Redir silent call Redir(<q-args>
 
 " Custom autopair for filetype.First parameter is adding, second parameter is
 " removing
-au FileType reason let b:AutoPairs = AutoPairsDefine({'/**':'**/'}, ["`", "'"])
-au FileType html let b:AutoPairs = AutoPairsDefine({'<!--' : '-->'})
+au FileType reason   let b:AutoPairs = AutoPairsDefine({'/**':'**/'}, ["`", "'"])
+au FileType html     let b:AutoPairs = AutoPairsDefine({'<!--':'-->'})
 au FileType markdown let b:AutoPairs = AutoPairsDefine({}, ["["])
+au FileType ruby     let b:AutoPairs = AutoPairsDefine({'\v(^|\s)\zsbegin': 'end//n', '\v(^|\s)\zsdo': 'end//n', '|':'|'})
 
 au FileType gitcommit set  textwidth=0
 au FileType markdown  setl conceallevel=0
@@ -721,6 +771,7 @@ hi link CocErrorHighlight CocUnderlineError
 hi MatchTag term=reverse cterm=reverse ctermfg=136 ctermbg=236 guibg=Yellow
 hi MatchParen ctermfg=yellow
 hi Search  ctermfg=234 ctermbg=180 guifg=#1e1e1e guibg=#e5c07b
+hi Cursor  ctermfg=234 ctermbg=white guifg=#1e1e1e guibg=#e5c07b
 
 " hi Visual cterm=reverse ctermbg=242 guibg=#303030 cterm=reverse ctermbg=242 gui=reverse guifg=#586e75 guibg=#002b36
 " Required for operations modifying multiple buffers like rename.
