@@ -11,7 +11,8 @@
     ]
   },
   "eslint.run": "onSave",
-  "java.jdt.ls.vmargs": "-javaagent:/Users/eh/.m2/repository/org/projectlombok/lombok/1.18.12/lombok-1.18.12.jar -Xbootclasspath/a:/Users/eh/.m2/repository/org/projectlombok/lombok/1.18.12/lombok-1.18.12.jar",
+  "eslint.autoFixOnSave": false,
+  "java.jdt.ls.vmargs": "-javaagent:/Users/eh/.m2/repository/org/projectlombok/lombok/1.18.12/lombok-1.18.12.jar",
   "java.maven.downloadSources": true,
   "java.completion.filteredTypes": [
     "java.awt.*",
@@ -21,14 +22,31 @@
   "prettier.eslintIntegration": true,
   "python.jediEnabled": false,
   "reason_language_server.reloadOnChange": true,
+  "languageserver": {
+    "rescript": {
+      "enable": true,
+      "module": "~/.vim/plugged/vim-rescript/server/out/server.js",
+      "args": [
+        "--node-ipc"
+      ],
+      "filetypes": [
+        "rescript"
+      ],
+      "rootPatterns": [
+        "bsconfig.json"
+      ]
+    }
+  },
   "solargraph.autoformat": true,
+  "solargraph.useBundler": false,
   "solargraph.checkGemVersion": false,
   "solargraph.diagnostics": true,
   "solargraph.formatting": true,
-  "sql.formatOptions":{"uppercase": true},
+  "sql.formatOptions": {
+    "uppercase": true
+  },
   "suggest.timeout": 6000,
-  "eslint.workingDirectories":["./packages/core"],
-  "eslint.autoFixOnSave":false,
+  "flutter.sdk.flutter-lookup": "asdf which flutter",
   "workspace.ignoredFiletypes": [
     "log",
     "txt",

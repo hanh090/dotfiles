@@ -3,7 +3,7 @@
 if empty(glob('~/.vim/autoload/plug.vim'))
   silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
     \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-  autocmd VimEnter * PlugInstall | source $MYVIMRC
+  autocmd VimEnter * PlugInstal.l:project_pathl | source $MYVIMRC
 endif
 
 call plug#begin('~/.vim/plugged')
@@ -17,6 +17,8 @@ Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'nvim-treesitter/playground'
 Plug 'nvim-treesitter/nvim-treesitter-refactor'
 Plug 'christianchiarulli/nvcode-color-schemes.vim'
+" Rspec folder
+Plug 'rlue/vim-fold-rspec'
 " " Theme + Style
 Plug 'norcalli/nvim-colorizer.lua'
 " Plug 'rafi/awesome-vim-colorschemes'
@@ -57,6 +59,7 @@ Plug 'Valloric/MatchTagAlways'
 
 "  Git
 Plug 'tpope/vim-fugitive'
+Plug 'junkblocker/git-time-lapse'
 " --- Integrate github to git
 Plug 'tpope/vim-rhubarb'
 " -- Integrate gitlab to git fugitive
@@ -80,14 +83,15 @@ Plug 'tpope/vim-unimpaired'
 Plug 'AndrewRadev/splitjoin.vim'
 
 " ReasonML
-Plug 'hanh090/vim-reason-plus'
+Plug 'rescript-lang/vim-rescript'
+Plug 'reasonml-editor/vim-reason-plus'
 " Send command to tmux
 Plug 'jgdavey/tslime.vim'
 "{
 let g:tslime_always_current_session = 1
 let g:tslime_always_current_window = 1
 vmap <C-c><C-c> <Plug>SendSelectionToTmux
-nmap <C-c><C-c> <Plug>NormalModeSendToTmux
+nmap <C-c><C-c> V<Plug>SendSelectionToTmux
 nmap <C-c>r <Plug>SetTmuxVars
 "}
 
@@ -106,15 +110,6 @@ Plug 'michaeljsmith/vim-indent-object'
 Plug 'bkad/CamelCaseMotion'
 "---{
 let g:camelcasemotion_key = ','
-"---}
-" Convert javascript object to json and fix problem if have
-Plug 'rhysd/vim-fixjson'
-"---{
-" let s:root_dir = expand('<sfile>:p:h:h:h')
-" let s:cmd_path = join([s:root_dir, 'node_modules', '.bin', 'fixjson'], '/')
-" let g:fixjson_executable  = s:cmd_path
-let g:fixjson_indent_size = 2
-let g:fixjson_fix_on_save = 0
 "---}
 
 if has("nvim")
@@ -151,7 +146,7 @@ call plug#end()
 lua << LUA
 require'nvim-treesitter.configs'.setup {
   ensure_installed = "all", -- one of "all", "maintained" (parsers with maintainers), or a list of languages
-  ignore_install = { "haskell" },
+  ignore_install = { "haskell", "ruby" },
   highlight = {
     enable = true,              -- false will disable the whole extension
   },
@@ -196,6 +191,8 @@ nnoremap <Esc><Esc> :noh<CR><Esc>
 " Move to bottom after select paragraph
 vnoremap y y']
 
+nmap gx :silent execute "!open " . shellescape("<cWORD>")<CR><CR>
+
 " Select inside the tick
 function! Ticks(inner)
     normal! gv
@@ -234,23 +231,42 @@ cnoremap <M-f> <S-Right>
 " center on the line it's found in.
 nnoremap n nzzzv
 nnoremap N Nzzzv
+
+" https://vim.fandom.com/wiki/Selecting_your_pasted_text
+nnoremap gp `[v`]
 " "========================================================
 " " leader config
 " "========================================================
 let mapleader=" "
 
 noremap  <silent> <leader>m :Fern . -drawer -toggle<CR>
-noremap  <silent> <leader>r :Fern . -reveal=% -drawer<CR>
+noremap  <silent> <leader>r :execute GoToProjDir() <bar> Fern . -reveal=% -drawer<CR>
+
+function GoToProjDir()
+  let path_parts = split(expand('%:p'), '/')
+  let project_part_idx = 0
+  for part in path_parts
+    if part == "projects"
+      break
+    endif
+
+    let project_part_idx += 1
+  endfor
+
+  let project_path = "/".join(path_parts[0:project_part_idx + 1], "/")
+  execute 'cd '.l:project_path
+endfunction
 " Mapping tmux-navigator control
 let g:fern#mapping#mappings= ['drawer', 'filter', 'mark', 'node', 'open', 'wait', 'yank']
 autocmd FileType fern nnoremap <buffer> <c-l> :wincmd l<cr>
+autocmd FileType fern nmap <buffer><nowait> z <Plug>(fern-action-zoom:half)
 autocmd FileType fern nnoremap <buffer> <c-j> :TmuxNavigateDown<cr>
 autocmd FileType fern hi CursorLine ctermbg=20 guibg=#2c323c gui=bold
 " Searching
 noremap  <leader>f :FZF<CR>
 vnoremap <leader>f y:call fzf#vim#files('.', {'options': ['--query', '<C-R>=@"<CR>']})<CR>
 noremap  <leader>b :Buffers<CR>
-" noremap  <silent> <leader>h :call fzf#vim#history({ 'options': ['--header-lines', 0, '--header', getcwd()]})<CR>
+noremap  <silent> <leader>h :call fzf#vim#history({ 'options': ['--header-lines', 0, '--header', getcwd()]})<CR>
 noremap  <leader>d :Cd <CR>
 " Search for the word under cursor
 nnoremap <silent> <leader>ag :call  histadd("cmd", 'Ag <C-R><C-W>')   <bar> Ag <C-R><C-W><CR>
@@ -293,6 +309,9 @@ noremap <leader>to :tabonly<cr>
 noremap <leader>s :vsplit<cr>
 noremap <leader>v :split<cr>
 
+" Copy and Comment Lines
+nmap gy yygccp
+
 " Copy current file / folder path
 nnoremap <silent> cp :let @+ = expand("%")   <bar> echo @+<CR>
 nnoremap <silent> cP :let @+ = expand("%:p") <bar> echo @+<CR>
@@ -307,7 +326,7 @@ noremap  <leader>gP :Git push origin HEAD --force <bar>echo "Pushed success" <cr
 noremap  <leader>gb :Git blame<cr>
 noremap  <leader>gc :BranchList<cr>
 noremap  <leader>gC :BranchList!<cr>
-noremap  <leader>gm :Git fetch origin master <bar> Git merge origin/master<cr>
+noremap  <leader>gm :echo 'Merging origin/'.GetMergeBranchByProj() <bar> execute 'Git fetch origin '.GetMergeBranchByProj() <bar> execute 'Git merge origin/'.GetMergeBranchByProj() <cr>
 noremap  <leader>gd :execute 'Git diff '.GInitCommitWhenBranching().'..HEAD'<cr>
 noremap  <leader>gD :execute 'Git diff --name-status '.GInitCommitWhenBranching().'..HEAD'<cr>
 
@@ -319,6 +338,7 @@ function! GInitCommitWhenBranching()
   let commit = system('git merge-base '.FugitiveHead().' origin/'.l:merge_branch)
   return commit[:-2]
 endfunction
+
 function! GNewBranch()
   let branch_name = input('Enter your branch ('.pathshorten(getcwd()).'):')
   if len(l:branch_name) == 0
@@ -336,11 +356,13 @@ function! GetMergeBranchByProj()
   elseif stridx(getcwd(), "plan-manager") >= 0
     let merge_branch = "dev"
   elseif stridx(getcwd(), "frontend-script") >= 0
+        \ || stridx(getcwd(), "shabu-town") >= 0
+        \ || stridx(getcwd(), "coop-game") >= 0
     let merge_branch = "main"
   endif
   return merge_branch
 endfunction
-noremap <leader>gn :call GNewBranch()<cr>
+noremap <silent> <leader>gn :call GNewBranch()<CR>
 
 " Git status in new tab
 noremap  <leader>gs :Gtabedit :<cr>
@@ -376,7 +398,15 @@ augroup fugitive_ext
 augroup END
 
 " Github PR
-nnoremap <leader>pr :Git hub-pr -d<cr>
+function! s:pr_cmd_by_proj()
+  if stridx(getcwd(), "shabu-town") >= 0 ||
+        \ stridx(getcwd(), "coop-game") >= 0
+    execute "Git hub-pr"
+  else
+    execute "Git hub-pr -d"
+  endif
+endfunction
+nnoremap <leader>pr :call <SID>pr_cmd_by_proj()<cr>
 
 " Github PR list
 function! s:pr_checkout(selected)
@@ -401,6 +431,16 @@ command! -nargs=* -complete=dir -bang PrList call
       \ } , 0))
 nnoremap <leader>pl :PrList<cr>
 nnoremap <leader>pL :PrList!<cr>
+
+command! -nargs=* -complete=dir -bang FindReference call
+      \ fzf#run(fzf#wrap(
+      \ {
+      \ 'source': "cat ~/projects/frontend-core/.dependencyGraph.json | jq 'to_entries[] | select(.value | .[] | index(\"".expand("%")."\") > 0) | select (. | length > 0) | .key' | sed 's/\"//g'",
+      \ 'options': [
+      \   '--tiebreak', 'index',
+      \   '--prompt', "Find ref>",
+      \ ]
+      \ }, 0))
 
 " Open github PR at current branch
 function! Open_Pr_In_Branch()
@@ -461,8 +501,8 @@ map  <leader>jf <Plug>(easymotion-overwin-f2)
 nmap <leader>jw <Plug>(easymotion-overwin-w)
 nmap <leader>jl <Plug>(easymotion-overwin-line)
 " Remove annoyed Coc in jump mode
-" autocmd User EasyMotionPromptBegin silent! CocDisable
-" autocmd User EasyMotionPromptEnd   silent! CocEnable
+autocmd User EasyMotionPromptBegin silent! CocDisable
+autocmd User EasyMotionPromptEnd   silent! CocEnable
 
 " autocmd User EasyMotionPromptBegin silent! TSBufDisable
 " autocmd User EasyMotionPromptEnd   silent! TSBufEnable
@@ -473,6 +513,7 @@ if !exists('g:WebDevIconsUnicodeDecorateFileNodesExtensionSymbols')
   let g:WebDevIconsUnicodeDecorateFileNodesExtensionSymbols = {}
 endif
 let g:WebDevIconsUnicodeDecorateFileNodesExtensionSymbols['re']   = 'λ'
+let g:WebDevIconsUnicodeDecorateFileNodesExtensionSymbols['res']   = 'λ'
 let g:WebDevIconsUnicodeDecorateFileNodesExtensionSymbols['mjml'] = ''
 let g:WebDevIconsUnicodeDecorateFileNodesExtensionSymbols['xml']  = ''
 let g:WebDevIconsUnicodeDecorateFileNodesExtensionSymbols['properties']  = ''
@@ -504,6 +545,7 @@ nnoremap <expr> <C-z> <SID>CtrlZ()
 
 filetype plugin indent on
 
+" yank/copy-paste policy
 if has('win32') || has('win64') || has('mac')
   set clipboard=unnamed
 else
@@ -515,9 +557,9 @@ set smarttab
 set tabstop=2 " Number of space og a <Tab> character
 set softtabstop=2
 set shiftwidth=2 " Number of spaces use by autoindent
-set lazyredraw
+" set lazyredraw
 set synmaxcol=120  " avoid slow rendering for long lines
-set redrawtime=10000
+set redrawtime=5000
 set regexpengine=1
 set expandtab
 set noshowmode
@@ -558,11 +600,11 @@ let g:coc_global_extensions =
       \ 'coc-eslint',
       \ 'coc-highlight',
       \ 'coc-html',
+      \ 'coc-flutter',
       \ 'coc-java',
       \ 'coc-json',
       \ 'coc-prettier',
       \ 'coc-python',
-      \ 'coc-reason',
       \ 'coc-snippets',
       \ 'coc-solargraph',
       \ 'coc-sql',
@@ -586,7 +628,6 @@ nmap <silent> ]g <Plug>(coc-diagnostic-next)
 " Remap keys for gotos
 nmap <silent> gd <Plug>(coc-definition)
 nmap <silent> gs :call CocAction('jumpDefinition', 'vne')<CR>
-nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
 nmap <silent> <space>co :CocList outline<CR>
@@ -664,10 +705,10 @@ endfunction
 " === END COC config
 
 " Auto format
-autocmd BufWritePost *.js,*.jsx,*.css,*.scss,*.less,*.ts,*.tsx if stridx(expand("%:p"), "node_modules") < 0 | call CocAction('format') | endif
-autocmd BufWritePost *.re call CocAction('format')
+autocmd BufWritePre *.js,*.jsx,*.css,*.scss,*.less,*.ts,*.tsx if stridx(expand("%:p"), "node_modules") < 0 | call CocAction('format') | endif
+autocmd BufWritePre *.re,*.res call CocAction('format')
 " Temporary fix for ruby syntax.Ref: https://github.com/nvim-treesitter/nvim-treesitter/issues/584#issuecomment-708607922
-autocmd BufNewFile,BufRead *.rb set syntax=ruby
+autocmd BufNewFile,BufRead *.rb set ft=ruby
 
 
 " Quick escape
@@ -684,7 +725,10 @@ let $FZF_DEFAULT_COMMAND = 'rg --files --no-ignore-vcs --hidden'.
       \' --glob "!*.reast"'.
       \' --glob "!*.d"'.
       \' --glob "!.cache"'.
+      \' --glob "!*.snap"'.
       \' --glob "!*.class"'.
+      \' --glob "!*.bs.js"'.
+      \' --glob "!*.ast"'.
       \' '
 
 let $FZF_DEFAULT_OPTS='--bind '.
@@ -752,9 +796,10 @@ command! -nargs=1 -complete=command -bar -range Redir silent call Redir(<q-args>
 
 " Custom autopair for filetype.First parameter is adding, second parameter is
 " removing
-au FileType reason   let b:AutoPairs = AutoPairsDefine({'/**':'**/'}, ["`", "'"])
+au FileType reason   let b:AutoPairs = AutoPairsDefine({'/**':'**/'},       ["`",     "'"])
+au FileType rescript let b:AutoPairs = AutoPairsDefine({'/**':'**/'},       ["`",     "'"])
 au FileType html     let b:AutoPairs = AutoPairsDefine({'<!--':'-->'})
-au FileType markdown let b:AutoPairs = AutoPairsDefine({}, ["["])
+au FileType markdown let b:AutoPairs = AutoPairsDefine({},                  ["["])
 au FileType ruby     let b:AutoPairs = AutoPairsDefine({'\v(^|\s)\zsbegin': 'end//n', '\v(^|\s)\zsdo': 'end//n', '|':'|'})
 
 au FileType gitcommit set  textwidth=0

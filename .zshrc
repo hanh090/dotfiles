@@ -92,6 +92,7 @@ source $ZSH/oh-my-zsh.sh
 # Preferred editor for local and remote sessions
 export EDITOR='nvim'
 bindkey '^V' edit-command-line
+bindkey -M viins jj vi-cmd-mode
 # if [[ -n $SSH_CONNECTION ]]; then
 #   export EDITOR='vim'
 # else
@@ -178,7 +179,9 @@ gfm() {
 }
 # git checkout interactive
 gcoi(){
- git checkout $(git branch | fzf -1)
+ checkoutToBranch=$(git branch | fzf -1 | xargs)
+ print -s "git checkout $checkoutToBranch"
+ git checkout $checkoutToBranch
 }
 
 # Quickly merge staging
@@ -200,7 +203,7 @@ deploySbx() {
   echo "DONE"
 }
 
-alias dsb='deploySbx $(git branch | fzf --height 40% -q "sbx | stag" -1)'
+alias dsb='deploySbx $(git branch | fzf --height 40% -q "^sbx | stag" -1)'
 
 # staging
 alias heroclistag='HERO_ACCESS_TOKEN=$HERO_ACCESS_TOKEN_STG herocli --server hero2.staging.ehrocks.com:443'
@@ -248,9 +251,13 @@ esac
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-source ~ZSH_CUSTOM/plugins/fzf-tab/fzf-tab.plugin.zsh
-
 # fix problem with unmatching
 unsetopt nomatch
 
 source /Users/eh/.config/broot/launcher/bash/br
+
+# heroku autocomplete setup
+HEROKU_AC_ZSH_SETUP_PATH=/Users/eh/Library/Caches/heroku/autocomplete/zsh_setup && test -f $HEROKU_AC_ZSH_SETUP_PATH && source $HEROKU_AC_ZSH_SETUP_PATH;
+
+source ~ZSH_CUSTOM/plugins/fzf-tab/fzf-tab.plugin.zsh
+
