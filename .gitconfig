@@ -14,5 +14,6 @@
 	whitespace = trailing-space
 [alias]
   hub-pr = !hub pull-request
+  hub-pr-list = !hub pr list
 [pull]
 	rebase = false

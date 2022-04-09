@@ -21,13 +21,15 @@
   "prettier.eslintIntegration": true,
   "python.jediEnabled": false,
   "solargraph.autoformat": true,
+  "solargraph.useBundler": false,
   "solargraph.checkGemVersion": false,
   "solargraph.diagnostics": true,
   "solargraph.formatting": true,
-  "sql.formatOptions":{"uppercase": true},
+  "sql.formatOptions": {
+    "uppercase": true
+  },
   "suggest.timeout": 6000,
-  "eslint.workingDirectories":["./packages/core"],
-  "eslint.autoFixOnSave":false,
+  "flutter.sdk.flutter-lookup": "asdf which flutter",
   "workspace.ignoredFiletypes": [
     "log",
     "txt",

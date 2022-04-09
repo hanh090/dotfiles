@@ -89,6 +89,7 @@ source $ZSH/oh-my-zsh.sh
 # Preferred editor for local and remote sessions
 export EDITOR='nvim'
 bindkey '^V' edit-command-line
+bindkey -M viins jj vi-cmd-mode
 # if [[ -n $SSH_CONNECTION ]]; then
 #   export EDITOR='vim'
 # else
@@ -175,7 +176,9 @@ gfm() {
 }
 # git checkout interactive
 gcoi(){
- git checkout $(git branch | fzf -1)
+ checkoutToBranch=$(git branch | fzf -1 | xargs)
+ print -s "git checkout $checkoutToBranch"
+ git checkout $checkoutToBranch
 }
 
 # Quickly merge staging
@@ -197,7 +200,7 @@ deploySbx() {
   echo "DONE"
 }
 
-alias dsb='deploySbx $(git branch | fzf --height 40% -q "sbx | stag" -1)'
+alias dsb='deploySbx $(git branch | fzf --height 40% -q "^sbx | stag" -1)'
 
 # Change cursor mapping
 # zle-keymap-select() {
