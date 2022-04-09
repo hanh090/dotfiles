@@ -74,9 +74,6 @@ plugins=(
   bgnotify
   fzf
   git
-  rake
-  rake-fast
-  rails
   vi-mode
   yarn
 )
@@ -202,21 +199,6 @@ deploySbx() {
 
 alias dsb='deploySbx $(git branch | fzf --height 40% -q "sbx | stag" -1)'
 
-# staging
-alias heroclistag='HERO_ACCESS_TOKEN=$HERO_ACCESS_TOKEN_STG herocli --server hero2.staging.ehrocks.com:443'
-herostag(){
-  heroclistag $1 $2 $3
-}
-
-# production AU
-alias herocliprod='HERO_ACCESS_TOKEN=$HERO_ACCESS_TOKEN_PROD herocli --server hero2.ehrocks.com:443'
-heroprod(){
-  heroprod $1 $2 $3
-}
-
-# production EU
-alias herocliprod_eu='HERO_ACCESS_TOKEN=$HERO_ACCESS_TOKEN_PROD_EU herocli --server hero2.eu.ehrocks.com:443'
-
 # Change cursor mapping
 # zle-keymap-select() {
 #   if [[ $KEYMAP = vicmd ]]; then
@@ -252,5 +234,3 @@ source ~ZSH_CUSTOM/plugins/fzf-tab/fzf-tab.plugin.zsh
 
 # fix problem with unmatching
 unsetopt nomatch
-
-source /Users/eh/.config/broot/launcher/bash/br

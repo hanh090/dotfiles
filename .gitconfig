@@ -1,5 +1,5 @@
 [user]
-	email = hanh.le@employmenthero.com
+	email = lehanh.bk.mt1002@gmail.com
 	name = Hanh Le
   # define command which will be used when "nvim" is set as a merge tool
 [mergetool "nvim"]

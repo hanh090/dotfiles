@@ -56,7 +56,7 @@ Plug 'andymass/vim-matchup'
 Plug 'Valloric/MatchTagAlways'
 
 "  Git
-Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-fugitive', { 'tag': 'v3.5' }
 " --- Integrate github to git
 Plug 'tpope/vim-rhubarb'
 " -- Integrate gitlab to git fugitive
@@ -67,7 +67,7 @@ Plug 'junegunn/vim-easy-align'
 Plug 'hanh090/auto-pairs'
 
 " Code completion, LSP
-Plug 'neoclide/coc.nvim'
+Plug 'neoclide/coc.nvim', { 'branch': 'release' }
 
 " Airline for status line
 Plug 'vim-airline/vim-airline'
@@ -79,8 +79,6 @@ Plug 'tpope/vim-unimpaired'
 " Split/Join code
 Plug 'AndrewRadev/splitjoin.vim'
 
-" ReasonML
-Plug 'hanh090/vim-reason-plus'
 " Send command to tmux
 Plug 'jgdavey/tslime.vim'
 "{
@@ -151,7 +149,7 @@ call plug#end()
 lua << LUA
 require'nvim-treesitter.configs'.setup {
   ensure_installed = "all", -- one of "all", "maintained" (parsers with maintainers), or a list of languages
-  ignore_install = { "haskell" },
+  ignore_install = { "haskell", "phpdoc" },
   highlight = {
     enable = true,              -- false will disable the whole extension
   },
@@ -250,7 +248,7 @@ autocmd FileType fern hi CursorLine ctermbg=20 guibg=#2c323c gui=bold
 noremap  <leader>f :FZF<CR>
 vnoremap <leader>f y:call fzf#vim#files('.', {'options': ['--query', '<C-R>=@"<CR>']})<CR>
 noremap  <leader>b :Buffers<CR>
-" noremap  <silent> <leader>h :call fzf#vim#history({ 'options': ['--header-lines', 0, '--header', getcwd()]})<CR>
+noremap  <silent> <leader>h :call fzf#vim#history({ 'options': ['--header-lines', 0, '--header', getcwd()]})<CR>
 noremap  <leader>d :Cd <CR>
 " Search for the word under cursor
 nnoremap <silent> <leader>ag :call  histadd("cmd", 'Ag <C-R><C-W>')   <bar> Ag <C-R><C-W><CR>
@@ -562,7 +560,6 @@ let g:coc_global_extensions =
       \ 'coc-json',
       \ 'coc-prettier',
       \ 'coc-python',
-      \ 'coc-reason',
       \ 'coc-snippets',
       \ 'coc-solargraph',
       \ 'coc-sql',
