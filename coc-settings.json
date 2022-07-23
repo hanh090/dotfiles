@@ -14,11 +14,9 @@
   "java.jdt.ls.vmargs": "-javaagent:/Users/hanhle/.m2/repository/org/projectlombok/lombok/1.18.22/lombok-1.18.22.jar",
   "java.maven.downloadSources": true,
   "java.completion.filteredTypes": [
-    "java.awt.*",
     "com.sun.*",
     "antlr.*"
   ],
-  "prettier.eslintIntegration": true,
   "python.jediEnabled": false,
   "solargraph.autoformat": true,
   "solargraph.useBundler": false,

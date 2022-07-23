@@ -23,13 +23,10 @@ Plug 'norcalli/nvim-colorizer.lua'
 Plug 'ryanoasis/vim-devicons'
 Plug 'lambdalisue/fern-renderer-devicons.vim'
 " Show indent line
-Plug 'Yggdroot/indentLine'
+Plug 'lukas-reineke/indent-blankline.nvim'
 "----{
-let g:indentLine_setConceal = 0
 "}
-" " Better display for json
-" Plug 'elzr/vim-json'
-let g:vim_json_syntax_conceal = 0
+Plug 'elzr/vim-json'
 " Register list
 Plug 'junegunn/vim-peekaboo'
 
@@ -39,7 +36,6 @@ if has('unix')
 endif
 
 " Support
-" Plug 'matze/vim-move'
 Plug 'easymotion/vim-easymotion'
 Plug 'ntpeters/vim-better-whitespace'
 "{
@@ -62,6 +58,11 @@ Plug 'junkblocker/git-time-lapse'
 Plug 'tpope/vim-rhubarb'
 " -- Integrate gitlab to git fugitive
 Plug 'shumphrey/fugitive-gitlab.vim'
+"----{
+let g:gitlab_api_keys = {'gitlab.com': 'glpat-yksby3x_HHJRc8ziuQet'}
+"}
+" Fugitive Bitbucket
+Plug 'tommcdo/vim-fubitive'
 " Align text
 Plug 'junegunn/vim-easy-align'
 " Auto add pairing
@@ -79,16 +80,10 @@ Plug 'vim-airline/vim-airline-themes'
 Plug 'tpope/vim-unimpaired'
 " Split/Join code
 Plug 'AndrewRadev/splitjoin.vim'
-
+" Fix json for human
+Plug 'rhysd/vim-fixjson'
 " Send command to tmux
-Plug 'jgdavey/tslime.vim'
-"{
-let g:tslime_always_current_session = 1
-let g:tslime_always_current_window = 1
-vmap <C-c><C-c> <Plug>SendSelectionToTmux
-nmap <C-c><C-c> 0V<Plug>SendSelectionToTmux
-nmap <C-c>r <Plug>SetTmuxVars
-"}
+Plug 'christoomey/vim-tmux-runner'
 
 " Navigate between tmux and vim
 Plug 'christoomey/vim-tmux-navigator'
@@ -98,6 +93,8 @@ Plug 't9md/vim-choosewin'
 
 " Snippet
 Plug 'honza/vim-snippets'
+" Autoformat
+Plug 'Chiel92/vim-autoformat'
 
 " Indent object, fit for yml,python file
 Plug 'michaeljsmith/vim-indent-object'
@@ -106,6 +103,8 @@ Plug 'bkad/CamelCaseMotion'
 "---{
 let g:camelcasemotion_key = ','
 "---}
+" NarrowText in temp buffer
+Plug 'chrisbra/NrrwRgn'
 
 if has("nvim")
   " Fix cursor hold in nvim
@@ -127,8 +126,8 @@ Plug 'plasticboy/vim-markdown'
 Plug 'tpope/vim-dispatch'
 " manage projection and alternate file
 Plug 'tpope/vim-projectionist'
-" Utilitis from projectionist for rails
-" Plug 'tpope/vim-rails'
+" for ghost text
+Plug 'raghur/vim-ghost'
 
 "Interactive buffer
 " Plug 'metakirby5/codi.vim'
@@ -181,6 +180,15 @@ command! -nargs=* -complete=dir -bang Cd call
       \ '-1',
       \ '--prompt', getcwd().">"]
       \ } , <bang>0))
+command! -nargs=* -complete=dir -bang TmuxLogs call
+      \ fzf#run(fzf#wrap(
+      \ {
+        \ 'source': join(['find ~', '-maxdepth 1','-name tmux\*', '| sort -r'], ' '),
+        \ 'sink': 'edit',
+        \ 'options': [
+          \ '-q', len(<q-args>) > 0 ?(<q-args>): '',
+          \ '--prompt', "TmuxLogs"]
+          \ } , <bang>0))
 " Ignore that because it leads to start in replace mode
 nnoremap <Esc><Esc> :noh<CR><Esc>
 " Move to bottom after select paragraph
@@ -237,7 +245,25 @@ let mapleader=" "
 noremap  <silent> <leader>m :Fern . -drawer -toggle<CR>
 noremap  <silent> <leader>r :execute GoToProjDir() <bar> Fern . -reveal=% -drawer<CR>
 
-function GoToProjDir()
+" TmuxRunner
+"{
+nnoremap <leader>v- :VtrOpenRunner { "orientation": "v", "percentage": 30 }<cr>
+nnoremap <leader>v\ :VtrOpenRunner { "orientation": "h", "percentage": 30 }<cr>
+nnoremap <leader>vk :VtrKillRunner<cr>
+nnoremap <leader>vd :VtrSendCtrlD<cr>
+nnoremap <leader>va :VtrAttachToPane<cr>
+nnoremap <leader>vq :VtrSendKeyRaw q<cr>
+nnoremap <leader>v0 :VtrAttachToPane 0<cr>:call system("tmux clock-mode -t 0 && sleep 0.1 && tmux send-keys -t 0 q")<cr>
+nnoremap <leader>v1 :VtrAttachToPane 1<cr>:call system("tmux clock-mode -t 1 && sleep 0.1 && tmux send-keys -t 1 q")<cr>
+nnoremap <leader>v2 :VtrAttachToPane 2<cr>:call system("tmux clock-mode -t 2 && sleep 0.1 && tmux send-keys -t 2 q")<cr>
+nnoremap <leader>v3 :VtrAttachToPane 3<cr>:call system("tmux clock-mode -t 3 && sleep 0.1 && tmux send-keys -t 3 q")<cr>
+nnoremap <leader>v4 :VtrAttachToPane 4<cr>:call system("tmux clock-mode -t 4 && sleep 0.1 && tmux send-keys -t 4 q")<cr>
+nnoremap <leader>v5 :VtrAttachToPane 5<cr>:call system("tmux clock-mode -t 5 && sleep 0.1 && tmux send-keys -t 5 q")<cr>
+nnoremap <leader>vf :VtrFocusRunner<cr>
+noremap <C-c><C-c> :VtrSendLinesToRunner<cr>
+"}
+
+function! GoToProjDir()
   let path_parts = split(expand('%:p'), '/')
   let project_part_idx = 0
   for part in path_parts
@@ -302,7 +328,8 @@ noremap <leader>q :q<cr>
 noremap <leader>to :tabonly<cr>
 " Split screen
 noremap <leader>s :vsplit<cr>
-noremap <leader>v :split<cr>
+" Change to avoid conflict with vimtmux
+noremap <leader>vv :split<cr>
 
 " Copy and Comment Lines
 nmap gy yygccp
@@ -324,6 +351,9 @@ noremap  <leader>gC :BranchList!<cr>
 noremap  <leader>gm :echo 'Merging origin/'.GetMergeBranchByProj() <bar> execute 'Git fetch origin '.GetMergeBranchByProj() <bar> execute 'Git merge origin/'.GetMergeBranchByProj() <cr>
 noremap  <leader>gd :execute 'Git diff '.GInitCommitWhenBranching().'..HEAD'<cr>
 noremap  <leader>gD :execute 'Git diff --name-status '.GInitCommitWhenBranching().'..HEAD'<cr>
+noremap  <leader>g1 :Git cherry-pick HEAD@{1}<cr>
+noremap  <leader>g0 :Git cherry-pick<space>
+noremap  <leader>gr :!gmr<space>
 
 " reload current file in source code
 noremap  <leader>gr :execute 'edit +'.line('.').' '.substitute(expand('%'), 'fugitive://\\|.git//\x*/', '', 'g')<cr>
@@ -353,6 +383,10 @@ function! GetMergeBranchByProj()
   elseif stridx(getcwd(), "frontend-script") >= 0
         \ || stridx(getcwd(), "shabu-town") >= 0
     let merge_branch = "main"
+  elseif stridx(getcwd(), "genvita-mobile") >= 0
+    let merge_branch = "release/uat"
+  elseif stridx(getcwd(), "genvita") >= 0
+    let merge_branch = "develop"
   endif
   return merge_branch
 endfunction
@@ -361,9 +395,10 @@ noremap <silent> <leader>gn :call GNewBranch()<CR>
 " Git status in new tab
 noremap  <leader>gs :Gtabedit :<cr>
 noremap  <leader>gS :Git<cr>
-nnoremap <leader>gh :GBrowse<cr>
-vnoremap <leader>gh :GBrowse<cr>
-vnoremap <leader>gH :GBrowse!<cr>
+nnoremap <leader>gh :GBrowse!<cr>
+vnoremap <leader>gh :GBrowse!<cr>
+nnoremap <leader>gH :GBrowse<cr>
+vnoremap <leader>gH :GBrowse<cr>
 
 function! OpenFilePath(fugitive_path)
   let file_path_with_hash = split(split(a:fugitive_path, '//')[-1])[-1]
@@ -378,9 +413,9 @@ endfunction
 augroup fugitive_ext
   autocmd!
   " Browse to the commit under my cursor
-  autocmd FileType fugitiveblame,git,qf nnoremap <buffer> <leader>gh :execute ":Gbrowse " . expand("<cword>")<cr>
-  autocmd FileType fugitive nnoremap <buffer> <leader>gb :Gbrowse head<cr>
-  autocmd FileType fugitive nnoremap <buffer> <leader>gB :Gbrowse! head<cr>
+  autocmd FileType fugitiveblame,git,qf nnoremap <buffer> <leader>gh :execute ":GBrowse " . expand("<cword>")<cr>
+  autocmd FileType fugitive nnoremap <buffer> <leader>gb :GBrowse head<cr>
+  autocmd FileType fugitive nnoremap <buffer> <leader>gB :GBrowse! head<cr>
   autocmd FileType fugitive nnoremap <buffer> D :!rm -rf <c-r><c-f><cr>
   autocmd FileType * set synmaxcol=200
   autocmd FileType fugitive set synmaxcol=500
@@ -551,13 +586,14 @@ set smarttab
 set tabstop=2 " Number of space og a <Tab> character
 set softtabstop=2
 set shiftwidth=2 " Number of spaces use by autoindent
-set lazyredraw
+" set lazyredraw
 set synmaxcol=120  " avoid slow rendering for long lines
-set redrawtime=5000
+" set redrawtime=5000
 set regexpengine=1
 set expandtab
 set noshowmode
 set conceallevel=2
+set fileencodings=utf-8
 "  Searching
 set hlsearch
 set incsearch
@@ -712,6 +748,7 @@ inoremap jj <ESC>
 let $FZF_DEFAULT_COMMAND = 'rg --files --no-ignore-vcs --hidden'.
       \' --glob !.git'.
       \' --glob !node_modules'.
+      \' --glob !dist'.
       \' --glob !target'.
       \' --glob !bin'.
       \' --glob "!*.cm*"'.
@@ -724,6 +761,8 @@ let $FZF_DEFAULT_COMMAND = 'rg --files --no-ignore-vcs --hidden'.
       \' --glob "!*.ast"'.
       \' '
 
+" If using macos please check with shortcut key. By default, ctr-space is
+" switch between input source in mac
 let $FZF_DEFAULT_OPTS='--bind '.
       \ 'ctrl-space:toggle-out,'.
       \ 'shift-tab:toggle-in,'.
@@ -735,7 +774,6 @@ let $FZF_DEFAULT_OPTS='--bind '.
 let g:fzf_preview_window = &columns > 120 ? 'right:40%:wrap' : ''
 autocmd VimResized * let g:fzf_preview_window = &columns > 120 ? 'right:40%:wrap' : ''
 " Border style (rounded / sharp / horizontal)
-" let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6,  'highlight': 'Todo', 'border': 'sharp' } }
 let g:fzf_layout = { 'down': '40%' }
 
 function! s:build_quickfix_list(lines)
@@ -816,3 +854,5 @@ hi Cursor  ctermfg=234 ctermbg=white guifg=#1e1e1e guibg=#e5c07b
 set hidden
 " Save file as root
 command! -nargs=0 Sw w !sudo tee % > /dev/null
+" execute alias in vim
+autocmd vimenter * let &shell='/bin/zsh -i'
