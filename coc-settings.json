@@ -3,7 +3,6 @@
     "node_modules/*"
   ],
   "coc.preferences.floatActions": false,
-  "diagnostic.messageTarget": "echo",
   "eslint.options": {
     "ignorePattern": [
       "node_modules/*",

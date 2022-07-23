@@ -14,17 +14,16 @@ Plug 'lambdalisue/fern.vim'
 
 " "--------- Language syntax
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-Plug 'nvim-treesitter/playground'
-Plug 'nvim-treesitter/nvim-treesitter-refactor'
 Plug 'christianchiarulli/nvcode-color-schemes.vim'
-" " Theme + Style
+" Theme + Style
 Plug 'norcalli/nvim-colorizer.lua'
-" Plug 'rafi/awesome-vim-colorschemes'
 Plug 'ryanoasis/vim-devicons'
 Plug 'lambdalisue/fern-renderer-devicons.vim'
 " Show indent line
 Plug 'lukas-reineke/indent-blankline.nvim'
-"----{
+"{
+" Better display for json
+let g:vim_json_syntax_conceal = 0
 "}
 Plug 'elzr/vim-json'
 " Register list
@@ -36,7 +35,7 @@ if has('unix')
 endif
 
 " Support
-Plug 'easymotion/vim-easymotion'
+Plug 'phaazon/hop.nvim'
 Plug 'ntpeters/vim-better-whitespace'
 "{
 let g:better_whitespace_filetypes_blacklist=['log', 'fugitive', 'quickfix', 'git']
@@ -52,21 +51,18 @@ Plug 'andymass/vim-matchup'
 Plug 'Valloric/MatchTagAlways'
 
 "  Git
-Plug 'tpope/vim-fugitive', { 'tag': 'v3.5' }
+Plug 'hanh090/vim-fugitive'
 Plug 'junkblocker/git-time-lapse'
 " --- Integrate github to git
 Plug 'tpope/vim-rhubarb'
 " -- Integrate gitlab to git fugitive
 Plug 'shumphrey/fugitive-gitlab.vim'
-"----{
-let g:gitlab_api_keys = {'gitlab.com': $GITLAB_TOKEN}
-"}
 " Fugitive Bitbucket
 Plug 'tommcdo/vim-fubitive'
 " Align text
 Plug 'junegunn/vim-easy-align'
 " Auto add pairing
-Plug 'hanh090/auto-pairs'
+Plug 'windwp/nvim-autopairs'
 
 " Code completion, LSP
 Plug 'neoclide/coc.nvim', { 'branch': 'release' }
@@ -74,7 +70,6 @@ Plug 'neoclide/coc.nvim', { 'branch': 'release' }
 " Airline for status line
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
-
 
 " More shortcut/keybinding
 Plug 'tpope/vim-unimpaired'
@@ -93,8 +88,6 @@ Plug 't9md/vim-choosewin'
 
 " Snippet
 Plug 'honza/vim-snippets'
-" Autoformat
-Plug 'Chiel92/vim-autoformat'
 
 " Indent object, fit for yml,python file
 Plug 'michaeljsmith/vim-indent-object'
@@ -129,23 +122,42 @@ Plug 'tpope/vim-projectionist'
 " for ghost text
 Plug 'raghur/vim-ghost'
 
-"Interactive buffer
-" Plug 'metakirby5/codi.vim'
-" Rainbow parenless
-" Plug 'luochen1990/rainbow'
-" let g:rainbow_active = 0
 call plug#end()
 
 "{
 lua << LUA
+require'hop'.setup()
+vim.api.nvim_set_keymap('', 'f', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.AFTER_CURSOR, current_line_only = true })<cr>", {})
+vim.api.nvim_set_keymap('', 'F', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.BEFORE_CURSOR, current_line_only = true })<cr>", {})
+vim.api.nvim_set_keymap('', 't', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.AFTER_CURSOR, current_line_only = true, hint_offset = -1 })<cr>", {})
+vim.api.nvim_set_keymap('', 'T', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.BEFORE_CURSOR, current_line_only = true, hint_offset = 1 })<cr>", {})
+
+require("nvim-autopairs").setup {}
+
+local function ts_disable(_, bufnr)
+  local lines = vim.api.nvim_buf_get_lines(0, 0, 100, false)
+
+  local width = #(lines[1])
+
+  for _, line in ipairs(lines) do
+    if #line > width then
+      width = #line
+    end
+  end
+  return width > 200
+end
+
 require'nvim-treesitter.configs'.setup {
   ensure_installed = "all", -- one of "all", "maintained" (parsers with maintainers), or a list of languages
   ignore_install = { "haskell", "phpdoc", "ruby" },
   highlight = {
     enable = true,              -- false will disable the whole extension
+    disable = function(lang, bufnr)
+      return ts_disable(lang, bufnr)
+    end,
   },
   incremental_selection = {
-    enable = true,
+    enable = false,
     keymaps = {
       init_selection = "gnn",
       node_incremental = "grn",
@@ -168,33 +180,12 @@ endfunction
 
 command! -nargs=* -bang RG call RipgrepFzf(<q-args>, <bang>0)
 
-" Multiple path for example: find ~/projects ~/Downloads -maxdepth 1 -type d
-" Detect hightlight at cursor http://www.drchip.org/astronaut/vim/index.html#Maps
-command! -nargs=* -complete=dir -bang Cd call
-      \ fzf#run(fzf#wrap(
-      \ {
-      \ 'source': join(['find ~/projects', '-maxdepth 1 ','-type d'], ' '),
-      \ 'sink': 'cd',
-      \ 'options': [
-      \ '-q', len(<q-args>) > 0 ?(<q-args>): '',
-      \ '-1',
-      \ '--prompt', getcwd().">"]
-      \ } , <bang>0))
-command! -nargs=* -complete=dir -bang TmuxLogs call
-      \ fzf#run(fzf#wrap(
-      \ {
-        \ 'source': join(['find ~', '-maxdepth 1','-name tmux\*', '| sort -r'], ' '),
-        \ 'sink': 'edit',
-        \ 'options': [
-          \ '-q', len(<q-args>) > 0 ?(<q-args>): '',
-          \ '--prompt', "TmuxLogs"]
-          \ } , <bang>0))
 " Ignore that because it leads to start in replace mode
 nnoremap <Esc><Esc> :noh<CR><Esc>
 " Move to bottom after select paragraph
 vnoremap y y']
 
-nmap gx :silent execute "!open " . shellescape("<cWORD>")<CR><CR>
+" nmap gx :silent execute "!open " . shellescape("<cWORD>")<CR><CR>
 
 " Select inside the tick
 function! Ticks(inner)
@@ -352,8 +343,9 @@ noremap  <leader>gm :echo 'Merging origin/'.GetMergeBranchByProj() <bar> execute
 noremap  <leader>gd :execute 'Git diff '.GInitCommitWhenBranching().'..HEAD'<cr>
 noremap  <leader>gD :execute 'Git diff --name-status '.GInitCommitWhenBranching().'..HEAD'<cr>
 noremap  <leader>g1 :Git cherry-pick HEAD@{1}<cr>
-noremap  <leader>g0 :Git cherry-pick<space>
-noremap  <leader>gr :!gmr<space>
+noremap  <leader>g0 :Git cherry-pick HEAD@{2}<Left>
+" Git merge request
+noremap  <leader>gq :execute 'VtrSendCommandToRunner cd '.getcwd().' && gmr'<cr><cr>
 
 " reload current file in source code
 noremap  <leader>gr :execute 'edit +'.line('.').' '.substitute(expand('%'), 'fugitive://\\|.git//\x*/', '', 'g')<cr>
@@ -417,10 +409,9 @@ augroup fugitive_ext
   autocmd FileType fugitive nnoremap <buffer> <leader>gb :GBrowse head<cr>
   autocmd FileType fugitive nnoremap <buffer> <leader>gB :GBrowse! head<cr>
   autocmd FileType fugitive nnoremap <buffer> D :!rm -rf <c-r><c-f><cr>
-  autocmd FileType * set synmaxcol=200
-  autocmd FileType fugitive set synmaxcol=500
+  autocmd FileType fugitive setlocal synmaxcol=500
   " Unmap q so that we can use macro to multiple remove
-  autocmd FileType fugitive nunmap <buffer> q
+  " autocmd FileType fugitive nunmap <buffer> q
   autocmd FileType git nnoremap <buffer> q q
   autocmd FileType fugitive,help DisableWhitespace
   autocmd FileType git nnoremap <buffer> go Vy:call OpenFilePath('<C-R>=@"<CR>')<CR>
@@ -522,19 +513,8 @@ endfunction
 nmap     <leader>=  :call EqualWindow()<cr>
 
 " Easy jump
-let g:EasyMotion_smartcase = 1
-map  <leader>jk <Plug>(easymotion-s)
-map  <leader>ja <Plug>(easymotion-lineanywhere)
-map  <leader>jA <Plug>(easymotion-jumptoanywhere)
-map  <leader>jf <Plug>(easymotion-overwin-f2)
-nmap <leader>jw <Plug>(easymotion-overwin-w)
-nmap <leader>jl <Plug>(easymotion-overwin-line)
-" Remove annoyed Coc in jump mode
-autocmd User EasyMotionPromptBegin silent! CocDisable
-autocmd User EasyMotionPromptEnd   silent! CocEnable
-
-" autocmd User EasyMotionPromptBegin silent! TSBufDisable
-" autocmd User EasyMotionPromptEnd   silent! TSBufEnable
+map  <leader>jk :HopChar1<CR>
+xmap <leader>jk <cmd>lua require'hop'.hint_char1()<CR>
 
 let g:fern#renderer = "devicons"
 let g:fern_renderer_devicons_disable_warning = 1
@@ -559,11 +539,8 @@ let g:airline#extensions#default#layout = [
       \ [ 'error', 'warning' ]
       \ ]
 
-
 " Custom closetag
 let g:closetag_filenames = '*.js,*.jsx,*.html, *.xml'
-" Custom vim-move to use control to move line up/down
-" let g:move_key_modifier = 'C-S'
 
 " Keep folder vim and terminal same
 function! s:CtrlZ()
@@ -586,7 +563,7 @@ set smarttab
 set tabstop=2 " Number of space og a <Tab> character
 set softtabstop=2
 set shiftwidth=2 " Number of spaces use by autoindent
-" set lazyredraw
+set lazyredraw
 set synmaxcol=120  " avoid slow rendering for long lines
 " set redrawtime=5000
 set regexpengine=1
@@ -633,7 +610,7 @@ let g:coc_global_extensions =
       \ 'coc-java',
       \ 'coc-json',
       \ 'coc-prettier',
-      \ 'coc-python',
+      \ 'coc-pyright',
       \ 'coc-snippets',
       \ 'coc-solargraph',
       \ 'coc-sql',
@@ -669,6 +646,20 @@ if has('nvim')
 else
   inoremap <silent><expr> <c-@> coc#refresh()
 endif
+inoremap <silent><expr> <C-n>
+      \ coc#pum#visible() ? coc#pum#next(1) :
+      \ CheckBackspace() ? "\<C-n>" :
+      \ coc#refresh()
+inoremap <silent><expr> <C-j>
+      \ coc#pum#visible() ? coc#pum#next(1) :
+      \ CheckBackspace() ? "\<C-j>" :
+      \ coc#refresh()
+inoremap <expr><C-k> coc#pum#visible() ? coc#pum#prev(1) : "\<C-k>"
+
+" Make <CR> to accept selected completion item or notify coc.nvim to format
+" <C-g>u breaks current undo, please make your own choice.
+inoremap <silent><expr> <C-x> coc#pum#visible() ? coc#pum#confirm()
+                              \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
 " Show full message.ce mean coc-expand
 nmap <silent> <space>ce :call CocAction("diagnosticInfo")<cr>
 " List of yank
@@ -729,16 +720,13 @@ endfunction
   " Use <C-k> for jump to previous placeholder, it's default of coc.nvim
   let g:coc_snippet_prev = '<c-k>'
   " Use <C-j> for both expand and jump (make expand higher priority.)
-  imap <C-j> <Plug>(coc-snippets-expand-jump)
+  " imap <C-j> <Plug>(coc-snippets-expand-jump)
 
 " === END COC config
 
 " Auto format
 autocmd BufWritePre *.js,*.jsx,*.css,*.scss,*.less,*.ts,*.tsx if stridx(expand("%:p"), "node_modules") < 0 | call CocAction('format') | endif
 autocmd BufWritePre *.re,*.res call CocAction('format')
-" Temporary fix for ruby syntax.Ref: https://github.com/nvim-treesitter/nvim-treesitter/issues/584#issuecomment-708607922
-autocmd BufNewFile,BufRead *.rb set ft=ruby
-
 
 " Quick escape
 inoremap jk <ESC>
@@ -825,14 +813,6 @@ endfunction
 command! -nargs=1 -complete=command -bar -range Redir silent call Redir(<q-args>, <range>, <line1>, <line2>)
 "End custom redirect output
 
-" Custom autopair for filetype.First parameter is adding, second parameter is
-" removing
-au FileType reason   let b:AutoPairs = AutoPairsDefine({'/**':'**/'},       ["`",     "'"])
-au FileType rescript let b:AutoPairs = AutoPairsDefine({'/**':'**/'},       ["`",     "'"])
-au FileType html     let b:AutoPairs = AutoPairsDefine({'<!--':'-->'})
-au FileType markdown let b:AutoPairs = AutoPairsDefine({},                  ["["])
-au FileType ruby     let b:AutoPairs = AutoPairsDefine({'\v(^|\s)\zsbegin': 'end//n', '\v(^|\s)\zsdo': 'end//n', '|':'|'})
-
 au FileType gitcommit set  textwidth=0
 au FileType markdown  setl conceallevel=0
 " Set background and colorscheme
@@ -848,11 +828,51 @@ hi MatchTag term=reverse cterm=reverse ctermfg=136 ctermbg=236 guibg=Yellow
 hi MatchParen ctermfg=yellow
 hi Search  ctermfg=234 ctermbg=180 guifg=#1e1e1e guibg=#e5c07b
 hi Cursor  ctermfg=234 ctermbg=white guifg=#1e1e1e guibg=#e5c07b
+hi CocMenuSel ctermbg=white guifg=#1e1e1e guibg=#e5c07b
 
 " hi Visual cterm=reverse ctermbg=242 guibg=#303030 cterm=reverse ctermbg=242 gui=reverse guifg=#586e75 guibg=#002b36
 " Required for operations modifying multiple buffers like rename.
 set hidden
 " Save file as root
 command! -nargs=0 Sw w !sudo tee % > /dev/null
-" execute alias in vim
-autocmd vimenter * let &shell='/bin/zsh -i'
+" Neovide - GUI for neovim
+if exists("g:goneovim")
+    " Put anything you want to happen only in Neovide here
+    set guifont=SauceCodePro\ Nerd\ Font:h14
+    nnoremap <special> <D-v> "+gP
+    nnoremap <special> <D-q> :q!<CR>
+    cnoremap <special> <D-v> <C-R>+
+    execute 'vnoremap <script> <special> <D-v>' paste#paste_cmd['v']
+    execute 'inoremap <script> <special> <D-v>' paste#paste_cmd['i']
+endif
+" Multiple path for example: find ~/projects ~/Downloads -maxdepth 1 -type d
+" Detect hightlight at cursor http://www.drchip.org/astronaut/vim/index.html#Maps
+" customize function put to the end of the file to make sure treesitter work
+command! -nargs=* -complete=dir -bang Cd call
+      \ fzf#run(fzf#wrap(
+      \ {
+      \ 'source': join(['find ~/projects', '-maxdepth 1 ','-type d'], ' '),
+      \ 'sink': 'cd',
+      \ 'options': [
+      \ '-q', len(<q-args>) > 0 ?(<q-args>): '',
+      \ '-1',
+      \ '--prompt', getcwd().">"]
+      \ } , <bang>0))
+command! -nargs=* -complete=dir -bang TmuxLogs call
+      \ fzf#run(fzf#wrap(
+      \ {
+        \ 'source': join(['find ~', '-maxdepth 1','-name tmux\*', '| sort -r'], ' '),
+        \ 'sink': 'edit',
+        \ 'options': [
+          \ '-q', len(<q-args>) > 0 ?(<q-args>): '',
+          \ '--prompt', "TmuxLogs"]
+          \ } , <bang>0))
+command! -nargs=* -complete=dir -bang Downloads call
+      \ fzf#run(fzf#wrap(
+      \ {
+      \ 'source': join(['find ~/Downloads', '-maxdepth 1', '| sort -r'], ' '),
+      \ 'sink': 'edit',
+      \ 'options': [
+      \ '-q', len(<q-args>) > 0 ?(<q-args>): '',
+      \ '--prompt', "TmuxLogs"]
+      \ } , <bang>0))
