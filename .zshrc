@@ -202,6 +202,23 @@ deploySbx() {
 
 alias dsb='deploySbx $(git branch | fzf --height 40% -q "^sbx | stag" -1)'
 
+gmr() {
+    # A quick way to open a GitLab merge request URL for the current git branch
+    # you're on. The optional first argument is the target branch.
+
+    repo_path=$(git remote get-url origin --push | sed 's/^.*://g' | sed 's/.git$//g')
+    current_branch=$(git rev-parse --abbrev-ref HEAD)
+
+    if [[ -n $1 ]]; then
+        target_branch="&merge_request[target_branch]=$1"
+    else
+        target_branch=""
+    fi
+
+    open "https://gitlab.com/$repo_path/merge_requests/new?merge_request[source_branch]=$current_branch$target_branch"
+
+}
+
 # Change cursor mapping
 # zle-keymap-select() {
 #   if [[ $KEYMAP = vicmd ]]; then
