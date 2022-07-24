@@ -59,7 +59,7 @@ Plug 'tpope/vim-rhubarb'
 " -- Integrate gitlab to git fugitive
 Plug 'shumphrey/fugitive-gitlab.vim'
 "----{
-let g:gitlab_api_keys = {'gitlab.com': 'glpat-yksby3x_HHJRc8ziuQet'}
+let g:gitlab_api_keys = {'gitlab.com': $GITLAB_TOKEN}
 "}
 " Fugitive Bitbucket
 Plug 'tommcdo/vim-fubitive'
@@ -252,7 +252,7 @@ nnoremap <leader>v\ :VtrOpenRunner { "orientation": "h", "percentage": 30 }<cr>
 nnoremap <leader>vk :VtrKillRunner<cr>
 nnoremap <leader>vd :VtrSendCtrlD<cr>
 nnoremap <leader>va :VtrAttachToPane<cr>
-nnoremap <leader>vq :VtrSendKeyRaw q<cr>
+nnoremap <leader>vq :VtrSendKeysRaw q<cr>
 nnoremap <leader>v0 :VtrAttachToPane 0<cr>:call system("tmux clock-mode -t 0 && sleep 0.1 && tmux send-keys -t 0 q")<cr>
 nnoremap <leader>v1 :VtrAttachToPane 1<cr>:call system("tmux clock-mode -t 1 && sleep 0.1 && tmux send-keys -t 1 q")<cr>
 nnoremap <leader>v2 :VtrAttachToPane 2<cr>:call system("tmux clock-mode -t 2 && sleep 0.1 && tmux send-keys -t 2 q")<cr>
