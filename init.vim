@@ -15,6 +15,9 @@ Plug 'lambdalisue/fern.vim'
 " "--------- Language syntax
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'christianchiarulli/nvcode-color-schemes.vim'
+Plug 'EdenEast/nightfox.nvim' " Vim-Plug
+" Show code context
+Plug 'SmiteshP/nvim-gps'
 " Theme + Style
 Plug 'norcalli/nvim-colorizer.lua'
 Plug 'ryanoasis/vim-devicons'
@@ -49,7 +52,9 @@ Plug 'alvan/vim-closetag'
 Plug 'andymass/vim-matchup'
 " Enhance matching tag for xml, html document
 Plug 'Valloric/MatchTagAlways'
+Plug 'dhruvasagar/vim-table-mode'
 
+" Note taking
 "  Git
 Plug 'hanh090/vim-fugitive'
 Plug 'junkblocker/git-time-lapse'
@@ -65,7 +70,7 @@ Plug 'junegunn/vim-easy-align'
 Plug 'windwp/nvim-autopairs'
 
 " Code completion, LSP
-Plug 'neoclide/coc.nvim', { 'branch': 'release' }
+Plug 'neoclide/coc.nvim', {'branch': 'release' }
 
 " Airline for status line
 Plug 'vim-airline/vim-airline'
@@ -83,11 +88,9 @@ Plug 'christoomey/vim-tmux-runner'
 " Navigate between tmux and vim
 Plug 'christoomey/vim-tmux-navigator'
 
-" Choose win
-Plug 't9md/vim-choosewin'
-
 " Snippet
 Plug 'honza/vim-snippets'
+Plug 'mlaursen/vim-react-snippets'
 
 " Indent object, fit for yml,python file
 Plug 'michaeljsmith/vim-indent-object'
@@ -127,33 +130,22 @@ call plug#end()
 "{
 lua << LUA
 require'hop'.setup()
+require("nvim-gps").setup()
+
 vim.api.nvim_set_keymap('', 'f', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.AFTER_CURSOR, current_line_only = true })<cr>", {})
 vim.api.nvim_set_keymap('', 'F', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.BEFORE_CURSOR, current_line_only = true })<cr>", {})
 vim.api.nvim_set_keymap('', 't', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.AFTER_CURSOR, current_line_only = true, hint_offset = -1 })<cr>", {})
 vim.api.nvim_set_keymap('', 'T', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.BEFORE_CURSOR, current_line_only = true, hint_offset = 1 })<cr>", {})
 
+
 require("nvim-autopairs").setup {}
-
-local function ts_disable(_, bufnr)
-  local lines = vim.api.nvim_buf_get_lines(0, 0, 100, false)
-
-  local width = #(lines[1])
-
-  for _, line in ipairs(lines) do
-    if #line > width then
-      width = #line
-    end
-  end
-  return width > 200
-end
-
+-- Load custom treesitter grammar for org filetype
 require'nvim-treesitter.configs'.setup {
   ensure_installed = "all", -- one of "all", "maintained" (parsers with maintainers), or a list of languages
   ignore_install = { "haskell", "phpdoc", "ruby" },
   highlight = {
     enable = true,              -- false will disable the whole extension
     disable = function(lang, bufnr)
-      return ts_disable(lang, bufnr)
     end,
   },
   incremental_selection = {
@@ -238,31 +230,49 @@ noremap  <silent> <leader>r :execute GoToProjDir() <bar> Fern . -reveal=% -drawe
 
 " TmuxRunner
 "{
+let g:vtr_filetype_runner_overrides = {
+        \ 'ruby': 'ruby -w {file}',
+        \ 'javascript': 'node {file}',
+        \ 'sql': 'usql postgres://postgres@localhost:5432/flexlane?sslmode=disable -G -f {file}',
+        \ 'haskell': 'runhaskell {file}'
+        \ }
 nnoremap <leader>v- :VtrOpenRunner { "orientation": "v", "percentage": 30 }<cr>
 nnoremap <leader>v\ :VtrOpenRunner { "orientation": "h", "percentage": 30 }<cr>
 nnoremap <leader>vk :VtrKillRunner<cr>
 nnoremap <leader>vd :VtrSendCtrlD<cr>
+nnoremap <leader>vc :VtrSendCtrlC<cr>
+nnoremap <leader>vp :VtrSendKeysRaw Up Enter<cr>
 nnoremap <leader>va :VtrAttachToPane<cr>
 nnoremap <leader>vq :VtrSendKeysRaw q<cr>
+nnoremap <leader>vz :VtrFocusRunner<cr>
 nnoremap <leader>v0 :VtrAttachToPane 0<cr>:call system("tmux clock-mode -t 0 && sleep 0.1 && tmux send-keys -t 0 q")<cr>
 nnoremap <leader>v1 :VtrAttachToPane 1<cr>:call system("tmux clock-mode -t 1 && sleep 0.1 && tmux send-keys -t 1 q")<cr>
 nnoremap <leader>v2 :VtrAttachToPane 2<cr>:call system("tmux clock-mode -t 2 && sleep 0.1 && tmux send-keys -t 2 q")<cr>
 nnoremap <leader>v3 :VtrAttachToPane 3<cr>:call system("tmux clock-mode -t 3 && sleep 0.1 && tmux send-keys -t 3 q")<cr>
 nnoremap <leader>v4 :VtrAttachToPane 4<cr>:call system("tmux clock-mode -t 4 && sleep 0.1 && tmux send-keys -t 4 q")<cr>
 nnoremap <leader>v5 :VtrAttachToPane 5<cr>:call system("tmux clock-mode -t 5 && sleep 0.1 && tmux send-keys -t 5 q")<cr>
-nnoremap <leader>vf :VtrFocusRunner<cr>
-noremap <C-c><C-c> :VtrSendLinesToRunner<cr>
+nnoremap <leader>vf :VtrSendFile<cr>
+nnoremap <C-c><C-c> :VtrSendLinesToRunner<cr>
+vnoremap <C-c><C-c> :VtrSendLinesToRunner<cr>
+" Git merge request in active runner
+noremap  <leader>vm :execute 'VtrSendCommandToRunner cd '.getcwd().' && ggp && gmr'<cr><cr>
 "}
 
 function! GoToProjDir()
-  let path_parts = split(expand('%:p'), '/')
+  let path = expand('%:p')
+  let path_parts = split(path, '/')
   let project_part_idx = 0
   for part in path_parts
     if part == "projects"
+      if stridx(path, "hashback") >=0 || stridx(path, "employment-hero") >=0
+        let project_part_idx += 1
+      endif
+
       break
     endif
 
     let project_part_idx += 1
+
   endfor
 
   let project_path = "/".join(path_parts[0:project_part_idx + 1], "/")
@@ -297,6 +307,7 @@ autocmd FileType fern nmap <silent> <buffer> <leader>ag :call SearchFern('<C-R><
 autocmd FileType fern nmap <silent> <buffer> <leader>rg :call SearchFern('<C-R><C-L>', 'Rg')<CR>
 
 nnoremap <silent> <leader>/ :BLines<CR>
+nnoremap <silent> <leader>8 :Lines<CR>
 
 " Search for the visually selected text
 vnoremap // y/\V<C-R>=escape(@",'/\')<CR><CR>
@@ -326,8 +337,8 @@ noremap <leader>vv :split<cr>
 nmap gy yygccp
 
 " Copy current file / folder path
-nnoremap <silent> cp :let @+ = expand("%")   <bar> echo @+<CR>
-nnoremap <silent> cP :let @+ = expand("%:p") <bar> echo @+<CR>
+nnoremap <silent> cP :let @+ = expand("%")   <bar> echo @+<CR>
+nnoremap <silent> cp :let @+ = expand("%:p") <bar> echo @+<CR>
 nnoremap <silent> cl :let @+ = expand("%").":".line(".") <bar> echo @+<CR>
 nnoremap <silent> cL :let @+ = expand("%:p").":".line(".") <bar> echo @+<CR>
 
@@ -339,13 +350,11 @@ noremap  <leader>gP :Git push origin HEAD --force <bar>echo "Pushed success" <cr
 noremap  <leader>gb :Git blame<cr>
 noremap  <leader>gc :BranchList<cr>
 noremap  <leader>gC :BranchList!<cr>
-noremap  <leader>gm :echo 'Merging origin/'.GetMergeBranchByProj() <bar> execute 'Git fetch origin '.GetMergeBranchByProj() <bar> execute 'Git merge origin/'.GetMergeBranchByProj() <cr>
+noremap  <leader>gm :echo 'Merging origin/'.GetMergeBranchByProj() <bar> execute 'Git fetch origin '.GetMergeBranchByProj() <bar> execute 'Git rebase origin/'.GetMergeBranchByProj() <cr>
 noremap  <leader>gd :execute 'Git diff '.GInitCommitWhenBranching().'..HEAD'<cr>
 noremap  <leader>gD :execute 'Git diff --name-status '.GInitCommitWhenBranching().'..HEAD'<cr>
 noremap  <leader>g1 :Git cherry-pick HEAD@{1}<cr>
 noremap  <leader>g0 :Git cherry-pick HEAD@{2}<Left>
-" Git merge request
-noremap  <leader>gq :execute 'VtrSendCommandToRunner cd '.getcwd().' && gmr'<cr><cr>
 
 " reload current file in source code
 noremap  <leader>gr :execute 'edit +'.line('.').' '.substitute(expand('%'), 'fugitive://\\|.git//\x*/', '', 'g')<cr>
@@ -361,7 +370,9 @@ function! GNewBranch()
   if len(l:branch_name) == 0
     return
   endif
+
   let merge_branch = GetMergeBranchByProj()
+
   execute '!git fetch origin '.l:merge_branch
   execute '!git checkout -b '.l:branch_name.' origin/'.l:merge_branch
 endfunction
@@ -452,16 +463,6 @@ command! -nargs=* -complete=dir -bang PrList call
 nnoremap <leader>pl :PrList<cr>
 nnoremap <leader>pL :PrList!<cr>
 
-command! -nargs=* -complete=dir -bang FindReference call
-      \ fzf#run(fzf#wrap(
-      \ {
-      \ 'source': "cat ~/projects/frontend-core/.dependencyGraph.json | jq 'to_entries[] | select(.value | .[] | index(\"".expand("%")."\") > 0) | select (. | length > 0) | .key' | sed 's/\"//g'",
-      \ 'options': [
-      \   '--tiebreak', 'index',
-      \   '--prompt', "Find ref>",
-      \ ]
-      \ }, 0))
-
 " Open github PR at current branch
 function! Open_Pr_In_Branch()
   if has('mac')
@@ -514,6 +515,7 @@ nmap     <leader>=  :call EqualWindow()<cr>
 
 " Easy jump
 map  <leader>jk :HopChar1<CR>
+map  <leader>jw :HopChar1MW<CR>
 xmap <leader>jk <cmd>lua require'hop'.hint_char1()<CR>
 
 let g:fern#renderer = "devicons"
@@ -532,11 +534,17 @@ let g:WebDevIconsUnicodeDecorateFileNodesExtensionSymbols['apib']  = ''
 " Custom airline
 let g:airline_theme='bubblegum'
 
+func! NvimGps() abort
+  return luaeval("require'nvim-gps'.is_available()") ?
+    \ luaeval("require'nvim-gps'.get_location()") : ''
+endf
+
 let g:airline_section_c=airline#section#create(["%{pathshorten(fnamemodify(expand('%'), ':~:.'))}"])
 let g:airline_section_b=airline#section#create(["%{FugitiveHead()[:20]}"])
+let g:airline_section_x =airline#section#create_right(["%{NvimGps()}"])
 let g:airline#extensions#default#layout = [
       \ [ 'a', 'b', 'c' ],
-      \ [ 'error', 'warning' ]
+      \ [ 'x', 'error', 'warning' ]
       \ ]
 
 " Custom closetag
@@ -563,7 +571,7 @@ set smarttab
 set tabstop=2 " Number of space og a <Tab> character
 set softtabstop=2
 set shiftwidth=2 " Number of spaces use by autoindent
-set lazyredraw
+" set lazyredraw
 set synmaxcol=120  " avoid slow rendering for long lines
 " set redrawtime=5000
 set regexpengine=1
@@ -655,6 +663,7 @@ inoremap <silent><expr> <C-j>
       \ CheckBackspace() ? "\<C-j>" :
       \ coc#refresh()
 inoremap <expr><C-k> coc#pum#visible() ? coc#pum#prev(1) : "\<C-k>"
+inoremap <expr><C-p> coc#pum#visible() ? coc#pum#prev(1) : "\<C-p>"
 
 " Make <CR> to accept selected completion item or notify coc.nvim to format
 " <C-g>u breaks current undo, please make your own choice.
@@ -725,7 +734,10 @@ endfunction
 " === END COC config
 
 " Auto format
-autocmd BufWritePre *.js,*.jsx,*.css,*.scss,*.less,*.ts,*.tsx if stridx(expand("%:p"), "node_modules") < 0 | call CocAction('format') | endif
+command! -nargs=0 Prettier :CocCommand prettier.forceFormatDocument
+autocmd VimEnter * if stridx(getcwd(), "peeba") >= 0 | let g:workspace='/peeba' | elseif stridx(getcwd(), "sourcecode") >= 0 | let g:workspace='/sourcecode' | else | let g:workspace='' | endif
+autocmd BufWritePre *.js,*.jsx,*.css,*.scss,*.less,*.ts,*.tsx if stridx(expand("%:p"), "node_modules") < 0 && stridx(expand("%:p"), "translations") < 0 && stridx(expand("%:p"), "taffi") < 0  | call CocAction('format') | endif
+" autocmd BufWritePost *.js,*.jsx,*.css,*.scss,*.less,*.ts,*.tsx if stridx(expand("%:p"), "taffi") >= 0  | execute ':silent !yarn eslint --fix ' . expand('%') | endif
 autocmd BufWritePre *.re,*.res call CocAction('format')
 
 " Quick escape
@@ -739,6 +751,7 @@ let $FZF_DEFAULT_COMMAND = 'rg --files --no-ignore-vcs --hidden'.
       \' --glob !dist'.
       \' --glob !target'.
       \' --glob !bin'.
+      \' --glob !build'.
       \' --glob "!*.cm*"'.
       \' --glob "!*.reast"'.
       \' --glob "!*.d"'.
@@ -818,17 +831,16 @@ au FileType markdown  setl conceallevel=0
 " Set background and colorscheme
 set termguicolors
 " configure nvcode-color-schemes
-let g:nvcode_termcolors=256
-colorscheme nvcode
+colorscheme nightfox
 
 hi CocErrorSign cterm=bold,reverse ctermfg=160 ctermbg=230 guifg=White guibg=Red
 hi CocUnderlineError cterm=underline ctermfg=61 gui=undercurl guisp=Red
-hi link CocErrorHighlight CocUnderlineError
-hi MatchTag term=reverse cterm=reverse ctermfg=136 ctermbg=236 guibg=Yellow
-hi MatchParen ctermfg=yellow
-hi Search  ctermfg=234 ctermbg=180 guifg=#1e1e1e guibg=#e5c07b
-hi Cursor  ctermfg=234 ctermbg=white guifg=#1e1e1e guibg=#e5c07b
-hi CocMenuSel ctermbg=white guifg=#1e1e1e guibg=#e5c07b
+" hi link CocErrorHighlight CocUnderlineError
+" hi MatchTag term=reverse cterm=reverse ctermfg=136 ctermbg=236 guibg=Yellow
+" hi MatchParen ctermfg=yellow
+" hi Search  ctermfg=234 ctermbg=180 guifg=#1e1e1e guibg=#e5c07b
+" hi Cursor  ctermfg=234 ctermbg=white guifg=#1e1e1e guibg=#e5c07b
+" hi CocMenuSel ctermbg=white guifg=#1e1e1e guibg=#e5c07b
 
 " hi Visual cterm=reverse ctermbg=242 guibg=#303030 cterm=reverse ctermbg=242 gui=reverse guifg=#586e75 guibg=#002b36
 " Required for operations modifying multiple buffers like rename.
@@ -848,10 +860,14 @@ endif
 " Multiple path for example: find ~/projects ~/Downloads -maxdepth 1 -type d
 " Detect hightlight at cursor http://www.drchip.org/astronaut/vim/index.html#Maps
 " customize function put to the end of the file to make sure treesitter work
+let g:workspace = get(g:, 'workspace', '')
+command! -nargs=* -complete=dir -bang SetH let g:workspace='/hashback'
+command! -nargs=* -complete=dir -bang SetS let g:workspace='/sourcecode'
+command! -nargs=* -complete=dir -bang SetD let g:workspace=''
 command! -nargs=* -complete=dir -bang Cd call
       \ fzf#run(fzf#wrap(
       \ {
-      \ 'source': join(['find ~/projects', '-maxdepth 1 ','-type d'], ' '),
+      \ 'source': join(['find ~/projects'.g:workspace, '-maxdepth 1 ','-type d'], ' '),
       \ 'sink': 'cd',
       \ 'options': [
       \ '-q', len(<q-args>) > 0 ?(<q-args>): '',
@@ -867,12 +883,3 @@ command! -nargs=* -complete=dir -bang TmuxLogs call
           \ '-q', len(<q-args>) > 0 ?(<q-args>): '',
           \ '--prompt', "TmuxLogs"]
           \ } , <bang>0))
-command! -nargs=* -complete=dir -bang Downloads call
-      \ fzf#run(fzf#wrap(
-      \ {
-      \ 'source': join(['find ~/Downloads', '-maxdepth 1', '| sort -r'], ' '),
-      \ 'sink': 'edit',
-      \ 'options': [
-      \ '-q', len(<q-args>) > 0 ?(<q-args>): '',
-      \ '--prompt', "TmuxLogs"]
-      \ } , <bang>0))

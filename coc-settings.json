@@ -16,16 +16,16 @@
     "com.sun.*",
     "antlr.*"
   ],
-  "python.jediEnabled": false,
   "solargraph.autoformat": true,
   "solargraph.useBundler": false,
   "solargraph.checkGemVersion": false,
   "solargraph.diagnostics": true,
   "solargraph.formatting": true,
   "sql.formatOptions": {
-    "uppercase": true
+    "keywordCase": "upper"
   },
   "suggest.timeout": 6000,
+  "snippets.shortcut": "SP",
   "flutter.sdk.flutter-lookup": "asdf which flutter",
   "workspace.ignoredFiletypes": [
     "log",
