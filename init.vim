@@ -842,7 +842,7 @@ hi CocUnderlineError cterm=underline ctermfg=61 gui=undercurl guisp=Red
 " hi Cursor  ctermfg=234 ctermbg=white guifg=#1e1e1e guibg=#e5c07b
 " hi CocMenuSel ctermbg=white guifg=#1e1e1e guibg=#e5c07b
 
-" hi Visual cterm=reverse ctermbg=242 guibg=#303030 cterm=reverse ctermbg=242 gui=reverse guifg=#586e75 guibg=#002b36
+hi Visual guibg=#445c80
 " Required for operations modifying multiple buffers like rename.
 set hidden
 " Save file as root
@@ -862,7 +862,6 @@ endif
 " customize function put to the end of the file to make sure treesitter work
 let g:workspace = get(g:, 'workspace', '')
 command! -nargs=* -complete=dir -bang SetH let g:workspace='/hashback'
-command! -nargs=* -complete=dir -bang SetS let g:workspace='/sourcecode'
 command! -nargs=* -complete=dir -bang SetD let g:workspace=''
 command! -nargs=* -complete=dir -bang Cd call
       \ fzf#run(fzf#wrap(

@@ -1,0 +1,95 @@
+live_config_reload = true
+
+[bell]
+animation = "EaseOutExpo"
+duration = 0
+
+[colors]
+draw_bold_text_with_bright_colors = true
+
+[colors.bright]
+black = "0x6f6f6f"
+blue = "0xc2e3ff"
+cyan = "0xc0e9f8"
+green = "0xd6fcba"
+magenta = "0xffc6ff"
+red = "0xfe978b"
+white = "0xffffff"
+yellow = "0xfffed5"
+
+[colors.cursor]
+background = "0xf0f0f0"
+cursor = "0xffffff"
+foreground = "0x26282a"
+text = "0x000000"
+
+[colors.normal]
+black = "0x26282a"
+blue = "0x8bbce5"
+cyan = "0xa2e1f8"
+green = "0xb4fb73"
+magenta = "0xffb2fe"
+red = "0xff8878"
+white = "0xf1f1f1"
+yellow = "0xfffcb7"
+
+[colors.primary]
+background = "0x26282a"
+foreground = "0xf0f0f0"
+
+[cursor]
+style = "Block"
+unfocused_hollow = true
+
+[font]
+size = 14.0
+
+[font.bold]
+family = "SauceCodePro Nerd Font"
+style = "Bold"
+
+[font.glyph_offset]
+x = 0
+y = 0
+
+[font.italic]
+family = "SauceCodePro Nerd Font"
+style = "Italic"
+
+[font.normal]
+family = "SauceCodePro Nerd Font"
+style = "Regular"
+
+[font.offset]
+x = 0
+y = 0
+
+[mouse]
+hide_when_typing = false
+
+[[mouse.bindings]]
+action = "PasteSelection"
+mouse = "Middle"
+
+[scrolling]
+history = 10000
+multiplier = 3
+
+[selection]
+save_to_clipboard = false
+semantic_escape_chars = ",?`|:\"' ()[]{}<>"
+
+[shell]
+args = ["--login"]
+program = "/bin/zsh"
+
+[window]
+decorations = "none"
+
+[window.dimensions]
+columns = 80
+lines = 24
+
+[window.padding]
+x = 2
+y = 2

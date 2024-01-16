@@ -239,14 +239,12 @@ gmr() {
 
 case "$OSTYPE" in
   darwin*)
-    . $(brew --prefix asdf)/asdf.sh
+    . /opt/homebrew/opt/asdf/libexec/asdf.sh
     ;;
   linux*)
     . $HOME/.asdf/asdf.sh
     ;;
 esac
-
-. ~/.asdf/plugins/java/set-java-home.zsh
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 

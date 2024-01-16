@@ -23,7 +23,7 @@
                   {
                     "bundle_identifiers": [
                       "^org\\.vim\\.",
-                      "^io\\.alacritty"
+                      "^org\\.alacritty"
                     ],
                     "type": "frontmost_application_unless"
                   }
@@ -48,7 +48,7 @@
                   {
                     "bundle_identifiers": [
                       "^org\\.vim\\.",
-                      "^io\\.alacritty"
+                      "^org\\.alacritty"
                     ],
                     "type": "frontmost_application_unless"
                   }
@@ -78,7 +78,7 @@
                   {
                     "bundle_identifiers": [
                       "^org\\.vim\\.",
-                      "^io\\.alacritty"
+                      "^org\\.alacritty"
                     ],
                     "type": "frontmost_application_unless"
                   }
@@ -108,7 +108,7 @@
                   {
                     "bundle_identifiers": [
                       "^com\\.apple\\.terminal",
-                      "^io\\.alacritty"
+                      "^org\\.alacritty"
                     ],
                     "type": "frontmost_application_if"
                   }
@@ -133,7 +133,7 @@
                   {
                     "bundle_identifiers": [
                       "^org\\.vim\\.",
-                      "^io\\.alacritty"
+                      "^org\\.alacritty"
                     ],
                     "type": "frontmost_application_unless"
                   }
