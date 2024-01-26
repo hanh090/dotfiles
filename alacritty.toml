@@ -85,6 +85,7 @@ program = "/bin/zsh"
 
 [window]
 decorations = "none"
+option_as_alt = "Both"
 
 [window.dimensions]
 columns = 80
