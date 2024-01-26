@@ -132,7 +132,8 @@ call plug#end()
 
 "{
 lua << LUA
-require'hop'.setup()
+require("hop").setup()
+require("ibl").setup()
 require("nvim-gps").setup()
 
 vim.api.nvim_set_keymap('', 'f', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.AFTER_CURSOR, current_line_only = true })<cr>", {})
