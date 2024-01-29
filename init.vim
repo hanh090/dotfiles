@@ -122,6 +122,9 @@ Plug 'plasticboy/vim-markdown'
 Plug 'tpope/vim-dispatch'
 " manage projection and alternate file
 Plug 'tpope/vim-projectionist'
+"---{
+let g:python3_host_prog = "$HOME/.asdf/shims/python3"
+"---}
 " for ghost text
 Plug 'raghur/vim-ghost'
 
@@ -254,7 +257,7 @@ nnoremap <leader>v4 :VtrAttachToPane 4<cr>:call system("tmux clock-mode -t 4 && 
 nnoremap <leader>v5 :VtrAttachToPane 5<cr>:call system("tmux clock-mode -t 5 && sleep 0.1 && tmux send-keys -t 5 q")<cr>
 nnoremap <leader>vf :VtrSendFile<cr>
 nnoremap <C-c><C-c> :VtrSendLinesToRunner<cr>
-vnoremap <C-c><C-c> :VtrSendLinesToRunner<cr>
+vnoremap <C-c><C-c> y:VtrSendKeysRaw '<C-R>"' Enter<cr>
 " Git merge request in active runner
 noremap  <leader>vm :execute 'VtrSendCommandToRunner cd '.getcwd().' && ggp && gmr'<cr><cr>
 "}
@@ -265,7 +268,7 @@ function! GoToProjDir()
   let project_part_idx = 0
   for part in path_parts
     if part == "projects"
-      if stridx(path, "hashback") >=0 || stridx(path, "employment-hero") >=0
+      if stridx(path, "hashback") >=0
         let project_part_idx += 1
       endif
 
