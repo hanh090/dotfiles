@@ -847,6 +847,9 @@ hi CocUnderlineError cterm=underline ctermfg=61 gui=undercurl guisp=Red
 " hi CocMenuSel ctermbg=white guifg=#1e1e1e guibg=#e5c07b
 
 hi Visual guibg=#445c80
+" Fern color
+hi link FernRootSymbol Title
+hi link FernRootText   Title
 " Required for operations modifying multiple buffers like rename.
 set hidden
 " Save file as root
