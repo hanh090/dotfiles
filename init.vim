@@ -16,8 +16,6 @@ Plug 'lambdalisue/fern.vim'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'christianchiarulli/nvcode-color-schemes.vim'
 Plug 'EdenEast/nightfox.nvim' " Vim-Plug
-" Show code context
-Plug 'SmiteshP/nvim-gps'
 " Theme + Style
 Plug 'norcalli/nvim-colorizer.lua'
 Plug 'ryanoasis/vim-devicons'
@@ -125,8 +123,6 @@ Plug 'tpope/vim-projectionist'
 "---{
 let g:python3_host_prog = "$HOME/.asdf/shims/python3"
 "---}
-" for ghost text
-Plug 'raghur/vim-ghost'
 
 call plug#end()
 
@@ -134,7 +130,6 @@ call plug#end()
 lua << LUA
 require("hop").setup()
 require("ibl").setup()
-require("nvim-gps").setup()
 
 vim.api.nvim_set_keymap('', 'f', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.AFTER_CURSOR, current_line_only = true })<cr>", {})
 vim.api.nvim_set_keymap('', 'F', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.BEFORE_CURSOR, current_line_only = true })<cr>", {})
@@ -384,6 +379,7 @@ endfunction
 function! GetMergeBranchByProj()
   let merge_branch = 'master'
   if stridx(getcwd(), "employment-hero") >=0
+        \ || stridx(getcwd(), "smartmatch-hub") >= 0
     let merge_branch = "development"
   elseif stridx(getcwd(), "plan-manager") >= 0
     let merge_branch = "dev"
@@ -537,15 +533,8 @@ let g:WebDevIconsUnicodeDecorateFileNodesExtensionSymbols['apib']  = ''
 
 " Custom airline
 let g:airline_theme='bubblegum'
-
-func! NvimGps() abort
-  return luaeval("require'nvim-gps'.is_available()") ?
-    \ luaeval("require'nvim-gps'.get_location()") : ''
-endf
-
 let g:airline_section_c=airline#section#create(["%{pathshorten(fnamemodify(expand('%'), ':~:.'))}"])
 let g:airline_section_b=airline#section#create(["%{FugitiveHead()[:20]}"])
-let g:airline_section_x =airline#section#create_right(["%{NvimGps()}"])
 let g:airline#extensions#default#layout = [
       \ [ 'a', 'b', 'c' ],
       \ [ 'x', 'error', 'warning' ]
