@@ -1,3 +1,10 @@
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
@@ -8,7 +15,7 @@ export ZSH=$HOME/.oh-my-zsh
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="robbyrussell"
+ZSH_THEME="powerlevel10k/powerlevel10k"
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -219,23 +226,14 @@ gmr() {
 
 }
 
-# Change cursor mapping
-# zle-keymap-select() {
-#   if [[ $KEYMAP = vicmd ]]; then
-#     print -n '\e[2 q'
-#   else
-#     print -n '\e[5 q'
-#   fi
-# }
-# zle-line-init() {
-#   print -n '\e[5 q'
-# }
-# zle -N zle-keymap-select
-# zle -N zle-line-init
-# preexec() {
-#   print -n $'\e[2 q'
-# }
-#End Change cursor mapping
+# staging
+alias heroclistag='herocli --server hero2.staging.ehrocks.com:443'
+
+# production
+alias herocliprod='herocli --server hero2.ehrocks.com:443'
+
+# integration
+alias herocliint='herocli --server hero2.integration.ehrocks.com:443'
 
 case "$OSTYPE" in
   darwin*)
@@ -246,9 +244,11 @@ case "$OSTYPE" in
     ;;
 esac
 
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
+source <(fzf --zsh)
 source ~ZSH_CUSTOM/plugins/fzf-tab/fzf-tab.plugin.zsh
 
 # fix problem with unmatching
 unsetopt nomatch
+
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh

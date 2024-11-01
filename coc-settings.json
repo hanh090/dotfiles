@@ -26,7 +26,6 @@
   },
   "suggest.timeout": 6000,
   "snippets.shortcut": "SP",
-  "flutter.sdk.flutter-lookup": "asdf which flutter",
   "workspace.ignoredFiletypes": [
     "log",
     "txt",
@@ -34,5 +33,7 @@
     "class",
     "jar"
   ],
-  "yank.highlight.enable": false
+  "yank.highlight.enable": false,
+  "typescript.workspaceSymbols.scope": "currentProject",
+  "tsserver.log": "normal"
 }
