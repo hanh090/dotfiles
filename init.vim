@@ -602,11 +602,10 @@ augroup END
 
 " Github PR
 function! s:pr_cmd_by_proj()
-  if stridx(getcwd(), "shabu-town") >= 0 ||
-        \ stridx(getcwd(), "coop-game") >= 0
-    execute "Git hub-pr"
-  else
+  if stridx(getcwd(), "Thinkei") >= 0 ||
     execute "Git hub-pr -d"
+  else
+    execute "Git hub-pr"
   endif
 endfunction
 nnoremap <leader>pr :call <SID>pr_cmd_by_proj()<cr>
