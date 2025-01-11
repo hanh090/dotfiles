@@ -134,7 +134,6 @@ vim.api.nvim_set_keymap('', 'F', "<cmd>lua require'hop'.hint_char1({ direction =
 vim.api.nvim_set_keymap('', 't', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.AFTER_CURSOR, current_line_only = true, hint_offset = -1 })<cr>", {})
 vim.api.nvim_set_keymap('', 'T', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.BEFORE_CURSOR, current_line_only = true, hint_offset = 1 })<cr>", {})
 
-
 require("nvim-autopairs").setup {}
 -- Load custom treesitter grammar for org filetype
 require'nvim-treesitter.configs'.setup {
@@ -146,6 +145,14 @@ require'nvim-treesitter.configs'.setup {
   highlight = {
     enable = true,              -- false will disable the whole extension
     disable = function(lang, bufnr)
+      local max_line_length = 1000 -- Set the max line length
+      local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
+      for _, line in ipairs(lines) do
+          if #line > max_line_length then
+              return true -- Disable highlighting for this buffer
+          end
+      end
+      return false -- Keep highlighting enabled
     end,
   },
   incremental_selection = {
@@ -178,16 +185,60 @@ require('mason-lspconfig').setup({
 -- Setup LSP configurations
 local lspconfig = require('lspconfig')
 
--- Format on save function
-local format_on_save = function(client, bufnr)
-  if client.server_capabilities.documentFormattingProvider then
-    vim.api.nvim_create_autocmd("BufWritePre", {
-      buffer = bufnr,
-      callback = function()
-        vim.lsp.buf.format({ async = false })
-      end
-    })
+-- Add command for format disable and enable
+vim.api.nvim_create_user_command("FormatDisable", function(args)
+  if args.bang then
+    -- FormatDisable! will disable formatting just for this buffer
+    vim.b.disable_autoformat = true
+  else
+    vim.g.disable_autoformat = true
   end
+end, {
+  desc = "Disable autoformat-on-save",
+  bang = true,
+})
+vim.api.nvim_create_user_command("FormatEnable", function()
+  vim.b.disable_autoformat = false
+  vim.g.disable_autoformat = false
+end, {
+  desc = "Re-enable autoformat-on-save",
+})
+
+vim.api.nvim_create_user_command("Format", function(args)
+  local range = nil
+  if args.count ~= -1 then
+    local end_line = vim.api.nvim_buf_get_lines(0, args.line2 - 1, args.line2, true)[1]
+    range = {
+      start = { args.line1, 0 },
+      ["end"] = { args.line2, end_line:len() },
+    }
+  end
+  require("conform").format({ async = true, lsp_format = "fallback", range = range })
+end, { range = true })
+vim.keymap.set("v", "<Space>cf", function()
+    -- Get the selected range in visual mode
+    local start_line = vim.fn.line("'<")
+    local end_line = vim.fn.line("'>")
+
+    -- Call the Format command with the selected range
+    vim.cmd(string.format(":%d,%dFormat", start_line, end_line))
+end, { desc = "Format selected code in visual mode" })
+
+local function is_disabled_format_repo()
+    -- Run a shell command to get the Git remote origin URL
+    local handle = io.popen("git config --get remote.origin.url 2>/dev/null")
+    if not handle then
+        return false -- Return false if the command fails
+    end
+
+    local result = handle:read("*a")
+    handle:close()
+
+    -- Trim whitespace from the result
+    result = result:gsub("%s+", "")
+
+    -- Check if the remote origin contains 'jenny'
+    return result:find("jenhacool") ~= nil
 end
 
 require("conform").setup({
@@ -199,17 +250,25 @@ require("conform").setup({
     -- You can customize some of the format options for the filetype (:help conform.format)
     rust = { "rustfmt", lsp_format = "fallback" },
     -- Conform will run the first available formatter
-    javascript = { "oxc", "prettierd" },
-    typescript = { "oxc", "prettierd" },
-    typescriptreact = { "oxc", "prettierd" },
-    javascripttreact = { "oxc", "prettierd" },
+    javascript = { "prettier", "prettierd" },
+    typescript = { "prettier", "prettierd" },
+    typescriptreact = { "prettier", "prettierd" },
+    javascriptreact = { "prettier", "prettierd", lsp_format = "fallback" },
     json = { "fixjson"}
   },
-  format_on_save = {
-    -- These options will be passed to conform.format()
-    timeout_ms = 5000,
-    lsp_format = "fallback",
-  },
+  format_on_save = function(bufnr)
+    -- Disable with a global or buffer-local variable
+    if vim.g.disable_autoformat or vim.b[bufnr].disable_autoformat then
+      return
+    end
+    -- Disable autoformat for files in a certain path
+    local bufname = vim.api.nvim_buf_get_name(bufnr)
+    if bufname:match("/node_modules/") or is_disabled_format_repo() then
+      return
+    end
+
+    return { timeout_ms = 500, lsp_format = "fallback" }
+  end,
 })
 
 local navic = require('nvim-navic')
@@ -224,9 +283,9 @@ local on_attach = function(client, bufnr)
   vim.api.nvim_buf_set_keymap(bufnr, 'n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
   vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
   vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-  vim.api.nvim_buf_set_keymap(bufnr, 'n', 'rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
-  vim.api.nvim_buf_set_keymap(bufnr, 'n', 'ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
-  vim.api.nvim_buf_set_keymap(bufnr, 'x', 'ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
+  vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
+  vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
+  vim.api.nvim_buf_set_keymap(bufnr, 'x', '<leader>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
   vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
     vim.lsp.diagnostic.on_publish_diagnostics, {
       signs = {
@@ -260,7 +319,7 @@ require('mason-lspconfig').setup_handlers({
 })
 
 -- Setup for LSP autocompletion using nvim-cmp
-local cmp = require'cmp'
+local cmp = require 'cmp'
 cmp.setup({
   snippet = {
     expand = function(args)
@@ -275,12 +334,33 @@ cmp.setup({
   },
   sources = cmp.config.sources({
     { name = 'nvim_lsp' },
-    { name = 'vsnip' }, -- For vsnip users.
+    { name = 'vsnip' },   -- For vsnip users.
     { name = 'luasnip' }, -- For luasnip users.
     -- { name = 'ultisnips' }, -- For ultisnips users.
     -- { name = 'snippy' }, -- For snippy users.
   }, {
-    { name = 'buffer' },
+    {
+      name = 'buffer',
+      option = {
+        get_bufnrs = function()
+          local bufs = {}
+          for _, win in ipairs(vim.api.nvim_list_wins()) do
+            bufs[vim.api.nvim_win_get_buf(win)] = true
+          end
+          return vim.tbl_keys(bufs)
+        end
+      }
+    },
+    { name = 'path' },
+    {
+      name = "cmp_yanky",
+      option = {
+        -- only suggest items which match the current filetype
+        onlyCurrentFiletype = false,
+        -- only suggest items with a minimum length
+        minLength = 3,
+      },
+    }
   })
 })
 
@@ -557,6 +637,7 @@ function! GetMergeBranchByProj()
         \ || stridx(getcwd(), "smartmatch-hub") >= 0
     let merge_branch = "development"
   elseif stridx(getcwd(), "time-tracking") >=0
+        \ || stridx(getcwd(), "sales-boost") >= 0
     let merge_branch = "dev"
   elseif stridx(getcwd(), "frontend-script") >= 0
         \ || stridx(getcwd(), "shabu-town") >= 0
@@ -602,7 +683,7 @@ augroup END
 
 " Github PR
 function! s:pr_cmd_by_proj()
-  if stridx(getcwd(), "Thinkei") >= 0 ||
+  if stridx(getcwd(), "Thinkei") >= 0
     execute "Git hub-pr -d"
   else
     execute "Git hub-pr"
@@ -695,18 +776,6 @@ if !exists('g:WebDevIconsUnicodeDecorateFileNodesExtensionSymbols')
   let g:WebDevIconsUnicodeDecorateFileNodesExtensionSymbols = {}
 endif
 
-" Custom airline
-" let g:airline_theme='bubblegum'
-" let g:airline_section_c=airline#section#create(["%{pathshorten(fnamemodify(expand('%'), ':~:.'))}"])
-" let g:airline_section_b=airline#section#create(["%{FugitiveHead()[:20]}"])
-" let g:airline#extensions#default#layout = [
-"       \ [ 'a', 'b', 'c' ],
-"       \ [ 'x', 'error', 'warning' ]
-"       \ ]
-"
-" Custom closetag
-let g:closetag_filenames = '*.js,*.jsx,*.html, *.xml'
-
 " yank/copy-paste policy
 if has('win32') || has('win64') || has('mac')
   set clipboard=unnamed
@@ -763,109 +832,6 @@ set updatetime=300
 set shortmess+=c
 " always show signcolumns
 set signcolumn=yes
-" Use `[g` and `]g` to navigate diagnostics
-" nmap <silent> [g <Plug>(coc-diagnostic-prev)
-" nmap <silent> ]g <Plug>(coc-diagnostic-next)
-" " Remap keys for gotos
-" nmap <silent> gd <Plug>(coc-definition)
-" nmap <silent> gs :call CocAction('jumpDefinition', 'vne')<CR>
-" nmap <silent> gi <Plug>(coc-implementation)
-" nmap <silent> gr <Plug>(coc-references)
-" nmap <silent> <space>co :CocList outline<CR>
-" nmap <silent> <space>cu :CocList output<CR>
-" nmap <silent> <space>cd :CocList diagnostics<CR>
-" nmap <silent> <space>cD :CocList --normal diagnostics<CR>
-" Use <c-space> to trigger completion.
-" if has('nvim')
-"   inoremap <silent><expr> <c-space> coc#refresh()
-" else
-"   inoremap <silent><expr> <c-@> coc#refresh()
-" endif
-" inoremap <silent><expr> <C-n>
-"       \ coc#pum#visible() ? coc#pum#next(1) :
-"       \ CheckBackspace() ? "\<C-n>" :
-"       \ coc#refresh()
-" inoremap <silent><expr> <C-j>
-"       \ coc#pum#visible() ? coc#pum#next(1) :
-"       \ CheckBackspace() ? "\<C-j>" :
-"       \ coc#refresh()
-" inoremap <expr><C-k> coc#pum#visible() ? coc#pum#prev(1) : "\<C-k>"
-" inoremap <expr><C-p> coc#pum#visible() ? coc#pum#prev(1) : "\<C-p>"
-"
-" " Make <CR> to accept selected completion item or notify coc.nvim to format
-" " <C-g>u breaks current undo, please make your own choice.
-" inoremap <silent><expr> <C-x> coc#pum#visible() ? coc#pum#confirm()
-"                               \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
-" " Show full message.ce mean coc-expand
-" nmap <silent> <space>ce :call CocAction("diagnosticInfo")<cr>
-" " List of yank
-" nmap <silent> <space>cy  :<C-u>CocList -N yank<cr>
-" nmap <silent> <space>cY  :<C-u>CocList --normal yank<cr>:set filetype=vim<cr>
-" " quick fix
-" nmap <silent> <space>cq <Plug>(coc-codeaction)
-" vmap <silent> <space>cq <Plug>(coc-codeaction-selected)
-" nmap <silent> <space>cf <Plug>(coc-format)
-" vmap <silent> <space>cf <Plug>(coc-format-selected)
-" " Add text object
-" xmap if <Plug>(coc-funcobj-i)
-" omap if <Plug>(coc-funcobj-i)
-" xmap af <Plug>(coc-funcobj-a)
-" omap af <Plug>(coc-funcobj-a)
-"format json need jq command in system
-" autocmd FileType json nnoremap <buffer> <leader>cf :%!jq '.'<cr>
-" Symbol renaming.
-" nmap <silent> <space>cn <Plug>(coc-rename)
-" function! s:reload_coc_extension()
-"   if(&filetype == 'javascript')
-"     let l:result = CocAction('reloadExtension', 'coc-eslint')
-"     echo 'Reload coc-eslint with result='.l:result
-"   elseif(&filetype == 'typescript' || &filetype == 'typescriptreact')
-"     let l:result = CocAction('reloadExtension', 'coc-tsserver')
-"     echo 'Reload coc-typescript with result='.l:result
-"   elseif(&filetype == 'reason')
-"     let l:result = CocAction('reloadExtension', 'coc-reason')
-"     echo 'Reload coc-reason with result='.l:result
-"   elseif(&filetype == 'ruby')
-"     let l:result = CocAction('reloadExtension', 'coc-solargraph')
-"     echo 'Reload coc-solargraph with result='.l:result
-"   elseif(&filetype == 'java')
-"     call coc#rpc#notify('runCommand', ['java.clean.workspace'])
-"     let l:result = CocAction('reloadExtension', 'coc-java')
-"     echo 'Reload coc-java with result='.l:result
-"   else
-"     CocRestart
-"   endif
-" endfunction
-" nmap <silent> <space>cl :call <SID>reload_coc_extension()<CR>
-" " Use K to show documentation in preview window
-" nnoremap <silent> K :call <SID>show_documentation()<CR>
-" function! s:show_documentation()
-"   if (index(['vim','help'], &filetype) >= 0)
-"     execute 'h '.expand('<cword>')
-"   else
-"     call CocAction('doHover')
-"   endif
-" endfunction
-
-  " " Use <C-l> for trigger snippet expand.
-  " imap <C-l> <Plug>(coc-snippets-expand)
-  " " Use <C-j> for select text for visual placeholder of snippet.
-  " vmap <C-j> <Plug>(coc-snippets-select)
-  " " Use <C-j> for jump to next placeholder, it's default of coc.nvim
-  " let g:coc_snippet_next = '<c-j>'
-  " " Use <C-k> for jump to previous placeholder, it's default of coc.nvim
-  " let g:coc_snippet_prev = '<c-k>'
-  " " Use <C-j> for both expand and jump (make expand higher priority.)
-  " " imap <C-j> <Plug>(coc-snippets-expand-jump)
-
-" === END COC config
-
-" Auto format
-" command! -nargs=0 Prettier :CocCommand prettier.forceFormatDocument
-" autocmd VimEnter * if stridx(getcwd(), "peeba") >= 0 | let g:workspace='/peeba' | elseif stridx(getcwd(), "sourcecode") >= 0 | let g:workspace='/sourcecode' | else | let g:workspace='' | endif
-" autocmd BufWritePre *.js,*.jsx,*.css,*.scss,*.less,*.ts,*.tsx if stridx(expand("%:p"), "node_modules") < 0 && stridx(expand("%:p"), "translations") < 0 && stridx(expand("%:p"), "taffi") < 0  | call CocAction('format') | endif
-" autocmd BufWritePost *.js,*.jsx,*.css,*.scss,*.less,*.ts,*.tsx if stridx(expand("%:p"), "taffi") >= 0  | execute ':silent !yarn eslint --fix ' . expand('%') | endif
-" autocmd BufWritePre *.re,*.res call CocAction('format')
 
 " Quick escape
 inoremap jk <ESC>
@@ -963,15 +929,6 @@ set completeopt=menu,menuone,noselect
 set conceallevel=0
 " choose color which from nvcode-color-schemes
 colorscheme nightfox
-
-" hi CocErrorSign cterm=bold,reverse ctermfg=160 ctermbg=230 guifg=White guibg=Red
-" hi CocUnderlineError cterm=underline ctermfg=61 gui=undercurl guisp=Red
-" hi link CocErrorHighlight CocUnderlineError
-" hi MatchTag term=reverse cterm=reverse ctermfg=136 ctermbg=236 guibg=Yellow
-" hi MatchParen ctermfg=yellow
-" hi Search  ctermfg=234 ctermbg=180 guifg=#1e1e1e guibg=#e5c07b
-" hi Cursor  ctermfg=234 ctermbg=white guifg=#1e1e1e guibg=#e5c07b
-" hi CocMenuSel ctermbg=white guifg=#1e1e1e guibg=#e5c07b
 
 hi Visual guibg=#445c80
 " Fern color
