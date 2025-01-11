@@ -83,9 +83,13 @@ semantic_escape_chars = ",?`|:\"' ()[]{}<>"
 args = ["--login"]
 program = "/bin/zsh"
 
+[terminal]
+osc52 = "CopyPaste"
+
 [window]
 decorations = "none"
 option_as_alt = "Both"
+dynamic_title = true
 
 [window.dimensions]
 columns = 80
