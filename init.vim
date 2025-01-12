@@ -35,11 +35,7 @@ let g:better_whitespace_filetypes_blacklist=['log', 'fugitive', 'quickfix', 'git
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-repeat'
 Plug 'mg979/vim-visual-multi'
-Plug 'alvan/vim-closetag'
 " Extend matching for html tag
-Plug 'andymass/vim-matchup'
-" Enhance matching tag for xml, html document
-Plug 'Valloric/MatchTagAlways'
 Plug 'dhruvasagar/vim-table-mode'
 
 " Note taking
@@ -273,7 +269,7 @@ require("conform").setup({
 
 local navic = require('nvim-navic')
 navic.setup({
-  depth_limit = 1,
+  depth_limit = 2,
 })
 
 -- Function to attach keybindings and format on save
@@ -777,11 +773,7 @@ if !exists('g:WebDevIconsUnicodeDecorateFileNodesExtensionSymbols')
 endif
 
 " yank/copy-paste policy
-if has('win32') || has('win64') || has('mac')
-  set clipboard=unnamed
-else
-  set clipboard=unnamed,unnamedplus
-endif
+set clipboard=unnamed,unnamedplus
 
 set autoindent " Copy indent from current line when starting a new line
 set smarttab
