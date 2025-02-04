@@ -627,8 +627,16 @@ function! GNewBranch()
   execute '!git checkout -b '.l:branch_name.' origin/'.l:merge_branch
 endfunction
 
+function! HasGitMainBranch()
+    " Run the Git command to check if 'main' exists as a local branch
+    let l:has_main = system('git branch --list main')
+
+    " Trim whitespace and check the result
+    return !empty(l:has_main) ? 1 : 0
+endfunction
+
 function! GetMergeBranchByProj()
-  let merge_branch = 'master'
+  let merge_branch = HasGitMainBranch() ? 'main' : 'master'
   if stridx(getcwd(), "employment-hero") >=0
         \ || stridx(getcwd(), "smartmatch-hub") >= 0
     let merge_branch = "development"
