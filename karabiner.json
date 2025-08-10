@@ -23,7 +23,8 @@
                   {
                     "bundle_identifiers": [
                       "^org\\.vim\\.",
-                      "^org\\.alacritty"
+                      "^org\\.alacritty",
+                      "^net\\.kovidgoyal\\.kitty$"
                     ],
                     "type": "frontmost_application_unless"
                   }
@@ -48,7 +49,8 @@
                   {
                     "bundle_identifiers": [
                       "^org\\.vim\\.",
-                      "^org\\.alacritty"
+                      "^org\\.alacritty",
+                      "^net\\.kovidgoyal\\.kitty"
                     ],
                     "type": "frontmost_application_unless"
                   }
@@ -78,7 +80,8 @@
                   {
                     "bundle_identifiers": [
                       "^org\\.vim\\.",
-                      "^org\\.alacritty"
+                      "^org\\.alacritty",
+                      "^net\\.kovidgoyal\\.kitty"
                     ],
                     "type": "frontmost_application_unless"
                   }
@@ -108,7 +111,8 @@
                   {
                     "bundle_identifiers": [
                       "^com\\.apple\\.terminal",
-                      "^org\\.alacritty"
+                      "^org\\.alacritty",
+                      "^net\\.kovidgoyal\\.kitty"
                     ],
                     "type": "frontmost_application_if"
                   }
@@ -133,7 +137,8 @@
                   {
                     "bundle_identifiers": [
                       "^org\\.vim\\.",
-                      "^org\\.alacritty"
+                      "^org\\.alacritty",
+                      "^net\\.kovidgoyal\\.kitty"
                     ],
                     "type": "frontmost_application_unless"
                   }
