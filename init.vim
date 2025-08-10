@@ -41,6 +41,10 @@ Plug 'dhruvasagar/vim-table-mode'
 " Note taking
 "  Git
 Plug 'tpope/vim-fugitive'
+Plug 'shumphrey/fugitive-gitlab.vim'
+"{
+let g:fugitive_gitlab_domains = ['https://git.code4you.com']
+"}
 Plug 'junkblocker/git-time-lapse'
 " --- Integrate github to git
 Plug 'tpope/vim-rhubarb'
@@ -118,6 +122,9 @@ Plug 'j-hui/fidget.nvim'
 
 " Symbol postion
 Plug 'SmiteshP/nvim-navic'
+
+" Bookmark with note
+Plug 'MattesGroeger/vim-bookmarks'
 call plug#end()
 
 "{
@@ -246,10 +253,10 @@ require("conform").setup({
     -- You can customize some of the format options for the filetype (:help conform.format)
     rust = { "rustfmt", lsp_format = "fallback" },
     -- Conform will run the first available formatter
-    javascript = { "prettier", "prettierd" },
-    typescript = { "prettier", "prettierd" },
-    typescriptreact = { "prettier", "prettierd" },
-    javascriptreact = { "prettier", "prettierd", lsp_format = "fallback" },
+    javascript = { "prettierd" },
+    typescript = { "prettierd" },
+    typescriptreact = { "prettierd" },
+    javascriptreact = { "prettierd", lsp_format = "fallback" },
     json = { "fixjson"}
   },
   format_on_save = function(bufnr)
@@ -263,7 +270,7 @@ require("conform").setup({
       return
     end
 
-    return { timeout_ms = 500, lsp_format = "fallback" }
+    return { timeout_ms = 2000, lsp_format = "fallback" }
   end,
 })
 
@@ -282,6 +289,8 @@ local on_attach = function(client, bufnr)
   vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
   vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
   vim.api.nvim_buf_set_keymap(bufnr, 'x', '<leader>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
+  vim.api.nvim_buf_set_keymap(bufnr, 'n', 'E', '<cmd>lua vim.diagnostic.open_float({ focusable = true })<CR>', opts)
+
   vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
     vim.lsp.diagnostic.on_publish_diagnostics, {
       signs = {
@@ -600,7 +609,7 @@ noremap  <leader>gP :Git push origin HEAD --force <bar>echo "Pushed success" <cr
 noremap  <leader>gb :Git blame<cr>
 noremap  <leader>gc :BranchList<cr>
 noremap  <leader>gC :BranchList!<cr>
-noremap  <leader>gm :echo 'Merging origin/'.GetMergeBranchByProj() <bar> execute 'Git fetch origin '.GetMergeBranchByProj() <bar> execute 'Git rebase origin/'.GetMergeBranchByProj() <cr>
+noremap  <leader>gm :echo 'Merging origin/'.GetMergeBranchByProj() <bar> execute 'Git fetch origin '.GetMergeBranchByProj() <bar> execute 'Git merge origin/'.GetMergeBranchByProj() <cr>
 noremap  <leader>gd :execute 'Git diff '.GInitCommitWhenBranching().'..HEAD'<cr>
 noremap  <leader>gD :execute 'Git diff --name-status '.GInitCommitWhenBranching().'..HEAD'<cr>
 noremap  <leader>g1 :Git cherry-pick HEAD@{1}<cr>
@@ -642,6 +651,7 @@ function! GetMergeBranchByProj()
     let merge_branch = "development"
   elseif stridx(getcwd(), "time-tracking") >=0
         \ || stridx(getcwd(), "sales-boost") >= 0
+        \ || stridx(getcwd(), "bbc") >= 0
     let merge_branch = "dev"
   elseif stridx(getcwd(), "frontend-script") >= 0
         \ || stridx(getcwd(), "shabu-town") >= 0
@@ -945,7 +955,7 @@ let g:workspace = get(g:, 'workspace', '')
 command! -nargs=* -complete=dir -bang Cd call
       \ fzf#run(fzf#wrap(
       \ {
-      \ 'source': join(['find ~/projects'.g:workspace, '-maxdepth 1 ','-type d'], ' '),
+      \ 'source': join(['find ~/projects ~/projects/sasadmin24'.g:workspace, '-maxdepth 1 ',"-type d | awk '!x[$0]++'"], ' '),
       \ 'sink': 'cd',
       \ 'options': [
       \ '-q', len(<q-args>) > 0 ?(<q-args>): '',
