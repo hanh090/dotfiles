@@ -235,15 +235,6 @@ alias herocliprod='herocli --server hero2.ehrocks.com:443'
 # integration
 alias herocliint='herocli --server hero2.integration.ehrocks.com:443'
 
-case "$OSTYPE" in
-  darwin*)
-    . /opt/homebrew/opt/asdf/libexec/asdf.sh
-    ;;
-  linux*)
-    . $HOME/.asdf/asdf.sh
-    ;;
-esac
-
 source <(fzf --zsh)
 source ~ZSH_CUSTOM/plugins/fzf-tab/fzf-tab.plugin.zsh
 
