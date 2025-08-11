@@ -122,6 +122,49 @@ call plug#end()
 
 "{
 lua << LUA
+local function paste(e)
+  return {
+    vim.fn.split(vim.fn.getreg(""), "\n"),
+    vim.fn.getregtype(""),
+  }
+end
+-- local status, osc52 = pcall(require, "vim.ui.clipboard.osc52")
+-- vim.g.clipboard = {
+--   name = "OSC 52",
+--   copy = {
+--     ["+"] = osc52.copy("+"),
+--     ["*"] = osc52.copy("*"),
+--   },
+--   paste = {
+--     ["+"] = osc52.paste("+"),
+--     ["*"] = osc52.paste("*"),
+--   },
+-- }
+
+function EnabledOsc52()
+  local status, osc52 = pcall(require, "vim.ui.clipboard.osc52")
+  if not status then
+    print("Error: OSC 52 module not found!")
+    return
+  end
+
+  vim.g.clipboard = {
+    name = "OSC 52",
+    copy = {
+      ["+"] = osc52.copy("+"),
+      ["*"] = osc52.copy("*"),
+    },
+    paste = {
+      ["+"] = paste("+"),
+      ["*"] = paste("*"),
+    },
+  }
+
+  print("OSC 52 clipboard enabled!")
+end
+
+-- Make the function available in Vim command mode
+vim.api.nvim_create_user_command("EnableOsc52", EnabledOsc52, {})
 require("hop").setup()
 require("ibl").setup()
 
@@ -180,6 +223,15 @@ require('mason-lspconfig').setup({
 
 -- Setup LSP configurations
 local lspconfig = require('lspconfig')
+vim.lsp.handlers["textDocument/publishDiagnostics"] = function(_, result, ctx, config)
+    if result.diagnostics then
+        -- Filter out the specific error code
+        result.diagnostics = vim.tbl_filter(function(diagnostic)
+            return diagnostic.code ~= "-32603"
+        end, result.diagnostics)
+    end
+    vim.lsp.diagnostic.on_publish_diagnostics(_, result, ctx, config)
+end
 
 -- Add command for format disable and enable
 vim.api.nvim_create_user_command("FormatDisable", function(args)
@@ -246,10 +298,10 @@ require("conform").setup({
     -- You can customize some of the format options for the filetype (:help conform.format)
     rust = { "rustfmt", lsp_format = "fallback" },
     -- Conform will run the first available formatter
-    javascript = { "prettier", "prettierd" },
-    typescript = { "prettier", "prettierd" },
-    typescriptreact = { "prettier", "prettierd" },
-    javascriptreact = { "prettier", "prettierd", lsp_format = "fallback" },
+    javascript = { "prettierd" },
+    typescript = { "prettierd" },
+    typescriptreact = { "prettierd" },
+    javascriptreact = { "prettierd", lsp_format = "fallback" },
     json = { "fixjson"}
   },
   format_on_save = function(bufnr)
@@ -263,7 +315,7 @@ require("conform").setup({
       return
     end
 
-    return { timeout_ms = 500, lsp_format = "fallback" }
+    return { timeout_ms = 2000, lsp_format = "fallback" }
   end,
 })
 
@@ -600,7 +652,7 @@ noremap  <leader>gP :Git push origin HEAD --force <bar>echo "Pushed success" <cr
 noremap  <leader>gb :Git blame<cr>
 noremap  <leader>gc :BranchList<cr>
 noremap  <leader>gC :BranchList!<cr>
-noremap  <leader>gm :echo 'Merging origin/'.GetMergeBranchByProj() <bar> execute 'Git fetch origin '.GetMergeBranchByProj() <bar> execute 'Git rebase origin/'.GetMergeBranchByProj() <cr>
+noremap  <leader>gm :echo 'Merging origin/'.GetMergeBranchByProj() <bar> execute 'Git fetch origin '.GetMergeBranchByProj() <bar> execute 'Git merge origin/'.GetMergeBranchByProj() <cr>
 noremap  <leader>gd :execute 'Git diff '.GInitCommitWhenBranching().'..HEAD'<cr>
 noremap  <leader>gD :execute 'Git diff --name-status '.GInitCommitWhenBranching().'..HEAD'<cr>
 noremap  <leader>g1 :Git cherry-pick HEAD@{1}<cr>
@@ -631,13 +683,16 @@ function! GetMergeBranchByProj()
   let merge_branch = 'master'
   if stridx(getcwd(), "employment-hero") >=0
         \ || stridx(getcwd(), "smartmatch-hub") >= 0
+        \ || stridx(getcwd(), "eh-mobile-pro") >= 0
     let merge_branch = "development"
   elseif stridx(getcwd(), "time-tracking") >=0
         \ || stridx(getcwd(), "sales-boost") >= 0
+        \ || stridx(getcwd(), "bbc") >= 0
     let merge_branch = "dev"
   elseif stridx(getcwd(), "frontend-script") >= 0
         \ || stridx(getcwd(), "shabu-town") >= 0
-        \ || stridx(getcwd(), "gold-diggers") >= 0
+        \ || stridx(getcwd(), "react-native-mixpanel") >= 0
+        \ || stridx(getcwd(), "ebf-swag-personal") >= 0
     let merge_branch = "main"
   endif
   return merge_branch
