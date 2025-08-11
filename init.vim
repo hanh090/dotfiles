@@ -129,6 +129,49 @@ call plug#end()
 
 "{
 lua << LUA
+local function paste(e)
+  return {
+    vim.fn.split(vim.fn.getreg(""), "\n"),
+    vim.fn.getregtype(""),
+  }
+end
+-- local status, osc52 = pcall(require, "vim.ui.clipboard.osc52")
+-- vim.g.clipboard = {
+--   name = "OSC 52",
+--   copy = {
+--     ["+"] = osc52.copy("+"),
+--     ["*"] = osc52.copy("*"),
+--   },
+--   paste = {
+--     ["+"] = osc52.paste("+"),
+--     ["*"] = osc52.paste("*"),
+--   },
+-- }
+
+function EnabledOsc52()
+  local status, osc52 = pcall(require, "vim.ui.clipboard.osc52")
+  if not status then
+    print("Error: OSC 52 module not found!")
+    return
+  end
+
+  vim.g.clipboard = {
+    name = "OSC 52",
+    copy = {
+      ["+"] = osc52.copy("+"),
+      ["*"] = osc52.copy("*"),
+    },
+    paste = {
+      ["+"] = paste("+"),
+      ["*"] = paste("*"),
+    },
+  }
+
+  print("OSC 52 clipboard enabled!")
+end
+
+-- Make the function available in Vim command mode
+vim.api.nvim_create_user_command("EnableOsc52", EnabledOsc52, {})
 require("hop").setup()
 require("ibl").setup()
 
@@ -187,6 +230,15 @@ require('mason-lspconfig').setup({
 
 -- Setup LSP configurations
 local lspconfig = require('lspconfig')
+vim.lsp.handlers["textDocument/publishDiagnostics"] = function(_, result, ctx, config)
+    if result.diagnostics then
+        -- Filter out the specific error code
+        result.diagnostics = vim.tbl_filter(function(diagnostic)
+            return diagnostic.code ~= "-32603"
+        end, result.diagnostics)
+    end
+    vim.lsp.diagnostic.on_publish_diagnostics(_, result, ctx, config)
+end
 
 -- Add command for format disable and enable
 vim.api.nvim_create_user_command("FormatDisable", function(args)
@@ -648,6 +700,7 @@ function! GetMergeBranchByProj()
   let merge_branch = HasGitMainBranch() ? 'main' : 'master'
   if stridx(getcwd(), "employment-hero") >=0
         \ || stridx(getcwd(), "smartmatch-hub") >= 0
+        \ || stridx(getcwd(), "eh-mobile-pro") >= 0
     let merge_branch = "development"
   elseif stridx(getcwd(), "time-tracking") >=0
         \ || stridx(getcwd(), "sales-boost") >= 0
@@ -655,7 +708,8 @@ function! GetMergeBranchByProj()
     let merge_branch = "dev"
   elseif stridx(getcwd(), "frontend-script") >= 0
         \ || stridx(getcwd(), "shabu-town") >= 0
-        \ || stridx(getcwd(), "gold-diggers") >= 0
+        \ || stridx(getcwd(), "react-native-mixpanel") >= 0
+        \ || stridx(getcwd(), "ebf-swag-personal") >= 0
     let merge_branch = "main"
   endif
   return merge_branch

@@ -152,78 +152,8 @@ cross_open(){
   esac
 }
 
-# circleci
-ci() {
-  cross_open https://circleci.com/gh/Thinkei/workflows/$1
-}
-cio() {
-  ci `basename $(pwd)`
-}
-# open circleci in currrent branch
-cc() {
-   ci `basename $(pwd)`/tree/"${$(git rev-parse --abbrev-ref HEAD)//\//%2F}"
-}
-
 pr() {
   cross_open $(hub pr list --format='%H %U %n' | grep $(git rev-parse --abbrev-ref HEAD) | awk '{print $2}')
-}
-
-# kill and open telegram app
-kt() {
-  kill -9 $(ps aux | fzf -e -1 -0 -q 'telegram !fzf' | awk '{print $2}')
-}
-
-ot() {
-  open -a "/Applications/Telegram.app/Contents/MacOS/Telegram"
-}
-# fetch and merge master to current branch
-gfm() {
- git fetch origin master
- git merge origin/master
-}
-# git checkout interactive
-gcoi(){
- checkoutToBranch=$(git branch | fzf -1 | xargs)
- print -s "git checkout $checkoutToBranch"
- git checkout $checkoutToBranch
-}
-
-# Quickly merge staging
-deploySbx() {
-  currentBranch=$(git rev-parse --abbrev-ref HEAD)
-  # git stash
-  echo "FETCH ORIGIN CODE"
-  git fetch origin $1
-  echo "MERGE $currentBranch"
-  git checkout $1
-  git reset --hard origin/$1
-  git merge $currentBranch -m "Merge branch '$currentBranch' into $1"
-  echo "PUSH CODE"
-  git push origin HEAD
-  cc # Open CircleCI
-  echo "CHECKOUT BACK"
-  git checkout $currentBranch
-  # git stash apply
-  echo "DONE"
-}
-
-alias dsb='deploySbx $(git branch | fzf --height 40% -q "^sbx | stag" -1)'
-
-gmr() {
-    # A quick way to open a GitLab merge request URL for the current git branch
-    # you're on. The optional first argument is the target branch.
-
-    repo_path=$(git remote get-url origin --push | sed 's/^.*://g' | sed 's/.git$//g')
-    current_branch=$(git rev-parse --abbrev-ref HEAD)
-
-    if [[ -n $1 ]]; then
-        target_branch="&merge_request[target_branch]=$1"
-    else
-        target_branch=""
-    fi
-
-    open "https://gitlab.com/$repo_path/merge_requests/new?merge_request[source_branch]=$current_branch$target_branch"
-
 }
 
 # staging
@@ -237,6 +167,8 @@ alias herocliint='herocli --server hero2.integration.ehrocks.com:443'
 
 source <(fzf --zsh)
 source ~ZSH_CUSTOM/plugins/fzf-tab/fzf-tab.plugin.zsh
+
+. ~/.asdf/plugins/java/set-java-home.zsh
 
 # fix problem with unmatching
 unsetopt nomatch
