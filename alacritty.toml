@@ -72,11 +72,11 @@ action = "PasteSelection"
 mouse = "Middle"
 
 [scrolling]
-history = 10000
+history = 100000
 multiplier = 3
 
 [selection]
-save_to_clipboard = false
+save_to_clipboard = true
 semantic_escape_chars = ",?`|:\"' ()[]{}<>"
 
 [shell]
