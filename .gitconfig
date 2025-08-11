@@ -3,13 +3,14 @@
 	name = Hanh Le
   # define command which will be used when "nvim" is set as a merge tool
 [mergetool "nvim"]
-  cmd = nvim -f -c \"Gdiffsplit!\" \"$MERGED\"
+  cmd = nvim -f -c "Gdiffsplit!" "$MERGED"
   # set "nvim" as tool for merging
 [merge]
   tool = nvim
-  # automatically launch merge tool without displaying a prompt
+  conflictstyle = diff3
 [mergetool]
   prompt = false
+  # automatically launch merge tool without displaying a prompt
 [core]
 	whitespace = trailing-space
 [alias]
