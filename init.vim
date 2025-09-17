@@ -270,7 +270,7 @@ vim.api.nvim_create_user_command("Format", function(args)
   end
   require("conform").format({ async = true, lsp_format = "fallback", range = range })
 end, { range = true })
-vim.keymap.set("v", "<Space>cf", function()
+vim.keymap.set("", "<Space>cf", function()
     -- Get the selected range in visual mode
     local start_line = vim.fn.line("'<")
     local end_line = vim.fn.line("'>")
