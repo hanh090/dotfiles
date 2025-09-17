@@ -45,7 +45,7 @@ unfocused_hollow = true
 size = 14.0
 
 [font.bold]
-family = "FiraCode Nerd Font"
+family = "JetBrainsMono Nerd Font"
 style = "Bold"
 
 [font.glyph_offset]
@@ -53,12 +53,12 @@ x = 0
 y = 0
 
 [font.italic]
-family = "FiraCode Nerd Font"
+family = "JetBrainsMono Nerd Font"
 style = "Italic"
 
 [font.normal]
-family = "FiraCode Nerd Font"
-style = "Retina"
+family = "JetBrainsMono Nerd Font"
+style = "Regular"
 
 [font.offset]
 x = 0
