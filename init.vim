@@ -270,7 +270,7 @@ vim.api.nvim_create_user_command("Format", function(args)
   end
   require("conform").format({ async = true, lsp_format = "fallback", range = range })
 end, { range = true })
-vim.keymap.set("v", "<Space>cf", function()
+vim.keymap.set("", "<Space>cf", function()
     -- Get the selected range in visual mode
     local start_line = vim.fn.line("'<")
     local end_line = vim.fn.line("'>")
@@ -1009,7 +1009,7 @@ let g:workspace = get(g:, 'workspace', '')
 command! -nargs=* -complete=dir -bang Cd call
       \ fzf#run(fzf#wrap(
       \ {
-      \ 'source': join(['find ~/projects ~/projects/sasadmin24'.g:workspace, '-maxdepth 1 ',"-type d | awk '!x[$0]++'"], ' '),
+      \ 'source': join(['find ~/projects ~/projects/gabo'.g:workspace, '-maxdepth 1 ',"-type d | awk '!x[$0]++'"], ' '),
       \ 'sink': 'cd',
       \ 'options': [
       \ '-q', len(<q-args>) > 0 ?(<q-args>): '',
