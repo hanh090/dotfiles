@@ -1009,7 +1009,7 @@ let g:workspace = get(g:, 'workspace', '')
 command! -nargs=* -complete=dir -bang Cd call
       \ fzf#run(fzf#wrap(
       \ {
-      \ 'source': join(['find ~/projects ~/projects/sasadmin24'.g:workspace, '-maxdepth 1 ',"-type d | awk '!x[$0]++'"], ' '),
+      \ 'source': join(['find ~/projects ~/projects/gabo'.g:workspace, '-maxdepth 1 ',"-type d | awk '!x[$0]++'"], ' '),
       \ 'sink': 'cd',
       \ 'options': [
       \ '-q', len(<q-args>) > 0 ?(<q-args>): '',
