@@ -125,6 +125,11 @@ Plug 'SmiteshP/nvim-navic'
 
 " Bookmark with note
 Plug 'MattesGroeger/vim-bookmarks'
+" Json path
+Plug 'mogelbrod/vim-jsonpath'
+"---{
+let g:jsonpath_register = '*'
+"---}
 call plug#end()
 
 "{
@@ -595,6 +600,9 @@ autocmd FileType fern nnoremap <buffer> <c-l> :wincmd l<cr>
 autocmd FileType fern nmap <buffer><nowait> z <Plug>(fern-action-zoom:half)
 autocmd FileType fern nnoremap <buffer> <c-j> :TmuxNavigateDown<cr>
 autocmd FileType fern hi CursorLine ctermbg=20 guibg=#2c323c gui=bold
+
+"Trigger and copy path in json file
+au FileType json nnoremap <buffer> <silent> K :JsonPath<CR>
 " Searching
 noremap  <leader>f :FZF<CR>
 vnoremap <leader>f y:call fzf#vim#files('.', {'options': ['--query', '<C-R>=@"<CR>']})<CR>
