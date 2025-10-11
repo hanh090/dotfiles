@@ -35,8 +35,6 @@ let g:better_whitespace_filetypes_blacklist=['log', 'fugitive', 'quickfix', 'git
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-repeat'
 Plug 'mg979/vim-visual-multi'
-" Extend matching for html tag
-Plug 'dhruvasagar/vim-table-mode'
 
 " Note taking
 "  Git
