@@ -18,7 +18,6 @@ Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 " Color schema
 Plug 'EdenEast/nightfox.nvim' " Vim-Plug
 " Theme + Style
-"Plug 'norcalli/nvim-colorizer.lua'
 Plug 'ryanoasis/vim-devicons'
 Plug 'lambdalisue/fern-renderer-devicons.vim'
 " Show indent line
@@ -79,9 +78,6 @@ Plug 'chrisbra/NrrwRgn'
 
 " Support raw search for ag and rg from fzf
 Plug 'jesseleite/vim-agriculture'
-
-" Markdown and folding
-Plug 'plasticboy/vim-markdown'
 
 " Asynchonous call
 Plug 'tpope/vim-dispatch'
