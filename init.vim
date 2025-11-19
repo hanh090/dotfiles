@@ -128,30 +128,20 @@ call plug#end()
 
 "{
 lua << LUA
-local function paste(e)
-  return {
-    vim.fn.split(vim.fn.getreg(""), "\n"),
-    vim.fn.getregtype(""),
-  }
-end
--- local status, osc52 = pcall(require, "vim.ui.clipboard.osc52")
--- vim.g.clipboard = {
---   name = "OSC 52",
---   copy = {
---     ["+"] = osc52.copy("+"),
---     ["*"] = osc52.copy("*"),
---   },
---   paste = {
---     ["+"] = osc52.paste("+"),
---     ["*"] = osc52.paste("*"),
---   },
--- }
 
 function EnabledOsc52()
   local status, osc52 = pcall(require, "vim.ui.clipboard.osc52")
   if not status then
     print("Error: OSC 52 module not found!")
     return
+  end
+
+  -- Define the paste function locally
+  local function paste()
+    return {
+      vim.fn.split(vim.fn.getreg(""), "\n"),
+      vim.fn.getregtype(""),
+    }
   end
 
   vim.g.clipboard = {
@@ -161,8 +151,8 @@ function EnabledOsc52()
       ["*"] = osc52.copy("*"),
     },
     paste = {
-      ["+"] = paste("+"),
-      ["*"] = paste("*"),
+      ["+"] = paste,
+      ["*"] = paste,
     },
   }
 
